@@ -1,59 +1,55 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start() {
-    connect(get_uri());
+    std::thread client([&]() {
+        connect(get_uri());
+    });
+    
+    ui.show();
 }
 
 const std::string SlackClient::get_uri() {
-    std::cout << "Getting websocker url ...";
+    fetch_roster();
     
-    std::string token = std::getenv("SLACK_TOKEN");
+    std::cerr << "Getting websocker url ...";
     
-    if (token.empty()) {
-        throw new std::runtime_error("SLACK_TOKEN is empty");
-    }
-    
-    std::ostringstream os;
-    os << curlpp::options::Url("https://slack.com/api/rtm.start?token=" + token);
-    
-    rapidjson::Document d;
-    d.Parse(os.str().c_str());
-    
-    std::cout << " OK" << std::endl;
-    
+    auto d = call("rtm.start", "");
+
+    std::cerr << " OK" << std::endl;
+
     return d["url"].GetString();
 }
 
 void SlackClient::connect(std::string uri) {
-    std::cout << "Attempting connection ...";
-    
+    std::cerr << "Attempting connection ...";
+
     wc.set_access_channels(websocketpp::log::alevel::none);
     wc.init_asio();
-    
-    wc.set_open_handler(bind(&SlackClient::on_open,this,::_1));
-    wc.set_tls_init_handler(bind(&SlackClient::on_tls_init,this,::_1));
-    wc.set_message_handler(bind(&SlackClient::on_message,this,::_1,::_2));
-    
+
+    wc.set_open_handler(bind(&SlackClient::on_open, this, ::_1));
+    wc.set_tls_init_handler(bind(&SlackClient::on_tls_init, this, ::_1));
+    wc.set_message_handler(bind(&SlackClient::on_message, this, ::_1, ::_2));
+
     websocketpp::lib::error_code ec;
     client::connection_ptr con = wc.get_connection(uri, ec);
-    
+
     if (ec) {
-        std::cout << "> Connect initialization error: " << ec.message() << std::endl;
+        std::cerr << "> Connect initialization error: " << ec.message() << std::endl;
         return;
     }
-    
+
     wc.connect(con);
     wc.run();
 }
 
 void SlackClient::on_open(websocketpp::connection_hdl hdl) {
     //wc.send(hdl, "ciao", websocketpp::frame::opcode::text);
-    std::cout << "Connected !" << std::endl;
+    std::cerr << "  Connected !" << std::endl;
 }
 
 context_ptr SlackClient::on_tls_init(websocketpp::connection_hdl) {
     context_ptr ctx = websocketpp::lib::make_shared<boost::asio::ssl::context>(boost::asio::ssl::context::tlsv1);
-    
+
     try {
         ctx->set_options(boost::asio::ssl::context::default_workarounds |
                          boost::asio::ssl::context::no_sslv2 |
@@ -66,7 +62,42 @@ context_ptr SlackClient::on_tls_init(websocketpp::connection_hdl) {
 }
 
 void SlackClient::on_message(websocketpp::connection_hdl hdl, message_ptr ptr) {
-    std::cout << "Received: " << ptr->get_payload() << std::endl;
+    std::cerr << "Received: " << ptr->get_payload() << std::endl;
+    process_event(ptr->get_payload());
+}
+
+void SlackClient::process_event(const std::string& json) {
+    rapidjson::Document d;
+    d.Parse(json.c_str());
+
+    if (d["type"] == "message") {
+        std::cout << "Received message:  " << &d["text"] << std::endl;
+    }
+
+}
+
+Document SlackClient::call(const std::string &api, const std::string &query) {
+    Document d;
+    std::ostringstream os;
+    
+    const auto token = std::getenv("SLACK_TOKEN");
+    const auto base_url = "https://slack.com/api/";
+    const auto url = base_url + api + "?token=" + token + "&" + query;
+    
+    os << curlpp::options::Url(url);
+    d.Parse(os.str().c_str());
+    
+    return d;
+}
+
+void SlackClient::fetch_roster() {
+    auto d = call("users.list", "");
+
+    const auto& members = d["members"];
+    
+    for (SizeType i=0; i<members.Size(); i++) {
+        ui.add_user(members[i]["profile"]["real_name"].GetString());
+    }
 }
 
 
