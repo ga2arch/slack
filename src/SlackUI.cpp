@@ -17,13 +17,9 @@ void SlackUI::show() {
     create_input();
 
     for (;;) {
-        show_lock.lock();
-        
         draw_roster();
         draw_chat();
         draw_input();
-        
-        show_lock.unlock();
         
         wait_input();
     }
@@ -118,7 +114,7 @@ void SlackUI::draw_input() {
 }
 
 void SlackUI::wait_input() {
-    char str[100];
+    char str[10000];
     wgetstr(input, str);
     
     messages.emplace_back(str);

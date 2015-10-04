@@ -44,7 +44,7 @@ private:
     WINDOW* chat;
     WINDOW* input;
     
-    std::mutex draw_lock, show_lock;
+    std::mutex draw_lock;
     
     std::vector<std::string> users = {};
     std::vector<std::string> messages = {};
