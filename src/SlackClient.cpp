@@ -67,14 +67,17 @@ void SlackClient::on_message(websocketpp::connection_hdl hdl, message_ptr ptr) {
 }
 
 void SlackClient::process_event(const std::string& json) {
-    rapidjson::Document d;
+    Document d;
+    std::ostringstream o;
+
     d.Parse(json.c_str());
 
     if (d["type"] == "message") {
-        std::ostringstream o;
         const auto name = roster[d["user"].GetString()];
         o << name << ": " << d["text"].GetString();
+        
         ui.add_message(o.str());
+        o.clear();
     }
 }
 
@@ -98,8 +101,8 @@ void SlackClient::fetch_roster() {
     const auto& members = d["members"];
     
     for (auto i=0; i<members.Size(); i++) {
-        const auto& name = members[i]["profile"]["real_name"].GetString();
-        const auto& id   = members[i]["id"].GetString();
+        const auto name = members[i]["profile"]["real_name"].GetString();
+        const auto id   = members[i]["id"].GetString();
         
         roster[id] = name;
         ui.add_user(name);

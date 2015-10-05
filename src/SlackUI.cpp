@@ -73,10 +73,8 @@ void SlackUI::draw_border(WINDOW *win) {
 void SlackUI::draw_roster() {
     draw_lock.lock();
 
-    auto x = 2;
-
     for (int i=0; i < users.size(); i++) {
-        mvwprintw(roster, i+2, x, "%.*s", 20, users[i].c_str());
+        mvwprintw(roster, i+2, 2, "%.*s", 20, users[i].c_str());
     }
 
     wborder(roster, 0, 0, 0, 0, 0, 0, 0, 0);
