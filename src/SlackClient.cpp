@@ -71,7 +71,9 @@ void SlackClient::process_event(const std::string& json) {
     d.Parse(json.c_str());
 
     if (d["type"] == "message") {
-        std::cout << "Received message:  " << &d["text"] << std::endl;
+        std::ostringstream o;
+        o << d["user"].GetString() << ": " << d["text"].GetString();
+        ui.add_message(o.str());
     }
 
 }
