@@ -36,6 +36,9 @@ void SlackUI::add_user(const std::string& user) {
 }
 
 SlackUI::~SlackUI() {
+    delwin(roster);
+    delwin(chat);
+    delwin(input);
     endwin();
 }
 
