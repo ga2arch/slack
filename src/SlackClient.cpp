@@ -95,7 +95,7 @@ void SlackClient::fetch_roster() {
 
     const auto& members = d["members"];
     
-    for (SizeType i=0; i<members.Size(); i++) {
+    for (auto i=0; i<members.Size(); i++) {
         ui.add_user(members[i]["profile"]["real_name"].GetString());
     }
 }

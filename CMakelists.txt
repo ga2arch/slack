@@ -18,6 +18,7 @@ find_package(RapidJSON REQUIRED)
 find_package(websocketpp REQUIRED)
 find_package(CURLpp REQUIRED)
 find_package(Boost COMPONENTS system thread)
+find_package(Threads)
 
 set(CURSES_NEED_NCURSES TRUE)
 find_package(Curses REQUIRED)
@@ -47,7 +48,8 @@ target_link_libraries(slack
 	${OPENSSL_CRYPTO_LIBRARY} 
 	${Boost_LIBRARIES} 
 	${CURLPP_LIBRARIES}
-	${CURSES_LIBRARIES})
+	${CURSES_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT})
 
 set_property(TARGET slack PROPERTY CXX_STANDARD 14)
 cotire(slack)
