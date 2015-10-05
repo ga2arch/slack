@@ -26,6 +26,8 @@ private:
     
     client wc;
     SlackUI ui;
+    
+    std::map<std::string, std::string> roster;
 };
 
 #endif
