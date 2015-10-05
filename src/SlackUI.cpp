@@ -40,6 +40,7 @@ SlackUI::~SlackUI() {
     delwin(chat);
     delwin(input);
     delwin(stdscr);
+
     endwin();
 }
 
