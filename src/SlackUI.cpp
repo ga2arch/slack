@@ -77,7 +77,6 @@ void SlackUI::draw_roster() {
         mvwprintw(roster, i+2, 2, "%.*s", 20, users[i].c_str());
     }
 
-    wborder(roster, 0, 0, 0, 0, 0, 0, 0, 0);
     wrefresh(roster);
 
     draw_lock.unlock();
@@ -92,7 +91,6 @@ void SlackUI::draw_chat() {
         mvwprintw(chat, i+2, x, "%s", messages[i].c_str());
     }
 
-    wborder(chat, 0, 0, 0, 0, 0, 0, 0, 0);
     wrefresh(chat);
 
     draw_lock.unlock();
@@ -101,7 +99,6 @@ void SlackUI::draw_chat() {
 void SlackUI::draw_input() {
     draw_lock.lock();
 
-    wborder(input, 0, 0, 0, 0, 0, 0, 0, 0);
     wmove(input, 1, 2);
 
     echo();
@@ -114,6 +111,7 @@ void SlackUI::wait_input() {
     char str[10000];
     wgetstr(input, str);
     wclear(input);
+    draw_border(input);
 
     messages.emplace_back(str);
 }
