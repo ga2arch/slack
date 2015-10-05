@@ -53,21 +53,25 @@ void SlackUI::setup_ncurses() {
 
 void SlackUI::create_roster() {
     roster = newwin(max_y, 22, 0, 0);
+    draw_border(roster);
 }
 
 void SlackUI::create_chat() {
     chat = newwin(max_y-4, max_x-22, 0, 22);
+    draw_border(chat);
 }
 
 void SlackUI::create_input() {
     input = newwin(4, max_x-22, max_y-4, 22);
+    draw_border(input);
+}
+
+void SlackUI::draw_border(WINDOW *win) {
+    wborder(win, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 void SlackUI::draw_roster() {
     draw_lock.lock();
-
-    wclear(roster);
-    wrefresh(roster);
 
     auto x = 2;
 
@@ -84,13 +88,10 @@ void SlackUI::draw_roster() {
 void SlackUI::draw_chat() {
     draw_lock.lock();
 
-    wclear(chat);
-    wrefresh(chat);
-
     auto x = 3;
 
     for (int i=0; i < messages.size(); i++) {
-        mvwprintw(roster, i+2, x, "%s", messages[i].c_str());
+        mvwprintw(chat, i+2, x, "%s", messages[i].c_str());
     }
 
     wborder(chat, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -101,9 +102,6 @@ void SlackUI::draw_chat() {
 
 void SlackUI::draw_input() {
     draw_lock.lock();
-
-    wclear(input);
-    wrefresh(input);
 
     wborder(input, 0, 0, 0, 0, 0, 0, 0, 0);
     wmove(input, 1, 2);
@@ -117,6 +115,7 @@ void SlackUI::draw_input() {
 void SlackUI::wait_input() {
     char str[10000];
     wgetstr(input, str);
+    wclear(input);
 
     messages.emplace_back(str);
 }
