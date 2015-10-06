@@ -101,6 +101,7 @@ void SlackUI::wait_input() {
     wgetstr(input, str);
     wclear(input);
     draw_border(input);
+    noecho();
 
     messages.emplace_back(str);
 }
