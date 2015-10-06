@@ -100,12 +100,11 @@ void SlackUI::draw_chat() {
 void SlackUI::wait_input() {
     char str[10000];
 
-    wmove(input, 1, 2);
+    mvwprintw(input, 1, 1, "> ");
     echo();
     wgetstr(input, str);
+    client->send_message(str);
     wclear(input);
     draw_border(input);
     noecho();
-    add_message(str);
-    client->send_message(str);
 }

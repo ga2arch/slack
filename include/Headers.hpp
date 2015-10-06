@@ -32,5 +32,7 @@ using websocketpp::lib::bind;
 
 // Rapidjson
 #include <rapidjson/document.h>
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 
 #endif /* Headers_h */

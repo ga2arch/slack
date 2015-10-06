@@ -10,8 +10,21 @@ void SlackClient::set_ui(SlackUI* ui) {
 
 void SlackClient::send_message(const std::string& message) {
     websocketpp::lib::error_code ec;
+    StringBuffer buffer;
 
-    wc.send(my_hdl, message, websocketpp::frame::opcode::text, ec);
+    Writer<StringBuffer> writer(buffer);
+    writer.StartObject();
+    writer.String("id");
+    writer.Uint(3);
+    writer.String("type");
+    writer.String("message");
+    writer.String("channel");
+    writer.String("D024BE91L");
+    writer.String("text");
+    writer.String(message.c_str());
+    writer.EndObject();
+
+    wc.send(my_hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
 
     if (ec) {
         std::cerr << "> Sending message error: " << ec.message() << std::endl;
