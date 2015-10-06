@@ -16,12 +16,16 @@ class Log {
 
 public:
     static std::fstream& d() {
-        static Log instance;
-        
-        return instance.debug;
+        return Log::getInstance().debug;
     }
     
 private:
+    static Log& getInstance() {
+        static Log instance;
+        
+        return instance;
+    }
+
     Log() {
         debug.open("slack.logs", std::fstream::out);
     }
