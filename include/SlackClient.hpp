@@ -29,6 +29,7 @@ private:
 
     Document call(const std::string& api, const std::string& query);
 
+    void fetch_user_info();
     void fetch_roster();
 
     SlackUI* ui;
@@ -36,6 +37,8 @@ private:
     websocketpp::connection_hdl my_hdl;
 
     std::map<std::string, std::string> roster;
+    
+    std::string me;
 };
 
 #include "SlackUI.hpp"

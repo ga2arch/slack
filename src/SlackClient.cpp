@@ -9,6 +9,7 @@ void SlackClient::set_ui(SlackUI* ui) {
 }
 
 const std::string SlackClient::get_uri() {
+    fetch_user_info();
     fetch_roster();
 
     Log::d() << "Getting websocker url ...";
@@ -79,6 +80,13 @@ void SlackClient::process_event(const std::string& json) {
         ui->add_message(o.str());
         o.clear();
     }
+    
+    if (d.HasMember("ok") && d.HasMember("text")) {
+        o << me << ": " << d["text"].GetString();
+        
+        ui->add_message(o.str());
+        o.clear();
+    }
 }
 
 bool SlackClient::check_response(const std::string& json) {
@@ -135,6 +143,15 @@ void SlackClient::fetch_roster() {
         roster[id] = name;
         ui->add_user(name);
     }
+}
+
+void SlackClient::fetch_user_info() {
+    auto d = call("auth.test", "");
+    const std::string user_id = d["user_id"].GetString();
+    
+    d = call("users.info", "user=" + user_id);
+    me = d["user"]["profile"]["real_name"].GetString();
+    
 }
 
 
