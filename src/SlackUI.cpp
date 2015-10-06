@@ -16,10 +16,10 @@ void SlackUI::show() {
     create_chat();
     create_input();
 
-    for (;;) {
-        draw_roster();
-        draw_chat();
+    draw_roster();
+    draw_chat();
 
+    for (;;) {
         wait_input();
     }
 }
@@ -103,5 +103,5 @@ void SlackUI::wait_input() {
     draw_border(input);
     noecho();
 
-    messages.emplace_back(str);
+    add_message(str);
 }
