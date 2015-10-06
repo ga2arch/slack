@@ -4,15 +4,15 @@ void SlackClient::start() {
     std::thread client([&]() {
         connect(get_uri());
     });
-    
+
     ui.show();
 }
 
 const std::string SlackClient::get_uri() {
     fetch_roster();
-    
+
     std::cerr << "Getting websocker url ...";
-    
+
     auto d = call("rtm.start", "");
 
     std::cerr << " OK" << std::endl;
@@ -75,7 +75,7 @@ void SlackClient::process_event(const std::string& json) {
     if (d["type"] == "message") {
         const auto name = roster[d["user"].GetString()];
         o << name << ": " << d["text"].GetString();
-        
+
         ui.add_message(o.str());
         o.clear();
     }
@@ -84,14 +84,14 @@ void SlackClient::process_event(const std::string& json) {
 Document SlackClient::call(const std::string &api, const std::string &query) {
     Document d;
     std::ostringstream os;
-    
+
     const auto token = std::getenv("SLACK_TOKEN");
     const auto base_url = "https://slack.com/api/";
     const auto url = base_url + api + "?token=" + token + "&" + query;
-    
+
     os << curlpp::options::Url(url);
     d.Parse(os.str().c_str());
-    
+
     return d;
 }
 
@@ -99,11 +99,11 @@ void SlackClient::fetch_roster() {
     auto d = call("users.list", "");
 
     const auto& members = d["members"];
-    
+
     for (auto i=0; i<members.Size(); i++) {
         const auto name = members[i]["profile"]["real_name"].GetString();
         const auto id   = members[i]["id"].GetString();
-        
+
         roster[id] = name;
         ui.add_user(name);
     }

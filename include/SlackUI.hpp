@@ -33,7 +33,6 @@ private:
     void draw_border(WINDOW *win);
     void draw_roster();
     void draw_chat();
-    void draw_input();
 
     void wait_input();
 

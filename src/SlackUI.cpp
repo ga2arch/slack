@@ -19,7 +19,6 @@ void SlackUI::show() {
     for (;;) {
         draw_roster();
         draw_chat();
-        draw_input();
 
         wait_input();
     }
@@ -74,7 +73,7 @@ void SlackUI::draw_roster() {
     draw_lock.lock();
 
     for (int i=0; i < users.size(); i++) {
-        mvwprintw(roster, i+2, 2, "%.*s", 20, users[i].c_str());
+        mvwprintw(roster, i+2, 1, "%.*s", 20, users[i].c_str());
     }
 
     wrefresh(roster);
@@ -85,10 +84,8 @@ void SlackUI::draw_roster() {
 void SlackUI::draw_chat() {
     draw_lock.lock();
 
-    auto x = 3;
-
     for (int i=0; i < messages.size(); i++) {
-        mvwprintw(chat, i+2, x, "%s", messages[i].c_str());
+        mvwprintw(chat, i+2, 1, "%s", messages[i].c_str());
     }
 
     wrefresh(chat);
@@ -96,19 +93,11 @@ void SlackUI::draw_chat() {
     draw_lock.unlock();
 }
 
-void SlackUI::draw_input() {
-    draw_lock.lock();
-
-    wmove(input, 1, 2);
-
-    echo();
-    wrefresh(input);
-
-    draw_lock.unlock();
-}
-
 void SlackUI::wait_input() {
     char str[10000];
+
+    wmove(input, 1, 2);
+    echo();
     wgetstr(input, str);
     wclear(input);
     draw_border(input);
