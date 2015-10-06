@@ -9,7 +9,9 @@ class SlackClient {
 
 public:
     void start();
-    
+
+    void send_message(const std::string& message);
+
 private:
     const std::string get_uri();
 
@@ -26,6 +28,7 @@ private:
 
     client wc;
     SlackUI ui;
+    websocketpp::connection_hdl my_hdl;
 
     std::map<std::string, std::string> roster;
 };

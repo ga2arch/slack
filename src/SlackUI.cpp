@@ -107,4 +107,5 @@ void SlackUI::wait_input() {
      * our str, and will call add_message()
      */
     add_message(str);
+//     send_message(str);
 }

@@ -8,6 +8,17 @@ void SlackClient::start() {
     ui.show();
 }
 
+void send_message(const std::string& message) {
+    websocketpp::lib::error_code ec;
+
+    wc.send(my_hdl, message, websocketpp::frame::opcode::text, ec);
+
+    if (ec) {
+        std::cerr << "> Sending message error: " << ec.message() << std::endl;
+        return;
+    }
+}
+
 const std::string SlackClient::get_uri() {
     fetch_roster();
 
@@ -44,6 +55,7 @@ void SlackClient::connect(std::string uri) {
 
 void SlackClient::on_open(websocketpp::connection_hdl hdl) {
     //wc.send(hdl, "ciao", websocketpp::frame::opcode::text);
+    my_hdl = hdl;
     std::cerr << "  Connected !" << std::endl;
 }
 
