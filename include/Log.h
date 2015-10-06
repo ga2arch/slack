@@ -16,11 +16,11 @@ class Log {
 
 public:
     static std::fstream& d() {
-        return Log::getInstance().debug;
+        return Log::get_instance().debug;
     }
     
 private:
-    static Log& getInstance() {
+    static Log& get_instance() {
         static Log instance;
         
         return instance;
