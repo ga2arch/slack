@@ -102,10 +102,6 @@ void SlackUI::wait_input() {
     wclear(input);
     draw_border(input);
     noecho();
-    /*
-     * here add_message will be removed: we'll send the message to the server, and Client will receive
-     * our str, and will call add_message()
-     */
     add_message(str);
 //     send_message(str);
 }
