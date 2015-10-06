@@ -8,6 +8,10 @@
 
 #include "SlackUI.hpp"
 
+void SlackUI::set_client(SlackClient* client) {
+    this->client = client;
+}
+
 void SlackUI::show() {
     setup_ncurses();
     getmaxyx(stdscr, max_y, max_x);
@@ -103,5 +107,5 @@ void SlackUI::wait_input() {
     draw_border(input);
     noecho();
     add_message(str);
-//     send_message(str);
+    client->send_message(str);
 }

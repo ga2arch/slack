@@ -1,11 +1,11 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start() {
-    std::thread client([&]() {
-        connect(get_uri());
-    });
+    connect(get_uri());
+}
 
-    ui.show();
+void SlackClient::set_ui(SlackUI* ui) {
+    this->ui = ui;
 }
 
 void SlackClient::send_message(const std::string& message) {
@@ -87,7 +87,7 @@ void SlackClient::process_event(const std::string& json) {
         const auto name = roster[d["user"].GetString()];
         o << name << ": " << d["text"].GetString();
 
-        ui.add_message(o.str());
+        ui->add_message(o.str());
         o.clear();
     }
 }
@@ -116,7 +116,7 @@ void SlackClient::fetch_roster() {
         const auto id   = members[i]["id"].GetString();
 
         roster[id] = name;
-        ui.add_user(name);
+        ui->add_user(name);
     }
 }
 

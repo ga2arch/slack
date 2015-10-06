@@ -5,9 +5,12 @@
 
 using namespace rapidjson;
 
+class SlackUI;
+
 class SlackClient {
 
 public:
+    void set_ui(SlackUI* ui);
     void start();
 
     void send_message(const std::string& message);
@@ -26,11 +29,13 @@ private:
 
     void fetch_roster();
 
+    SlackUI* ui;
     client wc;
-    SlackUI ui;
     websocketpp::connection_hdl my_hdl;
 
     std::map<std::string, std::string> roster;
 };
+
+#include "SlackUI.hpp"
 
 #endif

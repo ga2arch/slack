@@ -33,6 +33,4 @@ using websocketpp::lib::bind;
 // Rapidjson
 #include <rapidjson/document.h>
 
-#include "SlackUI.hpp"
-
 #endif /* Headers_h */

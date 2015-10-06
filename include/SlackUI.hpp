@@ -14,11 +14,14 @@
 #include <mutex>
 #include <curses.h>
 
+class SlackClient;
+
 class SlackUI {
 
 public:
     ~SlackUI();
 
+    void set_client(SlackClient* client);
     void show();
     void add_message(const std::string& message);
     void add_user(const std::string& user);
@@ -46,8 +49,12 @@ private:
 
     std::mutex draw_lock;
 
+    SlackClient* client;
+    
     std::vector<std::string> users = {};
     std::vector<std::string> messages = {};
 };
+
+#include "SlackClient.hpp"
 
 #endif /* SlackUI_hpp */
