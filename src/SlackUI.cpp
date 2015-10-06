@@ -103,7 +103,9 @@ void SlackUI::wait_input() {
     mvwprintw(input, 1, 1, "> ");
     echo();
     wgetstr(input, str);
+    
     client->send_message(str);
+    
     wclear(input);
     draw_border(input);
     noecho();

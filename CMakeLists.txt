@@ -30,7 +30,8 @@ set(SOURCES
 	src/SlackUI.cpp
 	include/SlackClient.hpp
 	include/SlackUI.hpp
-	include/Headers.hpp)
+	include/Headers.hpp
+	include/Log.h)
 
 add_executable(slack main.cpp ${SOURCES})
 

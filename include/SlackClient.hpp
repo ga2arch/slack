@@ -25,6 +25,8 @@ private:
     void on_message(websocketpp::connection_hdl hdl, message_ptr ptr);
 
     void process_event(const std::string& json);
+    bool check_response(const std::string& json);
+
     Document call(const std::string& api, const std::string& query);
 
     void fetch_roster();

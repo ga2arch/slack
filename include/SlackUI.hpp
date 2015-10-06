@@ -14,6 +14,8 @@
 #include <mutex>
 #include <curses.h>
 
+#include "Log.h"
+
 class SlackClient;
 
 class SlackUI {

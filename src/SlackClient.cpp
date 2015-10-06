@@ -8,44 +8,20 @@ void SlackClient::set_ui(SlackUI* ui) {
     this->ui = ui;
 }
 
-void SlackClient::send_message(const std::string& message) {
-    websocketpp::lib::error_code ec;
-    StringBuffer buffer;
-
-    Writer<StringBuffer> writer(buffer);
-    writer.StartObject();
-    writer.String("id");
-    writer.Uint(3);
-    writer.String("type");
-    writer.String("message");
-    writer.String("channel");
-    writer.String("D024BE91L");
-    writer.String("text");
-    writer.String(message.c_str());
-    writer.EndObject();
-
-    wc.send(my_hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
-
-    if (ec) {
-        std::cerr << "> Sending message error: " << ec.message() << std::endl;
-        return;
-    }
-}
-
 const std::string SlackClient::get_uri() {
     fetch_roster();
 
-    std::cerr << "Getting websocker url ...";
+    Log::d() << "Getting websocker url ...";
 
     auto d = call("rtm.start", "");
 
-    std::cerr << " OK" << std::endl;
+    Log::d() << " OK" << std::endl;
 
     return d["url"].GetString();
 }
 
 void SlackClient::connect(std::string uri) {
-    std::cerr << "Attempting connection ...";
+    Log::d() << "Attempting connection ...";
 
     wc.set_access_channels(websocketpp::log::alevel::none);
     wc.init_asio();
@@ -58,7 +34,7 @@ void SlackClient::connect(std::string uri) {
     client::connection_ptr con = wc.get_connection(uri, ec);
 
     if (ec) {
-        std::cerr << "> Connect initialization error: " << ec.message() << std::endl;
+        Log::d() << "> Connect initialization error: " << ec.message() << std::endl;
         return;
     }
 
@@ -68,7 +44,7 @@ void SlackClient::connect(std::string uri) {
 
 void SlackClient::on_open(websocketpp::connection_hdl hdl) {
     my_hdl = hdl;
-    std::cerr << "  Connected !" << std::endl;
+    Log::d() << "  Connected !" << std::endl;
 }
 
 context_ptr SlackClient::on_tls_init(websocketpp::connection_hdl) {
@@ -86,7 +62,7 @@ context_ptr SlackClient::on_tls_init(websocketpp::connection_hdl) {
 }
 
 void SlackClient::on_message(websocketpp::connection_hdl hdl, message_ptr ptr) {
-    std::cerr << "Received: " << ptr->get_payload() << std::endl;
+    Log::d() << "Received: " << ptr->get_payload() << std::endl;
     process_event(ptr->get_payload());
 }
 
@@ -96,13 +72,17 @@ void SlackClient::process_event(const std::string& json) {
 
     d.Parse(json.c_str());
 
-    if (d["type"] == "message") {
+    if (d.HasMember("type") && d["type"] == "message") {
         const auto name = roster[d["user"].GetString()];
         o << name << ": " << d["text"].GetString();
 
         ui->add_message(o.str());
         o.clear();
     }
+}
+
+bool SlackClient::check_response(const std::string& json) {
+    return false;
 }
 
 Document SlackClient::call(const std::string &api, const std::string &query) {
@@ -117,6 +97,30 @@ Document SlackClient::call(const std::string &api, const std::string &query) {
     d.Parse(os.str().c_str());
 
     return d;
+}
+
+void SlackClient::send_message(const std::string& message) {
+    websocketpp::lib::error_code ec;
+    StringBuffer buffer;
+    
+    Writer<StringBuffer> writer(buffer);
+    writer.StartObject();
+    writer.String("id");
+    writer.Uint(3);
+    writer.String("type");
+    writer.String("message");
+    writer.String("channel");
+    writer.String("D0BTB0RLY");
+    writer.String("text");
+    writer.String(message.c_str());
+    writer.EndObject();
+    
+    wc.send(my_hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
+    
+    if (ec) {
+        Log::d() << "> Sending message error: " << ec.message() << std::endl;
+        return;
+    }
 }
 
 void SlackClient::fetch_roster() {
