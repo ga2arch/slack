@@ -7,4 +7,6 @@ TODO:
 - [ ] Send messagges to user
 - [ ] properly format sent and received messages: https://api.slack.com/docs/formatting . wgetch instead of wgetstr
 - [ ] Better text input handling with vim like mode to escape insertion mode into win selection mode
-- [ ] Scroll Chat and input windows when needed.
+- [ ] Scroll Chat and input windows when needed
+- [ ] Make everything terminal window size agnostic
+- [ ] Support window resize
