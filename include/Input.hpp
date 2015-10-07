@@ -2,7 +2,8 @@
 #define Input_hpp
 
 #include "MyWindow.hpp"
-#include "SlackClient.hpp"
+
+class SlackClient;
 
 class Input: public MyWindow {
 
@@ -15,5 +16,7 @@ private:
     SlackClient* client;
 
 };
+
+#include "SlackClient.hpp"
 
 #endif

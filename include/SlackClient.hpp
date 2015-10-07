@@ -37,7 +37,7 @@ private:
     websocketpp::connection_hdl my_hdl;
 
     std::map<std::string, std::string> roster;
-    
+
     std::string me;
 };
 
