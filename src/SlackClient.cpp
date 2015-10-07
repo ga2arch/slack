@@ -12,7 +12,7 @@ const std::string SlackClient::get_uri() {
     fetch_user_info();
     fetch_roster();
 
-    Log::d() << "Getting websocker url ...";
+    Log::d() << "Getting websocket url ...";
 
     auto d = call("rtm.start", "");
 
