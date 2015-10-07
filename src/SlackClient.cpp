@@ -80,17 +80,13 @@ void SlackClient::process_event(const std::string& json) {
         ui->add_message(o.str());
         o.clear();
     }
-    
+
     if (d.HasMember("ok") && d.HasMember("text")) {
         o << me << ": " << d["text"].GetString();
-        
+
         ui->add_message(o.str());
         o.clear();
     }
-}
-
-bool SlackClient::check_response(const std::string& json) {
-    return false;
 }
 
 Document SlackClient::call(const std::string &api, const std::string &query) {
@@ -110,7 +106,7 @@ Document SlackClient::call(const std::string &api, const std::string &query) {
 void SlackClient::send_message(const std::string& message) {
     websocketpp::lib::error_code ec;
     StringBuffer buffer;
-    
+
     Writer<StringBuffer> writer(buffer);
     writer.StartObject();
     writer.String("id");
@@ -122,9 +118,9 @@ void SlackClient::send_message(const std::string& message) {
     writer.String("text");
     writer.String(message.c_str());
     writer.EndObject();
-    
+
     wc.send(my_hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
-    
+
     if (ec) {
         Log::d() << "> Sending message error: " << ec.message() << std::endl;
         return;
@@ -148,10 +144,10 @@ void SlackClient::fetch_roster() {
 void SlackClient::fetch_user_info() {
     auto d = call("auth.test", "");
     const std::string user_id = d["user_id"].GetString();
-    
+
     d = call("users.info", "user=" + user_id);
     me = d["user"]["profile"]["real_name"].GetString();
-    
+
 }
 
 

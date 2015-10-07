@@ -2,7 +2,7 @@
 
 void Chat::draw() {
     for (int i=0; i < messages.size(); i++) {
-        mvwprintw(win, i+2, 1, "%.*s", 20, messages[i].c_str());
+        mvwprintw(win, i+2, 1, "%s", messages[i].c_str());
     }
 
     wrefresh(win);
