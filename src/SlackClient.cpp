@@ -74,17 +74,17 @@ void SlackClient::process_event(const std::string& json) {
     d.Parse(json.c_str());
 
     if (d.HasMember("type") && d["type"] == "message") {
-        const auto name = roster[d["user"].GetString()];
-        o << name << ": " << d["text"].GetString();
+        const auto item = ui->roster->get_item(d["user"].GetString());
+        o << item.name << ": " << d["text"].GetString();
 
-        ui->add_message(o.str());
+        ui->chat->add_message(o.str());
         o.clear();
     }
 
     if (d.HasMember("ok") && d.HasMember("text")) {
         o << me << ": " << d["text"].GetString();
 
-        ui->add_message(o.str());
+        ui->chat->add_message(o.str());
         o.clear();
     }
 }
@@ -142,8 +142,7 @@ void SlackClient::fetch_roster() {
         
         if (name == me) continue;
         
-        roster[id] = name;
-        ui->add_user(name);
+        ui->roster->add_item(id, name);
     }
 }
 

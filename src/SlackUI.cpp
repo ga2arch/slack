@@ -27,22 +27,6 @@ void SlackUI::show() {
     }
 }
 
-void SlackUI::add_message(const std::string& message) {
-    chat->add_message(message);
-
-    draw_lock.lock();
-    chat->draw();
-    draw_lock.unlock();
-}
-
-void SlackUI::add_user(const std::string& user) {
-    roster->add_user(user);
-
-    draw_lock.lock();
-    roster->draw();
-    draw_lock.unlock();
-}
-
 SlackUI::~SlackUI() {
     delwin(stdscr);
     endwin();

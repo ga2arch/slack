@@ -28,16 +28,14 @@ public:
 
     void set_client(SlackClient* client);
     void show();
-    void add_message(const std::string& message);
-    void add_user(const std::string& user);
-
-private:
-    void setup_ncurses();
-
+    
     std::unique_ptr<Roster> roster;
     std::unique_ptr<Chat>   chat;
     std::unique_ptr<Input>  input;
 
+private:
+    void setup_ncurses();
+   
     std::mutex draw_lock;
 
     SlackClient *client;

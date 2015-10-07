@@ -17,4 +17,5 @@ void Chat::draw() {
 
 void Chat::add_message(const std::string& message) {
     messages.emplace_back(message);
+    draw();
 }
