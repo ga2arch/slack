@@ -34,9 +34,6 @@ public:
 private:
     void setup_ncurses();
 
-    int max_x;
-    int max_y;
-
     std::unique_ptr<Roster> roster;
     std::unique_ptr<Chat>   chat;
     std::unique_ptr<Input>  input;
