@@ -37,7 +37,9 @@ void SlackUI::add_message(const std::string& message) {
 
 void SlackUI::add_user(const std::string& user) {
     roster->add_user(user);
+}
 
+void SlackUI::refresh_user() {
     draw_lock.lock();
     roster->draw();
     draw_lock.unlock();

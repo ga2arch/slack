@@ -30,6 +30,7 @@ public:
     void show();
     void add_message(const std::string& message);
     void add_user(const std::string& user);
+    void refresh_user();
 
 private:
     void setup_ncurses();
