@@ -9,6 +9,6 @@ MyWindow::~MyWindow() {
     delwin(win);
 }
 
-MyWindow::void draw_borders() {
+void MyWindow::draw_borders() {
     wborder(win, 0, 0, 0, 0, 0, 0, 0, 0);
 }
