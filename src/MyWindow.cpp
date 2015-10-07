@@ -1,7 +1,7 @@
 #include "MyWindow.hpp"
 
-MyWindow::MyWindow(int y, int, int start_y, int start_x) {
-    newwin(y, x, start_y, start_x);
+MyWindow::MyWindow(int y, int x, int start_y, int start_x) {
+    win = newwin(y, x, start_y, start_x);
     draw_borders();
 };
 

@@ -25,17 +25,25 @@ find_package(Curses REQUIRED)
 
 include_directories(include src)
 
-set(SOURCES 
-	src/SlackClient.cpp 
+set(SOURCES
+	src/SlackClient.cpp
 	src/SlackUI.cpp
+	src/MyWindow.cpp
+	src/Input.cpp
+	src/Chat.cpp
+	src/Roster.cpp
 	include/SlackClient.hpp
 	include/SlackUI.hpp
 	include/Headers.hpp
-	include/Log.h)
+	include/Log.h
+	include/MyWindow.hpp
+	include/Input.hpp
+	include/Chat.hpp
+	include/Roster.hpp)
 
 add_executable(slack main.cpp ${SOURCES})
 
-target_include_directories(slack 
+target_include_directories(slack
 	PRIVATE ${OPENSSL_INCLUDE_DIRS}
 	PRIVATE ${RAPIDJSON_INCLUDE_DIRS}
 	PRIVATE ${Boost_INCLUDE_DIRS}
@@ -44,10 +52,10 @@ target_include_directories(slack
 	PRIVATE ${CURSES_INCLUDE_DIR}
 	PUBLIC include)
 
-target_link_libraries(slack 
-	${OPENSSL_SSL_LIBRARY} 
-	${OPENSSL_CRYPTO_LIBRARY} 
-	${Boost_LIBRARIES} 
+target_link_libraries(slack
+	${OPENSSL_SSL_LIBRARY}
+	${OPENSSL_CRYPTO_LIBRARY}
+	${Boost_LIBRARIES}
 	${CURLPP_LIBRARIES}
 	${CURSES_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT})
