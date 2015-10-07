@@ -14,7 +14,7 @@ public:
     void add_message(const std::string& message);
 
 private:
-    std::vector<std::string> messages = {};
+    std::vector<std::string> messages;
 
 };
 

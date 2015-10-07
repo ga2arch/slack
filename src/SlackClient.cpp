@@ -133,9 +133,15 @@ void SlackClient::fetch_roster() {
     const auto& members = d["members"];
 
     for (auto i=0; i<members.Size(); i++) {
-        const auto name = members[i]["profile"]["real_name"].GetString();
-        const auto id   = members[i]["id"].GetString();
+        const auto& m = members[i];
+        
+        std::string name     = m["profile"]["real_name"].GetString();
+        const std::string id = m["id"].GetString();
 
+        name = name.empty() ? m["name"].GetString() : name;
+        
+        if (name == me) continue;
+        
         roster[id] = name;
         ui->add_user(name);
     }
@@ -147,7 +153,8 @@ void SlackClient::fetch_user_info() {
 
     d = call("users.info", "user=" + user_id);
     me = d["user"]["profile"]["real_name"].GetString();
-
+    
+    me = me.empty() ? d["user"]["name"].GetString() : me;
 }
 
 

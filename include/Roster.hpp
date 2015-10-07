@@ -14,7 +14,7 @@ public:
     void add_user(const std::string& user);
 
 private:
-    std::vector<std::string> users = {};
+    std::vector<std::string> users;
 
 };
 
