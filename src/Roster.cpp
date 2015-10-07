@@ -11,9 +11,7 @@ void Roster::draw() {
 }
 
 void Roster::add_item(const std::string& id, const std::string& name) {
-    RosterItem item(id, name);
-
-    roster[id] = item;
+    roster.emplace(id, name);
     draw();
 }
 
