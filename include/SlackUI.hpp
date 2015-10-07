@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <mutex>
+#include <memory>
 
 #include "Log.h"
 #include "Chat.hpp"
@@ -36,9 +37,9 @@ private:
     int max_x;
     int max_y;
 
-    Roster *roster;
-    Chat *chat;
-    Input *input;
+    std::unique_ptr<Roster> roster;
+    std::unique_ptr<Chat>   chat;
+    std::unique_ptr<Input>  input;
 
     std::mutex draw_lock;
 

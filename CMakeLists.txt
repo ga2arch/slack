@@ -3,7 +3,7 @@ project(slack++ VERSION 0.1 LANGUAGES CXX C)
 
 #set(CMAKE_BUILD_TYPE Release)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-include(cotire)
+#include(cotire)
 set (COTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES 1)
 
 find_program(CCACHE_FOUND ccache)
@@ -28,7 +28,7 @@ include_directories(include src)
 set(SOURCES
 	src/SlackClient.cpp
 	src/SlackUI.cpp
-	src/MyWindow.cpp
+	src/Window.cpp
 	src/Input.cpp
 	src/Chat.cpp
 	src/Roster.cpp
@@ -36,7 +36,7 @@ set(SOURCES
 	include/SlackUI.hpp
 	include/Headers.hpp
 	include/Log.h
-	include/MyWindow.hpp
+	include/Window.hpp
 	include/Input.hpp
 	include/Chat.hpp
 	include/Roster.hpp)
@@ -61,5 +61,5 @@ target_link_libraries(slack
 	${CMAKE_THREAD_LIBS_INIT})
 
 set_property(TARGET slack PROPERTY CXX_STANDARD 14)
-cotire(slack)
+#cotire(slack)
 
