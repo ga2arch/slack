@@ -19,9 +19,6 @@ void SlackUI::show() {
     chat   = std::make_unique<Chat>(LINES-4, COLS-22, 0, 22);
     input  = std::make_unique<Input>(4, COLS-22, LINES-4, 22, client);
 
-    roster->draw();
-    chat->draw();
-
     for (;;) {
         input->wait();
     }

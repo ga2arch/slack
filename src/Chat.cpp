@@ -1,16 +1,14 @@
 #include "Chat.hpp"
 
 void Chat::draw() {
-    int j, l;
+    int j = 0;
+    int i = messages.size() - 1;
 
-    for (int i=0, l = 0; i < messages.size(); i++) {
-        j = 0;
-        do {
-            mvwprintw(win, l + 2, 1, "%s", messages[i].substr(j, COLS - 24).c_str());
-            l++;
-            j += COLS - 24;
-        } while (j < messages[i].size());
-    }
+    do {
+        mvwprintw(win, chat_line + 2, 1, "%s", messages[i].substr(j, COLS - 24).c_str());
+        chat_line++;
+        j += COLS - 24;
+    } while (j < messages[i].size());
 
     wrefresh(win);
 }

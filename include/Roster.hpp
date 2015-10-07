@@ -9,9 +9,9 @@
 struct RosterItem {
     std::string id;
     std::string name;
-    
+
     RosterItem() {}
-    
+
     RosterItem(const std::string& i,
                const std::string& n): id(i), name(n) {}
 };
@@ -19,10 +19,10 @@ struct RosterItem {
 class Roster: public Window {
 
 public:
-    Roster(int y, int x, int start_y, int start_x) :  Window(y, x, start_y, start_x) {};
+    Roster(int y, int x, int start_y, int start_x) :  Window(y, x, start_y, start_x) {wrefresh(win);};
     void draw();
     void add_item(const std::string& id, const std::string& name);
-    
+
     RosterItem get_item(const std::string& id);
 
 private:

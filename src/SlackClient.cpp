@@ -143,6 +143,7 @@ void SlackClient::fetch_roster() {
         if (name == me) continue;
         ui->roster->add_item(id, name);
     }
+    ui->roster->draw();
 }
 
 void SlackClient::fetch_user_info() {

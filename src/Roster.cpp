@@ -14,7 +14,6 @@ void Roster::add_item(const std::string& id, const std::string& name) {
     roster.emplace(std::piecewise_construct,
                    std::forward_as_tuple(id),
                    std::forward_as_tuple(id, name));
-    draw();
 }
 
 RosterItem Roster::get_item(const std::string& id) {
