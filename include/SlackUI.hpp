@@ -35,8 +35,6 @@ public:
 
 private:
     void setup_ncurses();
-   
-    std::mutex draw_lock;
 
     SlackClient *client;
 };

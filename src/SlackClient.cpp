@@ -12,7 +12,7 @@ const std::string SlackClient::get_uri() {
     fetch_user_info();
     fetch_roster();
 
-    Log::d() << "Getting websocker url ...";
+    Log::d() << "Getting websocket url ...";
 
     auto d = call("rtm.start", "");
 
@@ -134,14 +134,13 @@ void SlackClient::fetch_roster() {
 
     for (auto i=0; i<members.Size(); i++) {
         const auto& m = members[i];
-        
+
         std::string name     = m["profile"]["real_name"].GetString();
         const std::string id = m["id"].GetString();
 
         name = name.empty() ? m["name"].GetString() : name;
-        
+
         if (name == me) continue;
-        
         ui->roster->add_item(id, name);
     }
 }
@@ -152,7 +151,7 @@ void SlackClient::fetch_user_info() {
 
     d = call("users.info", "user=" + user_id);
     me = d["user"]["profile"]["real_name"].GetString();
-    
+
     me = me.empty() ? d["user"]["name"].GetString() : me;
 }
 
