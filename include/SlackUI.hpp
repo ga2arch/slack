@@ -12,9 +12,11 @@
 #include <stdio.h>
 #include <iostream>
 #include <mutex>
-#include <curses.h>
 
 #include "Log.h"
+#include "Chat.hpp"
+#include "Input.hpp"
+#include "Roster.hpp"
 
 class SlackClient;
 
@@ -31,32 +33,16 @@ public:
 private:
     void setup_ncurses();
 
-    void create_roster();
-    void create_chat();
-    void create_input();
-
-    void draw_border(WINDOW *win);
-    void draw_roster();
-    void draw_chat();
-
-    void wait_input();
-
-
     int max_x;
     int max_y;
 
-    WINDOW* roster;
-    WINDOW* chat;
-    WINDOW* input;
+    Roster *roster;
+    Chat *chat;
+    Input *input;
 
     std::mutex draw_lock;
 
-    SlackClient* client;
-    
-    std::vector<std::string> users = {};
-    std::vector<std::string> messages = {};
+    SlackClient *client;
 };
 
-#include "SlackClient.hpp"
-
-#endif /* SlackUI_hpp */
+#endif
