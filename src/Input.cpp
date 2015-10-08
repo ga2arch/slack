@@ -4,7 +4,7 @@ int Input::wait() {
     int c;
     
     mvwprintw(win, 1, 1, ">> ");
-    wmove(win, 1, curr_pos + 4);
+    wmove(win, 1, input_str.length() + 4);
     echo();
     
     do {
@@ -21,8 +21,7 @@ int Input::wait() {
             default:
                 if (isprint(c)) {
                     input_str.push_back(c);
-                    curr_pos++;
-                    if ((curr_pos + 1) % (COLS - 26) == 0) {
+                    if ((input_str.length() + 1) % (COLS - 26) == 0) {
                         wmove(win, 2, 1); // prototype. I'll have got to check when line is > 2 and scroll the content just like I do in chat.cpp
                     }
                 }
@@ -33,7 +32,6 @@ int Input::wait() {
     client->send_message(input_str);
 
     input_str.clear();
-    curr_pos = 0;
     
     wclear(win);
     draw_borders();

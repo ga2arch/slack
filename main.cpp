@@ -15,7 +15,6 @@ int main(int argc, char const* argv[]) {
     std::thread t([&]() {
         c.start();
     });
-    t.detach();
 
     ui.show();
 }

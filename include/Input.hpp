@@ -26,8 +26,6 @@ private:
 
     std::string input_str;
 
-    int curr_pos = 0;
-
 };
 
 #include "SlackClient.hpp"
