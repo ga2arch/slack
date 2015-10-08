@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include "Window.hpp"
 
 class SlackClient;
@@ -23,7 +24,7 @@ public:
 private:
     SlackClient* client;
 
-    char input_str[4000];
+    std::string input_str;
 
     int curr_pos = 0;
 
