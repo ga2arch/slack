@@ -24,10 +24,7 @@ void SlackUI::show() {
     do {
         c = input->wait();
         if (c == KEY_RESIZE) {
-            endwin();
-            roster->resize_win(LINES, 22, 0, 0);
-            chat->resize_win(LINES-4, COLS-22, 0, 22);
-            input->resize_win(4, COLS-22, LINES-4, 22);
+            resize();
         }
     } while (c != 27);
 }
@@ -41,5 +38,11 @@ void SlackUI::setup_ncurses() {
     initscr();
     cbreak();
     noecho();
-    keypad(stdscr, true);
+}
+
+void SlackUI::resize() {
+    endwin();
+    roster->resize_win(LINES, 22, 0, 0);
+    chat->resize_win(LINES-4, COLS-22, 0, 22);
+    input->resize_win(4, COLS-22, LINES-4, 22);
 }
