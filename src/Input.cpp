@@ -27,14 +27,19 @@ int Input::wait() {
                 return c;
 
             case KEY_BS:
-                if (input_str.length() > 0) input_str.pop_back();
+                if (input_str.length() > 0) {
+                    input_str.pop_back();
+                    col--;
+                    mvwprintw(win, line, col, " ");
+                    wmove(win, line, col);
+                }
                 break;
 
             default:
                 if (isprint(c)) {
                     input_str.push_back(c);
 
-                    mvwprintw(win, line, col, "%c", input_str[input_str.length() - 1]);
+                    mvwprintw(win, line, col, "%c", c);
                     if (col ==  COLS - 24) {
                         col = 1;
                         if (line == 2) {
