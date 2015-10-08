@@ -29,7 +29,7 @@ int Input::wait() {
                 return c;
                 
             case KEY_BS:
-                input_str.pop_back();
+                if (input_str.length() > 0) input_str.pop_back();
                 break;
                 
             default:
