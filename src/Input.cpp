@@ -12,6 +12,7 @@ Input::Input(int y, int x,
 
 int Input::wait() {
     const int KEY_ESC = 27;
+    const int KEY_BS = 127;
 
     int c;
     
@@ -27,9 +28,8 @@ int Input::wait() {
             case KEY_ESC: // ESC or resize event;
                 return c;
                 
-            case 127:
+            case KEY_BS:
                 input_str.pop_back();
-                Log::d() << "Message: " << input_str;
                 break;
                 
             default:
