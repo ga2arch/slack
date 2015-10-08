@@ -1,11 +1,20 @@
 #include "Input.hpp"
 
+Input::Input(int y, int x,
+             int start_y, int start_x,
+             const std::string &title,
+             SlackClient *cl): Window(y, x, start_y, start_x, title), client(cl) {
+    
+    scrollok(win, TRUE);
+    idlok(win, TRUE);
+    noecho();
+}
+
 int Input::wait() {
     int c;
     
     mvwprintw(win, 1, 1, ">> ");
     wmove(win, 1, input_str.length() + 4);
-    echo();
     
     do {
         c = wgetch(win);
@@ -17,6 +26,10 @@ int Input::wait() {
             case KEY_RESIZE:
             case 27: // ESC or resize event;
                 return c;
+                
+            case KEY_BACKSPACE:
+                input_str.erase(input_str.length()-1, 1);
+                break;
                 
             default:
                 if (isprint(c)) {
@@ -35,8 +48,11 @@ int Input::wait() {
     
     wclear(win);
     draw_borders();
-    noecho();
     return 0;
+}
+
+void Input::draw() {
+    
 }
 
 void Input::resize_win(int y, int x, int start_y, int start_x) {
