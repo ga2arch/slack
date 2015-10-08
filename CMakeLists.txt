@@ -32,14 +32,17 @@ set(SOURCES
 	src/Input.cpp
 	src/Chat.cpp
 	src/Roster.cpp
+	src/Session.cpp
+
 	include/SlackClient.hpp
 	include/SlackUI.hpp
 	include/Headers.hpp
-	include/Log.h
+	include/Log.hpp
 	include/Window.hpp
 	include/Input.hpp
 	include/Chat.hpp
-	include/Roster.hpp)
+	include/Roster.hpp
+	include/Session.hpp)
 
 add_executable(slack main.cpp ${SOURCES})
 
