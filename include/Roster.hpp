@@ -22,10 +22,12 @@ class Roster: public Window {
 
 public:
     Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title) {};
+
     void draw();
     void add_item(const std::string& id,
                   const std::string& name,
                   const std::string& channel);
+    void resize_win(int y, int x, int start_y, int start_x);
 
     RosterItem get_item(const std::string& id);
 

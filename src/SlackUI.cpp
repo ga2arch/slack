@@ -25,12 +25,9 @@ void SlackUI::show() {
         c = input->wait();
         if (c == KEY_RESIZE) {
             endwin();
-            refresh();
             roster->resize_win(LINES, 22, 0, 0);
             chat->resize_win(LINES-4, COLS-22, 0, 22);
             input->resize_win(4, COLS-22, LINES-4, 22);
-            roster->draw();
-            chat->draw();
         }
     } while (c != 27);
 }

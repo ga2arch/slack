@@ -22,3 +22,8 @@ void Roster::add_item(const std::string& id,
 RosterItem Roster::get_item(const std::string& id) {
     return roster[id];
 }
+
+void Roster::resize_win(int y, int x, int start_y, int start_x) {
+    Window::resize_win(y, x, start_y, start_x);
+    draw();
+}

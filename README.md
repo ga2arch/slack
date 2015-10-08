@@ -7,6 +7,11 @@ TODO:
 - [ ] Send messagges to user
 - [ ] properly format sent and received messages: https://api.slack.com/docs/formatting . wgetch instead of wgetstr
 - [ ] Better text input handling with vim like mode to escape insertion mode into win selection mode
-- [ ] Scroll Chat and input windows when needed
 - [ ] Make everything terminal window size agnostic
-- [ ] Support window resize
+
+MUST FIX (graphical part):
+
+- [ ] fix backspace in wgetch: it should remove latest input_str char and move back cursor
+- [ ] fix scrolling in Input win too
+- [ ] fix in resize: how many lines must now be printed? If a message was broken on multiple lines before the resize, are we sure it is not broken on more lines after?
+Or may be (if terminal window was enlarged) it now fits in one line only.
