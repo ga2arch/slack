@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "Window.hpp"
+#include "Session.hpp"
 
 class Chat: public Window {
 
@@ -12,9 +13,11 @@ public:
         scrollok(win, TRUE);
         idlok(win, TRUE);};
 
-    void draw(std::vector <std::string> messages);
-    void draw_all(std::vector <std::string> messages);
-    void resize_win(int y, int x, int start_y, int start_x, std::vector <std::string> messages);
+    void draw(std::vector<Message> messages);
+    void draw_all(std::vector<Message> messages);
+    void resize_win(int y, int x,
+                    int start_y, int start_x,
+                    std::vector<Message> messages);
 
 private:
 

@@ -74,19 +74,28 @@ void SlackClient::process_event(const std::string& json) {
     d.Parse(json.c_str());
 
     if (d.HasMember("type") && d["type"] == "message") {
-        const auto item = ui->roster->get_item(d["user"].GetString());
+        auto item = me;
+        
+        try {
+            item = ui->roster->get_item(d["user"].GetString());
+        } catch (std::exception&) {
+            item.channel = d["channel"].GetString();
+        }
+        
         o << item.name << ": " << d["text"].GetString();
-
-        ui->roster->add_message(o.str());
-        ui->chat->draw(ui->roster->get_messages());
+        
+        ui->add_message(item, o.str());
+        ui->chat->draw_all(ui->get_messages());
         o.clear();
     }
 
     if (d.HasMember("ok") && d.HasMember("text")) {
-        o << me << ": " << d["text"].GetString();
-
-        ui->roster->add_message(o.str());
-        ui->chat->draw(ui->roster->get_messages());
+        auto const reply_to = d["reply_to"].GetInt();
+        o << me.name << ": " << d["text"].GetString();
+        me.channel = sent[reply_to];
+        
+        ui->add_message(me, o.str());
+        ui->chat->draw_all(ui->get_messages());
         o.clear();
     }
 }
@@ -112,15 +121,18 @@ void SlackClient::send_message(const std::string& message) {
     Writer<StringBuffer> writer(buffer);
     writer.StartObject();
     writer.String("id");
-    writer.Uint(ui->roster->get_active());
+    writer.Uint(++sent_id);
     writer.String("type");
     writer.String("message");
     writer.String("channel");
+    
     writer.String(ui->roster->get_active_channel().c_str());
     writer.String("text");
     writer.String(message.c_str());
     writer.EndObject();
 
+    sent[sent_id] = ui->roster->get_active_channel();
+    
     wc.send(my_hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
 
     if (ec) {
@@ -142,7 +154,7 @@ void SlackClient::fetch_roster() {
 
         name = name.empty() ? m["name"].GetString() : name;
 
-        if (name == me) continue;
+        if (name == me.name) continue;
 
         const auto& channel = get_direct_channel(id);
         ui->roster->add_item(id, name, channel);
@@ -155,9 +167,10 @@ void SlackClient::fetch_user_info() {
     const std::string user_id = d["user_id"].GetString();
 
     d = call("users.info", "user=" + user_id);
-    me = d["user"]["profile"]["real_name"].GetString();
-
-    me = me.empty() ? d["user"]["name"].GetString() : me;
+    std::string name = d["user"]["profile"]["real_name"].GetString();
+    name = name.empty() ? d["user"]["name"].GetString() : name;
+    
+    me = RosterItem(user_id, name, ui->roster->get_active_channel());
 }
 
 std::string SlackClient::get_direct_channel(const std::string& userid) {

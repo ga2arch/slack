@@ -28,9 +28,13 @@ void SlackUI::show() {
         }
         if (c == 9) {
             roster->wait();
-            chat->draw_all(roster->get_messages());
+            chat->draw_all(get_messages());
         }
     } while (c != 27);
+}
+
+std::vector<Message> SlackUI::get_messages() {
+    return sessions[roster->get_active_channel()].messages;
 }
 
 SlackUI::~SlackUI() {
@@ -44,9 +48,14 @@ void SlackUI::setup_ncurses() {
     noecho();
 }
 
+void SlackUI::add_message(const RosterItem& item,
+                          const std::string& content) {
+    sessions[item.channel].messages.emplace_back(item, content);
+}
+
 void SlackUI::resize() {
     endwin();
     roster->resize_win(LINES, 22, 0, 0);
-    chat->resize_win(LINES-4, COLS-22, 0, 22, roster->get_messages());
+    chat->resize_win(LINES-4, COLS-22, 0, 22, get_messages());
     input->resize_win(4, COLS-22, LINES-4, 22);
 }

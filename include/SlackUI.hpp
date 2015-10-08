@@ -13,11 +13,13 @@
 #include <iostream>
 #include <mutex>
 #include <memory>
+#include <map>
 
-#include "Log.h"
+#include "Log.hpp"
 #include "Chat.hpp"
 #include "Input.hpp"
 #include "Roster.hpp"
+#include "Session.hpp"
 
 class SlackClient;
 
@@ -28,6 +30,9 @@ public:
 
     void set_client(SlackClient* client);
     void show();
+    std::vector<Message> get_messages();
+    void add_message(const RosterItem& item,
+                     const std::string& content);
 
     std::unique_ptr<Roster> roster;
     std::unique_ptr<Chat>   chat;
@@ -38,6 +43,7 @@ private:
     void resize();
 
     SlackClient *client;
+    std::map<std::string, Session> sessions;
 };
 
 #endif

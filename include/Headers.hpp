@@ -35,6 +35,6 @@ using websocketpp::lib::bind;
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
-#include "Log.h"
+#include "Log.hpp"
 
 #endif /* Headers_h */

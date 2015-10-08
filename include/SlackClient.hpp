@@ -2,6 +2,7 @@
 #define SlackClient_H
 
 #include "Headers.hpp"
+#include "Roster.hpp"
 
 using namespace rapidjson;
 
@@ -38,8 +39,11 @@ private:
     websocketpp::connection_hdl my_hdl;
 
     std::map<std::string, std::string> roster;
-
-    std::string me;
+    std::map<int, std::string> sent;
+    
+    int sent_id = 0;
+    
+    RosterItem me;
 };
 
 #include "SlackUI.hpp"

@@ -18,26 +18,15 @@ void Roster::add_item(const std::string& id,
     roster.emplace(std::piecewise_construct,
                    std::forward_as_tuple(id),
                    std::forward_as_tuple(id, name, channel));
-
-    roster_channels.push_back(channel);
-    messages.resize(roster.size());
 }
 
 RosterItem Roster::get_item(const std::string& id) {
-    return roster[id];
+    return roster.at(id);
 }
 
 void Roster::resize_win(int y, int x, int start_y, int start_x) {
     Window::resize_win(y, x, start_y, start_x);
     draw();
-}
-
-const std::string Roster::get_active_channel() {
-    return roster_channels[active];
-}
-
-const int Roster::get_active() {
-    return active;
 }
 
 void Roster::wait() {
@@ -71,10 +60,8 @@ void Roster::wait() {
     wattroff(win, A_BOLD);
 }
 
-void Roster::add_message(const std::string& message) {
-    messages[active].emplace_back(message);
-}
-
-std::vector <std::string>& Roster::get_messages() {
-    return messages[active];
+std::string Roster::get_active_channel() {
+    auto it = roster.begin();
+    std::advance(it, active);
+    return it->second.channel;
 }
