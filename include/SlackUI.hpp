@@ -30,7 +30,7 @@ public:
 
     void set_client(SlackClient* client);
     void show();
-    std::vector<Message> get_messages();
+    std::vector<Message>& get_messages();
     void add_message(const RosterItem& item,
                      const std::string& content);
 

@@ -33,7 +33,7 @@ void SlackUI::show() {
     } while (c != 27);
 }
 
-std::vector<Message> SlackUI::get_messages() {
+std::vector<Message>& SlackUI::get_messages() {
     return sessions[roster->get_active_channel()].messages;
 }
 

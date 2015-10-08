@@ -13,11 +13,11 @@ public:
         scrollok(win, TRUE);
         idlok(win, TRUE);};
 
-    void draw(std::vector<Message> messages);
-    void draw_all(std::vector<Message> messages);
+    void draw(const std::vector<Message>& messages);
+    void draw_all(const std::vector<Message>& messages);
     void resize_win(int y, int x,
                     int start_y, int start_x,
-                    std::vector<Message> messages);
+                    const std::vector<Message>& messages);
 
 private:
 

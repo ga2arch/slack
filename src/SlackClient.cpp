@@ -21,7 +21,7 @@ const std::string SlackClient::get_uri() {
     return d["url"].GetString();
 }
 
-void SlackClient::connect(std::string uri) {
+void SlackClient::connect(const std::string& uri) {
     Log::d() << "Attempting connection ...";
 
     wc.set_access_channels(websocketpp::log::alevel::none);

@@ -19,7 +19,7 @@ public:
 private:
     const std::string get_uri();
 
-    void connect(std::string uri);
+    void connect(const std::string& uri);
 
     void on_open(websocketpp::connection_hdl hdl);
     context_ptr on_tls_init(websocketpp::connection_hdl);
