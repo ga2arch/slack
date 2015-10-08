@@ -2,7 +2,7 @@
 
 int Input::wait() {
     int c;
-
+    
     mvwprintw(win, 1, 1, ">> ");
     wmove(win, 1, curr_pos + 4);
     echo();
@@ -16,21 +16,21 @@ int Input::wait() {
             }
         } else {
             switch (c) {
-//             case 9: // tab to go to roster win
-//                 roster->loop();
-//                 change_chat(); // here messages[i] will switch to new chatted person's one.
-//                 break;
+                    //             case 9: // tab to go to roster win
+                    //                 roster->loop();
+                    //                 change_chat(); // here messages[i] will switch to new chatted person's one.
+                    //                 break;
                 case KEY_RESIZE: case 27: // ESC or resize event;
                     return c;
             }
         }
     } while ((c != 10) && (curr_pos < 4000));
-
+    
     client->send_message(input_str);
-
+    
     memset(input_str, 0, strlen(input_str));
     curr_pos = 0;
-
+    
     wclear(win);
     draw_borders();
     noecho();
@@ -39,6 +39,6 @@ int Input::wait() {
 
 void Input::resize_win(int y, int x, int start_y, int start_x) {
     Window::resize_win(y, x, start_y, start_x);
-
+    
     mvwprintw(win, 1, 4, input_str);
 }

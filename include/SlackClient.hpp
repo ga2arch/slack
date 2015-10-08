@@ -31,6 +31,7 @@ private:
 
     void fetch_user_info();
     void fetch_roster();
+    std::string get_direct_channel(const std::string& userid);
 
     SlackUI* ui;
     client wc;

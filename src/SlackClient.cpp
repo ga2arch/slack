@@ -141,7 +141,9 @@ void SlackClient::fetch_roster() {
         name = name.empty() ? m["name"].GetString() : name;
 
         if (name == me) continue;
-        ui->roster->add_item(id, name);
+        
+        const auto& channel = get_direct_channel(id);
+        ui->roster->add_item(id, name, channel);
     }
     ui->roster->draw();
 }
@@ -156,5 +158,9 @@ void SlackClient::fetch_user_info() {
     me = me.empty() ? d["user"]["name"].GetString() : me;
 }
 
+std::string SlackClient::get_direct_channel(const std::string& userid) {
+    auto d = call("im.open", "user=" + userid);
+    return d["channel"]["id"].GetString();
+}
 
 

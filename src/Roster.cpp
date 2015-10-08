@@ -10,10 +10,13 @@ void Roster::draw() {
     wrefresh(win);
 }
 
-void Roster::add_item(const std::string& id, const std::string& name) {
+void Roster::add_item(const std::string& id,
+                      const std::string& name,
+                      const std::string& channel) {
+    
     roster.emplace(std::piecewise_construct,
                    std::forward_as_tuple(id),
-                   std::forward_as_tuple(id, name));
+                   std::forward_as_tuple(id, name, channel));
 }
 
 RosterItem Roster::get_item(const std::string& id) {
