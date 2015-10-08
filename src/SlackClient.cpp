@@ -77,14 +77,16 @@ void SlackClient::process_event(const std::string& json) {
         const auto item = ui->roster->get_item(d["user"].GetString());
         o << item.name << ": " << d["text"].GetString();
 
-        ui->chat->add_message(o.str());
+        ui->roster->add_message(o.str());
+        ui->chat->draw(ui->roster->get_messages());
         o.clear();
     }
 
     if (d.HasMember("ok") && d.HasMember("text")) {
         o << me << ": " << d["text"].GetString();
 
-        ui->chat->add_message(o.str());
+        ui->roster->add_message(o.str());
+        ui->chat->draw(ui->roster->get_messages());
         o.clear();
     }
 }

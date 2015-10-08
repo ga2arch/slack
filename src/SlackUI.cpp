@@ -28,6 +28,7 @@ void SlackUI::show() {
         }
         if (c == 9) {
             roster->wait();
+            chat->draw_all(roster->get_messages());
         }
     } while (c != 27);
 }
@@ -46,6 +47,6 @@ void SlackUI::setup_ncurses() {
 void SlackUI::resize() {
     endwin();
     roster->resize_win(LINES, 22, 0, 0);
-    chat->resize_win(LINES-4, COLS-22, 0, 22);
+    chat->resize_win(LINES-4, COLS-22, 0, 22, roster->get_messages());
     input->resize_win(4, COLS-22, LINES-4, 22);
 }

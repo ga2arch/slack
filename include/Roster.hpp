@@ -41,10 +41,16 @@ public:
 
     void wait();
 
+    void add_message(const std::string& message);
+
+    std::vector <std::string>& get_messages();
+
 private:
     std::map<std::string, RosterItem> roster;
 
     std::vector<std::string> roster_channels;
+
+    std::vector <std::vector <std::string> > messages;
 
     int active = 0;
 

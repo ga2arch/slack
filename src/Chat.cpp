@@ -1,6 +1,6 @@
 #include "Chat.hpp"
 
-void Chat::draw() {
+void Chat::draw(std::vector <std::string> messages) {
     int j = 0;
     int i = messages.size() - 1;
 
@@ -22,12 +22,15 @@ void Chat::draw() {
     wrefresh(win);
 }
 
-void Chat::add_message(const std::string& message) {
-    messages.emplace_back(message);
-    draw();
+void Chat::draw_all(std::vector <std::string> messages) {
+    wclear(win);
+    for (int i = 0; (i < messages.size()) && (i < LINES - 6); i++) {
+        mvwprintw(win, i + 1, 1, "%s", messages[i].c_str());
+    }
+    draw_borders();
 }
 
-void Chat::resize_win(int y, int x, int start_y, int start_x) {
+void Chat::resize_win(int y, int x, int start_y, int start_x, std::vector <std::string> messages) {
     Window::resize_win(y, x, start_y, start_x);
 
     if (messages.size() == 0) {
