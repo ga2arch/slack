@@ -13,6 +13,8 @@ public:
         idlok(win, TRUE);};
 
     void draw();
+    void resize_win(int y, int x, int start_y, int start_x);
+
     void add_message(const std::string& message);
 
 private:

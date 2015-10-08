@@ -20,9 +20,11 @@ class Roster: public Window {
 
 public:
     Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title) {};
-    void draw();
-    void add_item(const std::string& id, const std::string& name);
 
+    void draw();
+    void resize_win(int y, int x, int start_y, int start_x);
+
+    void add_item(const std::string& id, const std::string& name);
     RosterItem get_item(const std::string& id);
 
 private:
