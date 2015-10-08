@@ -3,9 +3,10 @@
 void Roster::draw() {
     int i = 0;
     for (const auto& kv: roster) {
-        mvwprintw(win, i+2, 1, "%.*s", 20, kv.second.name.c_str());
+        mvwprintw(win, i+1, 4, "%.*s", 17, kv.second.name.c_str());
         i++;
     }
+    mvwprintw(win, active + 1, 1, "->");
 
     wrefresh(win);
 }
@@ -13,10 +14,12 @@ void Roster::draw() {
 void Roster::add_item(const std::string& id,
                       const std::string& name,
                       const std::string& channel) {
-    
+
     roster.emplace(std::piecewise_construct,
                    std::forward_as_tuple(id),
                    std::forward_as_tuple(id, name, channel));
+
+    roster_channels.push_back(channel);
 }
 
 RosterItem Roster::get_item(const std::string& id) {
@@ -26,4 +29,43 @@ RosterItem Roster::get_item(const std::string& id) {
 void Roster::resize_win(int y, int x, int start_y, int start_x) {
     Window::resize_win(y, x, start_y, start_x);
     draw();
+}
+
+const std::string Roster::get_active_channel() {
+    return roster_channels[active];
+}
+
+const int Roster::get_active() {
+    return active;
+}
+
+void Roster::wait() {
+    int c, old_active;
+
+    wattron(win, A_BOLD);
+    mvwprintw(win, active + 1, 1, "->");
+    do {
+        old_active = active;
+        c = wgetch(win);
+        switch (c) {
+        case KEY_UP:
+            if (active > 0) {
+                active--;
+            }
+            break;
+        case KEY_DOWN:
+            if (active < roster.size() - 1) {
+                active++;
+            }
+            break;
+        default:
+            break;
+        }
+
+        if (active != old_active) {
+            mvwprintw(win, active + 1, 1, "->");
+            mvwprintw(win, old_active + 1, 1, "  ");
+        }
+    } while (c != 10);
+    wattroff(win, A_BOLD);
 }

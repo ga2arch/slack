@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 
 #include "Window.hpp"
 
@@ -21,7 +22,10 @@ struct RosterItem {
 class Roster: public Window {
 
 public:
-    Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title) {};
+    Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title) {
+        noecho();
+        keypad(win, TRUE);
+    };
 
     void draw();
     void add_item(const std::string& id,
@@ -31,8 +35,18 @@ public:
 
     RosterItem get_item(const std::string& id);
 
+    const std::string get_active_channel();
+
+    const int get_active();
+
+    void wait();
+
 private:
     std::map<std::string, RosterItem> roster;
+
+    std::vector<std::string> roster_channels;
+
+    int active = 0;
 
 };
 

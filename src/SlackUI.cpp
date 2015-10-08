@@ -26,6 +26,9 @@ void SlackUI::show() {
         if (c == KEY_RESIZE) {
             resize();
         }
+        if (c == 9) {
+            roster->wait();
+        }
     } while (c != 27);
 }
 

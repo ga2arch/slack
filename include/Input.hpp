@@ -15,15 +15,17 @@ public:
           int start_y, int start_x,
           const std::string &title,
           SlackClient *cl);
-    
+
     int wait();
-    void draw();
     void resize_win(int y, int x, int start_y, int start_x);
 
 private:
     SlackClient* client;
 
     std::string input_str;
+
+    int line = 1;
+    int col = 1;
 
 };
 

@@ -110,11 +110,11 @@ void SlackClient::send_message(const std::string& message) {
     Writer<StringBuffer> writer(buffer);
     writer.StartObject();
     writer.String("id");
-    writer.Uint(3);
+    writer.Uint(ui->roster->get_active());
     writer.String("type");
     writer.String("message");
     writer.String("channel");
-    writer.String("D0BTB0RLY");
+    writer.String(ui->roster->get_active_channel().c_str());
     writer.String("text");
     writer.String(message.c_str());
     writer.EndObject();
@@ -141,7 +141,7 @@ void SlackClient::fetch_roster() {
         name = name.empty() ? m["name"].GetString() : name;
 
         if (name == me) continue;
-        
+
         const auto& channel = get_direct_channel(id);
         ui->roster->add_item(id, name, channel);
     }
