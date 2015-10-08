@@ -5,6 +5,7 @@ TODO:
 
 - [x] Create a class for every pane
 - [x] Send messagges to user
+- [ ] delta and chat_line (chat.hpp) per-chat
 - [ ] properly format sent and received messages: https://api.slack.com/docs/formatting.
 - [ ] Better text input handling with vim like mode to escape insertion mode into win selection mode
 - [ ] Make everything terminal window size agnostic
