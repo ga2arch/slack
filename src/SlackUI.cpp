@@ -42,6 +42,7 @@ void SlackUI::setup_ncurses() {
     initscr();
     cbreak();
     noecho();
+    ESCDELAY = 25;
 }
 
 void SlackUI::resize() {
