@@ -16,6 +16,6 @@ int main(int argc, char const* argv[]) {
         c.start();
     });
     t.detach();
-    
+
     ui.show();
 }
