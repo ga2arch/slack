@@ -19,7 +19,7 @@ struct RosterItem {
 class Roster: public Window {
 
 public:
-    Roster(int y, int x, int start_y, int start_x) :  Window(y, x, start_y, start_x) {wrefresh(win);};
+    Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title) {};
     void draw();
     void add_item(const std::string& id, const std::string& name);
 

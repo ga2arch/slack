@@ -13,20 +13,31 @@ void SlackUI::set_client(SlackClient* client) {
 }
 
 void SlackUI::show() {
+    int c;
+
     setup_ncurses();
 
-    roster = std::make_unique<Roster>(LINES, 22, 0, 0);
-    chat   = std::make_unique<Chat>(LINES-4, COLS-22, 0, 22);
-    input  = std::make_unique<Input>(4, COLS-22, LINES-4, 22, client);
+    roster = std::make_unique<Roster>(LINES, 22, 0, 0, "Roster");
+    chat   = std::make_unique<Chat>(LINES-4, COLS-22, 0, 22, "Chat");
+    input  = std::make_unique<Input>(4, COLS-22, LINES-4, 22, "InputBox", client);
 
-    for (;;) {
-        input->wait();
-    }
+    do {
+        c = input->wait();
+        if (c == KEY_RESIZE) {
+            endwin();
+            refresh();
+            roster->resize_win(LINES, 22, 0, 0);
+            chat->resize_win(LINES-4, COLS-22, 0, 22);
+            input->resize_win(4, COLS-22, LINES-4, 22);
+            roster->draw();
+            chat->draw();
+        }
+    } while (c != 27);
 }
 
 SlackUI::~SlackUI() {
-    delwin(stdscr);
     endwin();
+    delwin(stdscr);
 }
 
 void SlackUI::setup_ncurses() {
