@@ -78,7 +78,7 @@ void SlackClient::process_event(const std::string& json) {
         
         try {
             item = ui->roster->get_item(d["user"].GetString());
-        } catch (std::exception&) {
+        } catch (std::out_of_range&) {
             item.channel = d["channel"].GetString();
         }
         
