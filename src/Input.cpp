@@ -11,31 +11,33 @@ Input::Input(int y, int x,
 }
 
 int Input::wait() {
+    const int KEY_ESC = 27;
+
     int c;
     
     mvwprintw(win, 1, 1, ">> ");
     wmove(win, 1, input_str.length() + 4);
     
     do {
+        draw();
+        
         c = wgetch(win);
         switch (c) {
-                //             case 9: // tab to go to roster win
-                //                 roster->loop();
-                //                 change_chat(); // here messages[i] will switch to new chatted person's one.
-                //                 break;
             case KEY_RESIZE:
-            case 27: // ESC or resize event;
+            case KEY_ESC: // ESC or resize event;
                 return c;
                 
-            case KEY_BACKSPACE:
-                input_str.erase(input_str.length()-1, 1);
+            case 127:
+                input_str.pop_back();
+                Log::d() << "Message: " << input_str;
                 break;
                 
             default:
                 if (isprint(c)) {
                     input_str.push_back(c);
+                    
                     if ((input_str.length() + 1) % (COLS - 26) == 0) {
-                        wmove(win, 2, 1); // prototype. I'll have got to check when line is > 2 and scroll the content just like I do in chat.cpp
+                        wmove(win, 2, 1);
                     }
                 }
                 break;
@@ -52,7 +54,10 @@ int Input::wait() {
 }
 
 void Input::draw() {
-    
+    wclear(win);
+    draw_borders();
+
+    mvwprintw(win, 1, 1, (">> " + input_str).c_str());
 }
 
 void Input::resize_win(int y, int x, int start_y, int start_x) {
