@@ -69,13 +69,13 @@ int Roster::wait() {
         }
 
         if (active != old_active) {
+            mvwprintw(win, old_active + line, 1, "  ");
             if ((active >= users_cont) && (line == 2)) {
                 line++;
             } else if ((active < users_cont) && (line == 3)) {
                 line--;
             }
             mvwprintw(win, active + line, 1, "* ");
-            mvwprintw(win, old_active + line, 1, "  ");
         }
     } while (c != 10);
     wattroff(win, A_BOLD);
