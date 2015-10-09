@@ -36,20 +36,25 @@ public:
     };
 
     void draw();
-    void add_item(const std::string& id,
+    void add_user(const std::string& id,
                   const std::string& name,
                   const std::string& channel);
+
+    void add_group(const std::string& channel,
+                  const std::string& name);
+    
     void resize_win(int y, int x, int start_y, int start_x);
-    RosterItem get_item(const std::string& id);
+    RosterItem get_user(const std::string& id);
+    RosterItem get_group(const std::string& id);
+
     int wait();
     std::string get_active_channel();
 
     int active = 0;
-    int users_cont = 0;
-    int groups_cont = 0;
 
 private:
-    std::map<std::string, RosterItem> roster;
+    std::map<std::string, RosterItem> users;
+    std::map<std::string, RosterItem> groups;
 
 };
 

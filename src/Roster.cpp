@@ -4,31 +4,41 @@ void Roster::draw() {
     int i = 0;
     int line = 2;
 
-    if (users_cont > 0) {
+    if (users.size() > 0) {
         mvwprintw(win, 1, 1, "USERS:");
-    }
-    for (const auto& kv: roster) {
-        if (i == users_cont) {
-            mvwprintw(win, i + line, 1, "GROUPS:");
-            line++;
+        
+        for (const auto& kv: users) {
+            mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
+            i++;
         }
-        mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
-        i++;
     }
+
     wrefresh(win);
 }
 
-void Roster::add_item(const std::string& id,
+void Roster::add_user(const std::string& id,
                       const std::string& name,
                       const std::string& channel) {
 
-    roster.emplace(std::piecewise_construct,
+    users.emplace(std::piecewise_construct,
                    std::forward_as_tuple(id),
                    std::forward_as_tuple(id, name, channel));
 }
 
-RosterItem Roster::get_item(const std::string& id) {
-    return roster.at(id);
+void Roster::add_group(const std::string& channel,
+                       const std::string& name) {
+    
+    groups.emplace(std::piecewise_construct,
+                   std::forward_as_tuple(channel),
+                   std::forward_as_tuple(channel, name, channel));
+}
+
+RosterItem Roster::get_user(const std::string& id) {
+    return users.at(id);
+}
+
+RosterItem Roster::get_group(const std::string& id) {
+    return groups.at(id);
 }
 
 void Roster::resize_win(int y, int x, int start_y, int start_x) {
@@ -52,20 +62,20 @@ int Roster::wait() {
         old_active = active;
         c = wgetch(win);
         switch (c) {
-        case KEY_UP:
-            if (active > 0) {
-                active--;
-            }
-            break;
-        case KEY_DOWN:
-            if (active < roster.size() - 1) {
-                active++;
-            }
-            break;
-        case KEY_ESC:
-            return c;
-        default:
-            break;
+            case KEY_UP:
+                if (active > 0) {
+                    active--;
+                }
+                break;
+            case KEY_DOWN:
+                if (active < roster.size() - 1) {
+                    active++;
+                }
+                break;
+            case KEY_ESC:
+                return c;
+            default:
+                break;
         }
 
         if (active != old_active) {

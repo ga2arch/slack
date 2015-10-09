@@ -1,6 +1,11 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start() {
+    fetch_user_info();
+    fetch_users();
+    fetch_groups();
+    
+    ui->roster->draw();
     connect(get_uri());
 }
 
@@ -9,11 +14,6 @@ void SlackClient::set_ui(SlackUI* ui) {
 }
 
 const std::string SlackClient::get_uri() {
-    fetch_user_info();
-    fetch_users();
-    fetch_groups();
-    ui->roster->draw();
-
     Log::d() << "Getting websocket url ...";
 
     auto d = call("rtm.start", "");
@@ -148,6 +148,8 @@ void SlackClient::send_message(const std::string& message) {
 }
 
 void SlackClient::fetch_users() {
+    Log::d() << "Fetching users" << std::endl;
+
     auto d = call("users.list", "");
 
     const auto& members = d["members"];
@@ -169,6 +171,8 @@ void SlackClient::fetch_users() {
 }
 
 void SlackClient::fetch_groups() {
+    Log::d() << "Fetching groups" << std::endl;
+    
     auto d = call("groups.list", "");
 
     const auto& members = d["groups"];
@@ -187,8 +191,13 @@ void SlackClient::fetch_groups() {
 
 
 void SlackClient::fetch_user_info() {
+    Log::d() << "Fetching user info" << std::endl;
+
     auto d = call("auth.test", "");
+    
     const std::string user_id = d["user_id"].GetString();
+    
+    Log::d() << user_id << std::endl;
 
     d = call("users.info", "user=" + user_id);
     std::string name = d["user"]["profile"]["real_name"].GetString();
