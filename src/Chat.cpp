@@ -30,7 +30,7 @@ void Chat::draw(Session& current_session) {
 void Chat::draw_all(const Session& current_session) {
     wclear(win);
 
-    for (int i = current_session.delta; i < current_session.chat_line; i++) {
+    for (int i = current_session.delta; i < current_session.messages.size(); i++) {
         mvwprintw(win, i + 1 - current_session.delta, 1, "%s", current_session.messages[i].content.c_str());
     }
     draw_borders();
