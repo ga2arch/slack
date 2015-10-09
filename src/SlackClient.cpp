@@ -1,14 +1,12 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start() {
-    auto u = std::async([&]() { fetch_users(); });
+    auto u = std::async([&]() { fetch_users(); fetch_user_info(); });
     auto i = std::async([&]() { fetch_groups(); });
-    auto h = std::async([&]() { fetch_user_info(); });
     auto uri = std::async([&]() { return get_uri(); });
     
     u.wait();
     i.wait();
-    h.wait();
     
     ui->roster->draw();
     connect(uri.get());
