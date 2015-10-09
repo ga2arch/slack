@@ -24,24 +24,21 @@ private:
     void on_open(websocketpp::connection_hdl hdl);
     context_ptr on_tls_init(websocketpp::connection_hdl);
     void on_message(websocketpp::connection_hdl hdl, message_ptr ptr);
-
     void process_event(const std::string& json);
-    bool check_response(const std::string& json);
 
     Document call(const std::string& api, const std::string& query);
 
-    void fetch_user_info();
     void fetch_users();
     void fetch_groups();
+    void fetch_user_info();
+
     std::string get_direct_channel(const std::string& userid);
 
     SlackUI* ui;
     client wc;
-    websocketpp::connection_hdl my_hdl;
+    websocketpp::connection_hdl hdl;
 
-    std::map<std::string, std::string> roster;
     std::map<int, std::string> sent;
-
     int sent_id = 0;
 
     RosterItem me;

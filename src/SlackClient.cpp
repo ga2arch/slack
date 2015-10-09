@@ -46,7 +46,7 @@ void SlackClient::connect(const std::string& uri) {
 }
 
 void SlackClient::on_open(websocketpp::connection_hdl hdl) {
-    my_hdl = hdl;
+    this->hdl = hdl;
     Log::d() << "  Connected !" << std::endl;
 }
 
@@ -123,7 +123,8 @@ Document SlackClient::call(const std::string &api, const std::string &query) {
 void SlackClient::send_message(const std::string& message) {
     websocketpp::lib::error_code ec;
     StringBuffer buffer;
-
+    auto channel = ui->roster->get_active_channel().c_str();
+    
     Writer<StringBuffer> writer(buffer);
     writer.StartObject();
     writer.String("id");
@@ -132,14 +133,13 @@ void SlackClient::send_message(const std::string& message) {
     writer.String("message");
     writer.String("channel");
 
-    writer.String(ui->roster->get_active_channel().c_str());
+    writer.String(channel);
     writer.String("text");
     writer.String(message.c_str());
     writer.EndObject();
 
-    sent[sent_id] = ui->roster->get_active_channel();
-
-    wc.send(my_hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
+    sent[sent_id] = channel;
+    wc.send(hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
 
     if (ec) {
         Log::d() << "> Sending message error: " << ec.message() << std::endl;
