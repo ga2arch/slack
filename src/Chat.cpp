@@ -4,7 +4,6 @@ void Chat::draw(Session& current_session) {
     int j = 0;
     int i = current_session.messages.size() - 1;
 
-    curs_set(0);
     if (current_session.messages.empty()) {
         return;
     }
@@ -29,10 +28,10 @@ void Chat::draw(Session& current_session) {
 }
 
 void Chat::draw_all(const Session& current_session) {
-    curs_set(0);
     wclear(win);
-    for (int i = 0; (i < current_session.messages.size()) && (i < LINES - 6); i++) {
-        mvwprintw(win, i + 1, 1, "%s", current_session.messages[i].content.c_str());
+
+    for (int i = current_session.delta; i < current_session.chat_line; i++) {
+        mvwprintw(win, i + 1 - current_session.delta, 1, "%s", current_session.messages[i].content.c_str());
     }
     draw_borders();
 }
@@ -42,7 +41,6 @@ void Chat::resize_win(int y, int x,
                       Session& current_session) {
     Window::resize_win(y, x, start_y, start_x);
 
-    curs_set(0);
 
     if (current_session.messages.empty()) {
         return;

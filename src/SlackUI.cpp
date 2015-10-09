@@ -54,6 +54,7 @@ void SlackUI::setup_ncurses() {
     cbreak();
     noecho();
     ESCDELAY = 25;
+    curs_set(0);
 }
 
 void SlackUI::add_message(const RosterItem& item,

@@ -9,15 +9,14 @@ TODO:
 - [x] start program with focus on roster win, to choose user to chat with
 - [ ] roster->draw() should wait for fetch_roster() to finish -> using a blocking queue?
 - [ ] properly format sent and received messages: https://api.slack.com/docs/formatting.
-- [ ] Better text input handling with vim like mode to escape insertion mode into win selection mode
-- [ ] Make everything terminal window size agnostic
+- [x] Better text input handling with vim like mode to escape insertion mode into win selection mode -> not vim mode still.
 - [ ] play sound when income message?
 
-MUST FIX (graphical part):
+MUST FIX (UI):
 
 - [x] fix backspace in wgetch: it should remove latest input_str char and move back cursor
 - [ ] key_left/right support in Input?
 - [x] fix scrolling in Input win too
-- [ ] fix in resize: how many lines must now be printed? If a message was broken on multiple lines before the resize, are we sure it is not broken on more lines after?
-Or may be (if terminal window was enlarged) it now fits in one line only.
+- [ ] Make everything terminal window size agnostic
+- [ ] fix resize: it is quite broken now.
 - [ ] scroll even Roster win if needed

@@ -3,7 +3,6 @@
 void Roster::draw() {
     int i = 0;
 
-    curs_set(0);
     for (const auto& kv: roster) {
         mvwprintw(win, i+1, 3, "%.*s", 17, kv.second.name.c_str());
         i++;
@@ -36,7 +35,6 @@ int Roster::wait() {
     int c, old_active;
 
     wattron(win, A_BOLD);
-    curs_set(0);
     mvwprintw(win, active + 1, 1, "* ");
     do {
         old_active = active;
