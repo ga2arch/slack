@@ -75,17 +75,19 @@ void SlackClient::process_event(const std::string& json) {
 
     if (d.HasMember("type") && d["type"] == "message") {
         auto item = me;
-        
+
         try {
             item = ui->roster->get_item(d["user"].GetString());
         } catch (std::out_of_range&) {
             item.channel = d["channel"].GetString();
         }
-        
+
         o << item.name << ": " << d["text"].GetString();
-        
+
         ui->add_message(item, o.str());
-        ui->chat->draw_all(ui->get_messages());
+        if (item.channel == ui->roster->get_active_channel()) {
+            ui->chat->draw(ui->get_session());
+        }
         o.clear();
     }
 
@@ -93,9 +95,11 @@ void SlackClient::process_event(const std::string& json) {
         auto const reply_to = d["reply_to"].GetInt();
         o << me.name << ": " << d["text"].GetString();
         me.channel = sent[reply_to];
-        
+
         ui->add_message(me, o.str());
-        ui->chat->draw_all(ui->get_messages());
+        if (me.channel == ui->roster->get_active_channel()) {
+            ui->chat->draw(ui->get_session());
+        }
         o.clear();
     }
 }
@@ -125,14 +129,14 @@ void SlackClient::send_message(const std::string& message) {
     writer.String("type");
     writer.String("message");
     writer.String("channel");
-    
+
     writer.String(ui->roster->get_active_channel().c_str());
     writer.String("text");
     writer.String(message.c_str());
     writer.EndObject();
 
     sent[sent_id] = ui->roster->get_active_channel();
-    
+
     wc.send(my_hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
 
     if (ec) {
@@ -169,7 +173,7 @@ void SlackClient::fetch_user_info() {
     d = call("users.info", "user=" + user_id);
     std::string name = d["user"]["profile"]["real_name"].GetString();
     name = name.empty() ? d["user"]["name"].GetString() : name;
-    
+
     me = RosterItem(user_id, name, ui->roster->get_active_channel());
 }
 

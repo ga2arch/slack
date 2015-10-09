@@ -2,6 +2,8 @@
 
 void Roster::draw() {
     int i = 0;
+
+    curs_set(0);
     for (const auto& kv: roster) {
         mvwprintw(win, i+1, 3, "%.*s", 17, kv.second.name.c_str());
         i++;
@@ -29,10 +31,12 @@ void Roster::resize_win(int y, int x, int start_y, int start_x) {
     draw();
 }
 
-void Roster::wait() {
+int Roster::wait() {
+    const int KEY_ESC = 27;
     int c, old_active;
 
     wattron(win, A_BOLD);
+    curs_set(0);
     mvwprintw(win, active + 1, 1, "* ");
     do {
         old_active = active;
@@ -48,6 +52,8 @@ void Roster::wait() {
                 active++;
             }
             break;
+        case KEY_ESC:
+            return c;
         default:
             break;
         }
@@ -58,6 +64,7 @@ void Roster::wait() {
         }
     } while (c != 10);
     wattroff(win, A_BOLD);
+    return c;
 }
 
 std::string Roster::get_active_channel() {

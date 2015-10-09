@@ -21,20 +21,27 @@ void SlackUI::show() {
     chat   = std::make_unique<Chat>(LINES-4, COLS-22, 0, 22, "Chat");
     input  = std::make_unique<Input>(4, COLS-22, LINES-4, 22, "InputBox", client);
 
-    do {
+    chat->print_starting_message();
+    c = roster->wait();
+    if (c != 27) {
+        chat->draw_all(get_session());
+    }
+    while (c != 27) {
         c = input->wait();
         if (c == KEY_RESIZE) {
             resize();
         }
         if (c == 9) {
-            roster->wait();
-            chat->draw_all(get_messages());
+            c = roster->wait();
+            if (c != 27) {
+                chat->draw_all(get_session());
+            }
         }
-    } while (c != 27);
+    }
 }
 
-std::vector<Message>& SlackUI::get_messages() {
-    return sessions[roster->get_active_channel()].messages;
+Session& SlackUI::get_session() {
+    return sessions[roster->get_active_channel()];
 }
 
 SlackUI::~SlackUI() {
@@ -57,6 +64,6 @@ void SlackUI::add_message(const RosterItem& item,
 void SlackUI::resize() {
     endwin();
     roster->resize_win(LINES, 22, 0, 0);
-    chat->resize_win(LINES-4, COLS-22, 0, 22, get_messages());
+    chat->resize_win(LINES-4, COLS-22, 0, 22, get_session());
     input->resize_win(4, COLS-22, LINES-4, 22);
 }

@@ -13,16 +13,16 @@ struct RosterItem {
     std::string channel;
 
     RosterItem() {}
-    
+
     RosterItem(const std::string& i,
                const std::string& n,
                const std::string& c): id(i), name(n), channel(c) {}
-    
+
     RosterItem& operator=(const RosterItem& other) {
         id = other.id;
         name = other.name;
         channel = other.channel;
-        
+
         return *this;
     }
 };
@@ -41,9 +41,9 @@ public:
                   const std::string& channel);
     void resize_win(int y, int x, int start_y, int start_x);
     RosterItem get_item(const std::string& id);
-    void wait();
+    int wait();
     std::string get_active_channel();
-    
+
     int active = 0;
 
 private:

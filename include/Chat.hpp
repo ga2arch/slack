@@ -13,17 +13,12 @@ public:
         scrollok(win, TRUE);
         idlok(win, TRUE);};
 
-    void draw(const std::vector<Message>& messages);
-    void draw_all(const std::vector<Message>& messages);
+    void draw(Session& current_session);
+    void draw_all(const Session& current_session);
     void resize_win(int y, int x,
                     int start_y, int start_x,
-                    const std::vector<Message>& messages);
-
-private:
-
-    int chat_line = 0;
-    int delta = 0;
-
+                    Session& current_session);
+    void print_starting_message();
 };
 
 #endif
