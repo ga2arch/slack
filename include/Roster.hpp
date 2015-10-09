@@ -35,7 +35,9 @@ public:
         keypad(win, TRUE);
     };
 
+    int wait();
     void draw();
+
     void add_user(const std::string& id,
                   const std::string& name,
                   const std::string& channel);
@@ -43,16 +45,12 @@ public:
     void add_group(const std::string& channel,
                    const std::string& name);
     
-    void resize_win(int y, int x, int start_y, int start_x);
     RosterItem get_user(const std::string& id);
     RosterItem get_group(const std::string& id);
 
     void remove_user(const std::string& id);
     
-    int wait();
     std::string get_active_channel();
-
-
 private:
     int active;
 

@@ -57,11 +57,6 @@ void Roster::remove_user(const std::string& id) {
     users.erase(id);
 }
 
-void Roster::resize_win(int y, int x, int start_y, int start_x) {
-    Window::resize_win(y, x, start_y, start_x);
-    draw();
-}
-
 int Roster::wait() {
     const int KEY_ESC = 27;
     int c, old_active;
