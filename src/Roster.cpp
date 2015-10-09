@@ -12,6 +12,18 @@ void Roster::draw() {
             i++;
         }
     }
+    
+    line += users.size();
+    i = 0;
+    
+    if (groups.size() > 0) {
+        mvwprintw(win, line++, 1, "GROUPS:");
+
+        for (const auto& kv: groups) {
+            mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
+            i++;
+        }
+    }
 
     wrefresh(win);
 }
@@ -41,6 +53,10 @@ RosterItem Roster::get_group(const std::string& id) {
     return groups.at(id);
 }
 
+void Roster::remove_user(const std::string& id) {
+    users.erase(id);
+}
+
 void Roster::resize_win(int y, int x, int start_y, int start_x) {
     Window::resize_win(y, x, start_y, start_x);
     draw();
@@ -53,7 +69,7 @@ int Roster::wait() {
 
     wattron(win, A_BOLD);
 
-    if ((active >= users_cont) && (users_cont != 0)) {
+    if ((active >= users.size()) && (users.size() != 0)) {
         line++;
     }
 
@@ -68,7 +84,7 @@ int Roster::wait() {
                 }
                 break;
             case KEY_DOWN:
-                if (active < roster.size() - 1) {
+                if (active < users.size()+groups.size() - 1) {
                     active++;
                 }
                 break;
@@ -80,9 +96,9 @@ int Roster::wait() {
 
         if (active != old_active) {
             mvwprintw(win, old_active + line, 1, "  ");
-            if ((active >= users_cont) && (line == 2)) {
+            if ((active >= users.size()) && (line == 2)) {
                 line++;
-            } else if ((active < users_cont) && (line == 3)) {
+            } else if ((active < users.size()) && (line == 3)) {
                 line--;
             }
             mvwprintw(win, active + line, 1, "* ");
@@ -93,7 +109,14 @@ int Roster::wait() {
 }
 
 std::string Roster::get_active_channel() {
-    auto it = roster.begin();
-    std::advance(it, active);
-    return it->second.channel;
+    if (active < users.size()) {
+        auto it = users.begin();
+        std::advance(it, active);
+        return it->second.channel;
+    } else {
+        auto it = groups.begin();
+        std::advance(it, active - users.size());
+        return it->second.channel;
+    }
+   
 }

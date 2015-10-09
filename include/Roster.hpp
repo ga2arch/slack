@@ -47,6 +47,8 @@ public:
     RosterItem get_user(const std::string& id);
     RosterItem get_group(const std::string& id);
 
+    void remove_user(const std::string& id);
+    
     int wait();
     std::string get_active_channel();
 

@@ -1,9 +1,9 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start() {
-    fetch_user_info();
     fetch_users();
     fetch_groups();
+    fetch_user_info();
     
     ui->roster->draw();
     connect(get_uri());
@@ -76,18 +76,18 @@ void SlackClient::process_event(const std::string& json) {
     d.Parse(json.c_str());
 
     if (d.HasMember("type") && d["type"] == "message") {
-        auto item = me;
+        auto user = me;
 
         try {
-            item = ui->roster->get_item(d["user"].GetString());
+            user = ui->roster->get_user(d["user"].GetString());
         } catch (std::out_of_range&) {
-            item.channel = d["channel"].GetString();
+            user.channel = d["channel"].GetString();
         }
 
-        o << item.name << ": " << d["text"].GetString();
+        o << user.name << ": " << d["text"].GetString();
 
-        ui->add_message(item, o.str());
-        if (item.channel == ui->roster->get_active_channel()) {
+        ui->add_message(user, o.str());
+        if (user.channel == ui->roster->get_active_channel()) {
             ui->chat->draw(ui->get_session());
         }
         o.clear();
@@ -165,8 +165,7 @@ void SlackClient::fetch_users() {
         if (name == me.name) continue;
 
         const auto& channel = get_direct_channel(id);
-        ui->roster->add_item(id, name, channel);
-        ui->roster->users_cont++;
+        ui->roster->add_user(id, name, channel);
     }
 }
 
@@ -184,11 +183,9 @@ void SlackClient::fetch_groups() {
         const std::string id = m["creator"].GetString();
         const std::string channel = m["id"].GetString();
 
-        ui->roster->add_item(channel, name, channel);
-        ui->roster->groups_cont++;
+        ui->roster->add_group(channel, name);
     }
 }
-
 
 void SlackClient::fetch_user_info() {
     Log::d() << "Fetching user info" << std::endl;
@@ -196,13 +193,12 @@ void SlackClient::fetch_user_info() {
     auto d = call("auth.test", "");
     
     const std::string user_id = d["user_id"].GetString();
-    
-    Log::d() << user_id << std::endl;
 
     d = call("users.info", "user=" + user_id);
     std::string name = d["user"]["profile"]["real_name"].GetString();
     name = name.empty() ? d["user"]["name"].GetString() : name;
-
+    
+    ui->roster->remove_user(user_id);
     me = RosterItem(user_id, name, ui->roster->get_active_channel());
 }
 
