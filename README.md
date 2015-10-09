@@ -9,7 +9,7 @@ TODO:
 - [x] start program with focus on roster win, to choose user to chat with
 - [ ] properly format sent and received messages: https://api.slack.com/docs/formatting.
 - [x] Better text input handling with vim like mode to escape insertion mode into win selection mode -> not vim mode still.
-- [ ] play sound when income message?
+- [ ] play sound when income message / someway notify user about new messages in other chats
 
 MUST FIX (UI):
 
