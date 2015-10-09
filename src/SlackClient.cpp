@@ -1,27 +1,68 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start() {
-    auto u = std::async([&]() { fetch_users(); fetch_user_info(); });
-    auto i = std::async([&]() { fetch_groups(); });
-    auto uri = std::async([&]() { return get_uri(); });
     
-    u.wait();
-    i.wait();
     
-    ui->roster->draw();
-    connect(uri.get());
+    connect(fetch_data());
 }
 
 void SlackClient::set_ui(SlackUI* ui) {
     this->ui = ui;
 }
 
-const std::string SlackClient::get_uri() {
+const std::string SlackClient::fetch_data() {
     Log::d() << "Getting websocket url ...";
 
     auto d = call("rtm.start", "");
 
     Log::d() << " OK" << std::endl;
+    
+    const std::string id_me = d["self"]["id"].GetString();
+    
+    const auto& users = d["users"];
+    const auto& ims = d["ims"];
+    const auto& groups = d["groups"];
+
+    // Get Users
+    for (auto i = 0; i < users.Size(); i++) {
+        const auto& u = users[i];
+        
+        std::string name = u["profile"]["real_name"].GetString();
+        const std::string id = u["id"].GetString();
+        
+        name = name.empty() ? u["name"].GetString() : name;
+        
+        std::string channel;
+        
+        // Get IM Channel
+        for (auto j=0; j < ims.Size(); j++) {
+            if (ims[j]["user"].GetString() == id) {
+                channel = ims[j]["id"].GetString();
+            }
+        }
+        
+        if (id == id_me) {
+            me.id = id_me;
+            me.name = name;
+            me.channel = channel;
+            
+            continue;
+        };
+        
+        ui->roster->add_user(id, name, channel);
+    }
+    
+    // Get Groups
+    for (auto i = 0; i < groups.Size(); i++) {
+        const auto& g = groups[i];
+        
+        const std::string name = g["name"].GetString();
+        const std::string channel = g["id"].GetString();
+        
+        ui->roster->add_group(channel, name);
+    }
+
+    ui->roster->draw();
 
     return d["url"].GetString();
 }
@@ -149,64 +190,3 @@ void SlackClient::send_message(const std::string& message) {
         return;
     }
 }
-
-void SlackClient::fetch_users() {
-    Log::d() << "Fetching users" << std::endl;
-
-    auto d = call("users.list", "");
-
-    const auto& members = d["members"];
-
-    for (auto i = 0; i < members.Size(); i++) {
-        const auto& m = members[i];
-
-        std::string name = m["profile"]["real_name"].GetString();
-        const std::string id = m["id"].GetString();
-
-        name = name.empty() ? m["name"].GetString() : name;
-
-        if (name == me.name) continue;
-
-        const auto& channel = get_direct_channel(id);
-        ui->roster->add_user(id, name, channel);
-    }
-}
-
-void SlackClient::fetch_groups() {
-    Log::d() << "Fetching groups" << std::endl;
-    
-    auto d = call("groups.list", "");
-
-    const auto& members = d["groups"];
-
-    for (auto i = 0; i < members.Size(); i++) {
-        const auto& m = members[i];
-
-        const std::string name = m["name"].GetString();
-        const std::string channel = m["id"].GetString();
-
-        ui->roster->add_group(channel, name);
-    }
-}
-
-void SlackClient::fetch_user_info() {
-    Log::d() << "Fetching user info" << std::endl;
-
-    auto d = call("auth.test", "");
-    
-    const std::string user_id = d["user_id"].GetString();
-
-    d = call("users.info", "user=" + user_id);
-    std::string name = d["user"]["profile"]["real_name"].GetString();
-    name = name.empty() ? d["user"]["name"].GetString() : name;
-    
-    ui->roster->remove_user(user_id);
-    me = RosterItem(user_id, name, ui->roster->get_active_channel());
-}
-
-std::string SlackClient::get_direct_channel(const std::string& userid) {
-    auto d = call("im.open", "user=" + userid);
-    return d["channel"]["id"].GetString();
-}
-
-

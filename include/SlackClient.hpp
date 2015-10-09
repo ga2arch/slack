@@ -17,7 +17,7 @@ public:
     void send_message(const std::string& message);
 
 private:
-    const std::string get_uri();
+    const std::string fetch_data();
 
     void connect(const std::string& uri);
 
@@ -27,10 +27,6 @@ private:
     void process_event(const std::string& json);
 
     Document call(const std::string& api, const std::string& query);
-
-    void fetch_users();
-    void fetch_groups();
-    void fetch_user_info();
 
     std::string get_direct_channel(const std::string& userid);
 
