@@ -30,7 +30,7 @@ struct RosterItem {
 class Roster: public Window {
 
 public:
-    Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title) {
+    Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title), active(0) {
         noecho();
         keypad(win, TRUE);
     };
@@ -41,7 +41,7 @@ public:
                   const std::string& channel);
 
     void add_group(const std::string& channel,
-                  const std::string& name);
+                   const std::string& name);
     
     void resize_win(int y, int x, int start_y, int start_x);
     RosterItem get_user(const std::string& id);
@@ -52,9 +52,10 @@ public:
     int wait();
     std::string get_active_channel();
 
-    int active = 0;
 
 private:
+    int active;
+
     std::map<std::string, RosterItem> users;
     std::map<std::string, RosterItem> groups;
 

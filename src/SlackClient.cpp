@@ -1,7 +1,7 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start() {
-    fetch_users();
+    std::thread u([&]() { fetch_users(); });
     fetch_groups();
     fetch_user_info();
     
@@ -180,7 +180,6 @@ void SlackClient::fetch_groups() {
         const auto& m = members[i];
 
         const std::string name = m["name"].GetString();
-//         const std::string id = m["creator"].GetString();
         const std::string channel = m["id"].GetString();
 
         ui->roster->add_group(channel, name);
