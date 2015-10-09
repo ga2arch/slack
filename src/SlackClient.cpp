@@ -177,7 +177,7 @@ void SlackClient::fetch_groups() {
         const auto& m = members[i];
 
         const std::string name = m["name"].GetString();
-//         const std::string id = m["creator"].GetString();
+        const std::string id = m["creator"].GetString();
         const std::string channel = m["id"].GetString();
 
         ui->roster->add_item(channel, name, channel);
