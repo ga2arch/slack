@@ -31,7 +31,8 @@ private:
     Document call(const std::string& api, const std::string& query);
 
     void fetch_user_info();
-    void fetch_roster();
+    void fetch_users();
+    void fetch_groups();
     std::string get_direct_channel(const std::string& userid);
 
     SlackUI* ui;
@@ -40,9 +41,9 @@ private:
 
     std::map<std::string, std::string> roster;
     std::map<int, std::string> sent;
-    
+
     int sent_id = 0;
-    
+
     RosterItem me;
 };
 

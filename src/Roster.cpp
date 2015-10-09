@@ -2,13 +2,19 @@
 
 void Roster::draw() {
     int i = 0;
+    int line = 2;
 
+    if (users_cont > 0) {
+        mvwprintw(win, 1, 1, "USERS:");
+    }
     for (const auto& kv: roster) {
-        mvwprintw(win, i+1, 3, "%.*s", 17, kv.second.name.c_str());
+        if (i == users_cont) {
+            mvwprintw(win, i + line, 1, "GROUPS:");
+            line++;
+        }
+        mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
         i++;
     }
-    mvwprintw(win, active + 1, 1, "* ");
-
     wrefresh(win);
 }
 
@@ -33,9 +39,15 @@ void Roster::resize_win(int y, int x, int start_y, int start_x) {
 int Roster::wait() {
     const int KEY_ESC = 27;
     int c, old_active;
+    int line = 2;
 
     wattron(win, A_BOLD);
-    mvwprintw(win, active + 1, 1, "* ");
+
+    if ((active >= users_cont) && (users_cont != 0)) {
+        line++;
+    }
+
+    mvwprintw(win, active + line, 1, "* ");
     do {
         old_active = active;
         c = wgetch(win);
@@ -57,8 +69,13 @@ int Roster::wait() {
         }
 
         if (active != old_active) {
-            mvwprintw(win, active + 1, 1, "* ");
-            mvwprintw(win, old_active + 1, 1, "  ");
+            if ((active >= users_cont) && (line == 2)) {
+                line++;
+            } else if ((active < users_cont) && (line == 3)) {
+                line--;
+            }
+            mvwprintw(win, active + line, 1, "* ");
+            mvwprintw(win, old_active + line, 1, "  ");
         }
     } while (c != 10);
     wattroff(win, A_BOLD);

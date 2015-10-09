@@ -45,9 +45,12 @@ public:
     std::string get_active_channel();
 
     int active = 0;
+    int users_cont = 0;
+    int groups_cont = 0;
 
 private:
     std::map<std::string, RosterItem> roster;
+
 };
 
 #endif
