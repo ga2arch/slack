@@ -42,7 +42,8 @@ set(SOURCES
 	include/Input.hpp
 	include/Chat.hpp
 	include/Roster.hpp
-	include/Session.hpp)
+	include/Session.hpp
+	include/Websockets.hpp)
 
 add_executable(slack main.cpp ${SOURCES})
 
