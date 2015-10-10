@@ -13,7 +13,7 @@ TODO:
 - [ ] properly format sent and received messages: https://api.slack.com/docs/formatting.
 - [ ] drop websocketpp(and boost) in favour of a lighter solution?
 - [x] Better text input handling with vim like mode to escape insertion mode into win selection mode -> not vim mode still.
-- [ ] someway notify user about new messages in other chats
+- [x] someway notify user about new messages in other chats
 
 MUST FIX (UI):
 
