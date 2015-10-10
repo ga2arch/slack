@@ -17,10 +17,10 @@ const std::string SlackClient::fetch_data() {
 
     Log::d() << " OK" << std::endl;
     
-    const std::string id_me = d["self"]["id"].GetString();
+    me.id = d["self"]["id"].GetString();
     
-    const auto& users = d["users"];
-    const auto& ims = d["ims"];
+    const auto& users  = d["users"];
+    const auto& ims    = d["ims"];
     const auto& groups = d["groups"];
 
     // Get Users
@@ -41,8 +41,7 @@ const std::string SlackClient::fetch_data() {
             }
         }
         
-        if (id == id_me) {
-            me.id = id_me;
+        if (id == me.id) {
             me.name = name;
             me.channel = channel;
             
