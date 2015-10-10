@@ -11,6 +11,8 @@ void SlackClient::set_ui(SlackUI* ui) {
 }
 
 const std::string SlackClient::fetch_data() {
+    std::map<std::string, std::string> users_status;
+
     Log::d() << "Getting websocket url ...";
 
     auto d = call("rtm.start", "");
@@ -48,6 +50,8 @@ const std::string SlackClient::fetch_data() {
             continue;
         };
 
+        users_status.emplace(id, u["presence"].GetString());
+
         ui->roster->add_user(id, name, channel);
     }
 
@@ -61,7 +65,7 @@ const std::string SlackClient::fetch_data() {
         ui->roster->add_group(channel, name);
     }
 
-    ui->roster->draw();
+    ui->roster->draw(users_status);
 
     return d["url"].GetString();
 }
@@ -149,10 +153,10 @@ void SlackClient::process_event(const std::string& json) {
     }
     // online/offline events
     if (d.HasMember("type") && d["type"] == "presence_change") { // why it throws an exception here during program startup?
-        try {
+        if (me.id != d["user"].GetString()) {
             const RosterItem &x = ui->roster->get_user(d["user"].GetString());
             ui->roster->change_status(d["presence"].GetString(), x);
-        } catch (std::out_of_range&){} ;
+        }
     }
 }
 

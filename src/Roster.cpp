@@ -1,15 +1,21 @@
 #include "Roster.hpp"
 
-void Roster::draw() {
+void Roster::draw(std::map<std::string, std::string>& users_status) {
     int i = 0;
     int line = 2;
 
     if (users.size() > 0) {
         wattron(win, A_BOLD);
         mvwprintw(win, 1, 1, "USERS:");
-        wattroff(win, A_BOLD);
+
         for (const auto& kv: users) {
+            wattroff(win, A_BOLD);
+            if (users_status.at(kv.first) == "active") {
+                wattron(win, A_BOLD);
+                wattron(win, COLOR_PAIR(2));
+            }
             mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
+            wattroff(win, COLOR_PAIR(2));
             i++;
         }
     }
