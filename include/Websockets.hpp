@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -34,11 +35,10 @@ public:
 
         std::list<std::string> headers;
         headers.push_back("GET " + path + " HTTP/1.1");
-        headers.push_back("Host: " + host + ":443" );
+        headers.push_back("Host: " + host );
         headers.push_back("Upgrade: websocket");
         headers.push_back("Connection: upgrade");
         headers.push_back("Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==");
-        headers.push_back("Sec-WebSocket-Protocol: chat");
         headers.push_back("Sec-WebSocket-Version: 13");
 
         curl = curl_easy_init();
@@ -63,10 +63,10 @@ public:
         
         data += "\r\n";
         
-        send(data);
-        std::cerr << receive() << std::endl;
+        _send(data);
         
-        std::cerr << "Received: " << recv_frame() << std::endl;
+        //send_frame("ciao");
+        std::cerr << "Received: " << receive() << std::endl;
     }
     
     int wait_on_socket(curl_socket_t sockfd, int for_recv, long timeout_ms) {
@@ -95,7 +95,7 @@ public:
         return res;
     }
     
-    void send(const std::string& data) {
+    void _send(const std::string& data) {
         if(!wait_on_socket(socket, 0, 600L)) {
             throw std::out_of_range("");
         }
@@ -109,14 +109,14 @@ public:
         }
     }
     
-    std::string receive() {
+    std::string _receive() {
         std::string data;
         size_t received;
         
         for (;;) {
-            char buff[1024]={0};
+            char buff[1024] = {0};
 
-            wait_on_socket(socket, 1, 60000L);
+            wait_on_socket(socket, 1, 600L);
             auto status = curl_easy_recv(curl, buff, 1024, &received);
             
             if (status != CURLE_OK) {
@@ -129,7 +129,7 @@ public:
         return data;
     }
     
-    void send_frame(const std::string& data) {
+    void send(const std::string& data) {
         std::string frame;
 
         auto len = data.length();
@@ -158,11 +158,23 @@ public:
         for (auto c: data)
             frame.push_back(c);
 
-        send(frame);
+        _send(frame);
     }
     
-    std::string recv_frame() {
-        auto frame = receive();
+    std::string receive() {
+        auto frame = _receive();
+        
+        if (frame[0] == 'H') {
+            auto header_end = frame.find("\r\n\r\n");
+            if (header_end != 0) {
+                frame = std::string(frame.begin()+header_end+4, frame.end());
+            }
+        }
+        
+        while (frame.length() < 3) {
+            frame = _receive();
+            usleep(10 * 1000);
+        }
         
         auto length = frame[1] & 127;
         int index = 2;

@@ -17,7 +17,7 @@ int main(int argc, char const* argv[]) {
 
     ui.show();*/
     
-    std::string token = "BDwJUlfnKfyrgxlOnNPBEpLIcHNQ0DpTm2tLwuxuhgVBD59Hh_rIFvfnfbdPR1gOMKkediB_kybCj9VEHvW76SMeAulLpB1w-CyztxnhalRTz1DMw34pUZZzcBp6Vuh1_ww3Tgs4JCl7Zn6NIDf8JQ==";
+    std::string token("B2KM4l-BgOrBtRV3sQvH8RCnl_4FJB2tkHzwFtsz7UtU09E77BULdK7MHT0fWCaEuOjael6XzYSzt5tDbwSNoy6hLpC0yKvZRq2QFZnnkqOYqFTWIiGaszrPXY1y4gJ4SdE6vSL4OX5UjEaMPdV5Ow==");
     
     Websockets wc("ms411.slack-msgs.com", "/websocket/" + token);
     wc.connect();
