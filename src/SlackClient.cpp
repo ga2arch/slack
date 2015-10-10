@@ -136,6 +136,8 @@ void SlackClient::process_event(const std::string& json) {
         ui->add_message(user, o.str());
         if (user.channel == ui->roster->get_active_channel()) {
             ui->chat->draw(ui->get_session());
+        } else {
+            ui->roster->highlight_user(user.id);
         }
         o.clear();
     }

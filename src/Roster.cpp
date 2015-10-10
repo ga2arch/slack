@@ -128,18 +128,33 @@ void Roster::change_status(const std::string& status, const RosterItem& user) {
 
     for (const auto& kv: users) {
         if (kv.second.name == user.name) {
-            wattron(win, A_BOLD);
-            if (status == "away") {
-                wattroff(win, A_BOLD);
-            } else if (status == "active") {
+            if (status == "active") {
+                wattron(win, A_BOLD);
                 wattron(win, COLOR_PAIR(2));
             }
             mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
+            wattroff(win, COLOR_PAIR(2));
+            wattroff(win, A_BOLD);
             break;
         }
         i++;
     }
-    wattroff(win, COLOR_PAIR(2));
-    wattroff(win, A_BOLD);
+    wrefresh(win);
+}
+
+void Roster::highlight_user(const std::string &id) {
+    int i = 0;
+
+    for (const auto& kv: users) {
+        if (kv.first == id) {
+            wattron(win, COLOR_PAIR(3));
+            wattron(win, A_BOLD);
+            mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
+            wattroff(win, COLOR_PAIR(3));
+            wattron(win, A_BOLD);
+            break;
+        }
+        i++;
+    }
     wrefresh(win);
 }
