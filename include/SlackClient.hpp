@@ -3,6 +3,7 @@
 
 #include "Headers.hpp"
 #include "Roster.hpp"
+#include "WebsocketClient.hpp"
 
 using namespace rapidjson;
 
@@ -21,9 +22,6 @@ private:
 
     void connect(const std::string& uri);
 
-    void on_open(websocketpp::connection_hdl hdl);
-    context_ptr on_tls_init(websocketpp::connection_hdl);
-    void on_message(websocketpp::connection_hdl hdl, message_ptr ptr);
     void process_event(const std::string& json);
 
     Document call(const std::string& api, const std::string& query);
@@ -31,8 +29,7 @@ private:
     std::string get_direct_channel(const std::string& userid);
 
     SlackUI* ui;
-    client wc;
-    websocketpp::connection_hdl hdl;
+    WebsocketClient wc;
 
     std::map<int, std::string> sent;
     int sent_id = 0;

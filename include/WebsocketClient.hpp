@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
 #include <unistd.h>
 
 #include <sys/time.h>
@@ -22,16 +23,15 @@
 #include <curlpp/Infos.hpp>
 
 
-class Websockets {
+class WebsocketClient {
     
 public:
-    Websockets(const std::string& _host,
-               const std::string& _path): host(_host), path(_path) {
-    }
-    
-    void connect() {
-        https_url = "https://" + host + path;
-        std::cerr << https_url;
+    void connect(std::string uri) {
+        auto temp = split(uri, '/');
+
+        auto host = temp[2];
+        auto path = "/" + temp[3] + "/" + temp[4];
+        auto https_url = "https" + uri.substr(3, uri.length()-1);
 
         std::list<std::string> headers;
         headers.push_back("GET " + path + " HTTP/1.1");
@@ -49,12 +49,7 @@ public:
         long s;
         auto status = curl_easy_getinfo(curl, CURLINFO_LASTSOCKET, &s);
         socket = s;
-        
-        if (status != CURLE_OK) {
-            std::cerr << "error" << std::endl;
-        } else
-            std::cerr << "connected" << std::endl;
-        
+
         std::string data;
         
         for (const auto& h: headers) {
@@ -64,9 +59,20 @@ public:
         data += "\r\n";
         
         _send(data);
+    }
+    
+    std::vector<std::string> split(const std::string &s,
+                                   char delim) {
         
-        //send_frame("ciao");
-        std::cerr << "Received: " << receive() << std::endl;
+        std::vector<std::string> elems;
+        std::stringstream ss(s);
+        std::string item;
+        
+        while (std::getline(ss, item, delim)) {
+            elems.push_back(item);
+        }
+        
+        return elems;
     }
     
     int wait_on_socket(curl_socket_t sockfd, int for_recv, long timeout_ms) {
@@ -131,20 +137,31 @@ public:
     
     void send(const std::string& data) {
         std::string frame;
-
+        
+        const uint8_t masking_key[4] = { 0x12, 0x34, 0x56, 0x78 };
         auto len = data.length();
         frame.push_back(129);
         
         if (len <= 125) {
-            frame.push_back(len);
+            frame.push_back( (len & 255) | 0x80 );
+            
+            frame.push_back( masking_key[0] );
+            frame.push_back( masking_key[1] );
+            frame.push_back( masking_key[2] );
+            frame.push_back( masking_key[3] );
             
         } else if (len >= 126 && len <= 65535) {
-            frame.push_back(126);
+            frame.push_back( 126 | 0x80 );
             frame.push_back( (len >> 8) & 255 );
             frame.push_back( len        & 255 );
             
+            frame.push_back( masking_key[0] );
+            frame.push_back( masking_key[1] );
+            frame.push_back( masking_key[2] );
+            frame.push_back( masking_key[3] );
+            
         } else {
-            frame.push_back(127);
+            frame.push_back( 127 | 0x80 );
             frame.push_back( (len >> 56) & 255 );
             frame.push_back( (len >> 48) & 255 );
             frame.push_back( (len >> 40) & 255 );
@@ -153,24 +170,24 @@ public:
             frame.push_back( (len >> 16) & 255 );
             frame.push_back( (len >> 8)  & 255 );
             frame.push_back( len         & 255 );
+            
+            frame.push_back( masking_key[0] );
+            frame.push_back( masking_key[1] );
+            frame.push_back( masking_key[2] );
+            frame.push_back( masking_key[3] );
         }
         
-        for (auto c: data)
-            frame.push_back(c);
+        for (auto i=0; i < data.length(); i++)
+            frame.push_back( data[i] ^ masking_key[i & 0x3] );
 
         _send(frame);
+        
+        Log::d() << "Send: " << frame << std::endl;
     }
     
     std::string receive() {
         auto frame = _receive();
-        
-        if (frame[0] == 'H') {
-            auto header_end = frame.find("\r\n\r\n");
-            if (header_end != 0) {
-                frame = std::string(frame.begin()+header_end+4, frame.end());
-            }
-        }
-        
+               
         while (frame.length() < 3) {
             frame = _receive();
             usleep(10 * 1000);
@@ -189,16 +206,11 @@ public:
         return std::string(frame.begin()+index, frame.end());
     }
     
-    ~Websockets() {
+    ~WebsocketClient() {
         curl_easy_cleanup(curl);
     }
     
 private:
-    std::string host;
-    std::string path;
-    
-    std::string https_url;
-    
     CURL* curl;
     curl_socket_t socket;
     

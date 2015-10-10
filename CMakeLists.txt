@@ -15,9 +15,7 @@ endif(CCACHE_FOUND)
 
 find_package(OpenSSL REQUIRED)
 find_package(RapidJSON REQUIRED)
-find_package(websocketpp REQUIRED)
 find_package(CURLpp REQUIRED)
-find_package(Boost COMPONENTS system thread)
 find_package(Threads)
 
 set(CURSES_NEED_NCURSES TRUE)
@@ -43,15 +41,13 @@ set(SOURCES
 	include/Chat.hpp
 	include/Roster.hpp
 	include/Session.hpp
-	include/Websockets.hpp)
+	include/WebsocketClient.hpp)
 
 add_executable(slack main.cpp ${SOURCES})
 
 target_include_directories(slack
 	PRIVATE ${OPENSSL_INCLUDE_DIRS}
 	PRIVATE ${RAPIDJSON_INCLUDE_DIRS}
-	PRIVATE ${Boost_INCLUDE_DIRS}
-	PRIVATE ${WEBSOCKETPP_INCLUDE_DIR}
 	PRIVATE ${CURLPP_INCLUDE_DIRS}
 	PRIVATE ${CURSES_INCLUDE_DIR}
 	PUBLIC include)
@@ -59,7 +55,6 @@ target_include_directories(slack
 target_link_libraries(slack
 	${OPENSSL_SSL_LIBRARY}
 	${OPENSSL_CRYPTO_LIBRARY}
-	${Boost_LIBRARIES}
 	${CURLPP_LIBRARIES}
 	${CURSES_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT})

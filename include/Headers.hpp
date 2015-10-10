@@ -14,18 +14,6 @@
 #include <thread>
 #include <future>
 
-// WebSocket
-#include <websocketpp/config/asio_client.hpp>
-#include <websocketpp/client.hpp>
-
-using client = websocketpp::client<websocketpp::config::asio_tls_client>;
-using message_ptr = websocketpp::config::asio_tls_client::message_type::ptr;
-using context_ptr = websocketpp::lib::shared_ptr<boost::asio::ssl::context>;
-
-using websocketpp::lib::placeholders::_1;
-using websocketpp::lib::placeholders::_2;
-using websocketpp::lib::bind;
-
 // CurlCPP
 #include <curlpp/cURLpp.hpp>
 #include <curlpp/Easy.hpp>

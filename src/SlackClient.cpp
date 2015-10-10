@@ -1,8 +1,6 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start() {
-    
-    
     connect(fetch_data());
 }
 
@@ -67,49 +65,15 @@ const std::string SlackClient::fetch_data() {
 }
 
 void SlackClient::connect(const std::string& uri) {
-    Log::d() << "Attempting connection ...";
-
-    wc.set_access_channels(websocketpp::log::alevel::none);
-    wc.init_asio();
-
-    wc.set_open_handler(bind(&SlackClient::on_open, this, ::_1));
-    wc.set_tls_init_handler(bind(&SlackClient::on_tls_init, this, ::_1));
-    wc.set_message_handler(bind(&SlackClient::on_message, this, ::_1, ::_2));
-
-    websocketpp::lib::error_code ec;
-    client::connection_ptr con = wc.get_connection(uri, ec);
-
-    if (ec) {
-        Log::d() << "> Connect initialization error: " << ec.message() << std::endl;
-        return;
+    Log::d() << "Attempting connection ..." << std::endl;
+    wc.connect(uri);
+    
+    wc.receive();
+    for (;;) {
+        auto event = wc.receive();
+        Log::d() << "Event: " << event << std::endl;
+        std::async([&]() { process_event(event); });
     }
-
-    wc.connect(con);
-    wc.run();
-}
-
-void SlackClient::on_open(websocketpp::connection_hdl hdl) {
-    this->hdl = hdl;
-    Log::d() << "  Connected !" << std::endl;
-}
-
-context_ptr SlackClient::on_tls_init(websocketpp::connection_hdl) {
-    context_ptr ctx = websocketpp::lib::make_shared<boost::asio::ssl::context>(boost::asio::ssl::context::tlsv1);
-
-    try {
-        ctx->set_options(boost::asio::ssl::context::default_workarounds |
-                         boost::asio::ssl::context::no_sslv2 |
-                         boost::asio::ssl::context::no_sslv3 |
-                         boost::asio::ssl::context::single_dh_use);
-    } catch (std::exception& e) {
-        std::cout << e.what() << std::endl;
-    }
-    return ctx;
-}
-
-void SlackClient::on_message(websocketpp::connection_hdl hdl, message_ptr ptr) {
-    Log::d() << "Received: " << ptr->get_payload() << std::endl;
-    process_event(ptr->get_payload());
 }
 
 void SlackClient::process_event(const std::string& json) {
@@ -164,7 +128,6 @@ Document SlackClient::call(const std::string &api, const std::string &query) {
 }
 
 void SlackClient::send_message(const std::string& message) {
-    websocketpp::lib::error_code ec;
     StringBuffer buffer;
     auto channel = ui->roster->get_active_channel().c_str();
     
@@ -182,10 +145,5 @@ void SlackClient::send_message(const std::string& message) {
     writer.EndObject();
 
     sent[sent_id] = channel;
-    wc.send(hdl, buffer.GetString(), websocketpp::frame::opcode::text, ec);
-
-    if (ec) {
-        Log::d() << "> Sending message error: " << ec.message() << std::endl;
-        return;
-    }
+    wc.send(buffer.GetString());
 }
