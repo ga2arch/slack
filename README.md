@@ -14,6 +14,7 @@ TODO:
 - [ ] drop websocketpp(and boost) in favour of a lighter solution?
 - [x] Better text input handling with vim like mode to escape insertion mode into win selection mode -> not vim mode still.
 - [x] someway notify user about new messages in other chats
+- [ ] ring buffer for messages with a limit of 1000
 
 MUST FIX (UI):
 
