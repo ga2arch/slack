@@ -1,5 +1,0 @@
-Getting websocket url ... OK
-Attempting connection ...  Connected !
-Received: {"type":"hello"}
-Received: {"type":"presence_change","user":"U0BTB0RH6","presence":"active"}
-Received: {"ok":true,"reply_to":1,"ts":"1444491318.000002","text":"top"}

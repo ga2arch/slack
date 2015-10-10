@@ -36,7 +36,7 @@ public:
     };
 
     int wait();
-    void draw();
+    void draw(std::map<std::string, std::string>& users_status);
 
     void add_user(const std::string& id,
                   const std::string& name,
