@@ -145,21 +145,11 @@ public:
         if (len <= 125) {
             frame.push_back( (len & 255) | 0x80 );
             
-            frame.push_back( masking_key[0] );
-            frame.push_back( masking_key[1] );
-            frame.push_back( masking_key[2] );
-            frame.push_back( masking_key[3] );
-            
         } else if (len >= 126 && len <= 65535) {
             frame.push_back( 126 | 0x80 );
             frame.push_back( (len >> 8) & 255 );
             frame.push_back( len        & 255 );
-            
-            frame.push_back( masking_key[0] );
-            frame.push_back( masking_key[1] );
-            frame.push_back( masking_key[2] );
-            frame.push_back( masking_key[3] );
-            
+
         } else {
             frame.push_back( 127 | 0x80 );
             frame.push_back( (len >> 56) & 255 );
@@ -170,19 +160,17 @@ public:
             frame.push_back( (len >> 16) & 255 );
             frame.push_back( (len >> 8)  & 255 );
             frame.push_back( len         & 255 );
-            
-            frame.push_back( masking_key[0] );
-            frame.push_back( masking_key[1] );
-            frame.push_back( masking_key[2] );
-            frame.push_back( masking_key[3] );
         }
+        
+        frame.push_back( masking_key[0] );
+        frame.push_back( masking_key[1] );
+        frame.push_back( masking_key[2] );
+        frame.push_back( masking_key[3] );
         
         for (auto i=0; i < data.length(); i++)
             frame.push_back( data[i] ^ masking_key[i & 0x3] );
 
         _send(frame);
-        
-        Log::d() << "Send: " << frame << std::endl;
     }
     
     std::string receive() {
