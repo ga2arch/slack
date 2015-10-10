@@ -16,10 +16,10 @@
 
 struct Message {
     RosterItem item;
-    std::string content;
+    std::vector <std::string> content;
 
     Message(const RosterItem& i,
-            const std::string& c): item(i), content(c) {}
+            const std::vector <std::string>& c): item(i), content(c) {}
 };
 
 class Session {

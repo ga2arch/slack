@@ -21,7 +21,7 @@ int Input::wait() {
     do {
         c = wgetch(win);
         switch (c) {
-            case KEY_ESC: // ESC or resize event;
+            case KEY_ESC: // ESC or tab event;
             case KEY_TAB:
                 return c;
 

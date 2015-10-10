@@ -9,11 +9,11 @@ TODO:
 - [x] start program with focus on roster win, to choose user to chat with
 - [x] Add groups support
 - [ ] add channel support
-- [ ] split every message in (COLS - 24) substr. Print chat message in chat_context_switch() from the bottom.
+- [x] split every message in (COLS - 24) substr. Print chat message in chat_context_switch() from the bottom.
 - [ ] properly format sent and received messages: https://api.slack.com/docs/formatting.
 - [ ] drop websocketpp(and boost) in favour of a lighter solution?
 - [x] Better text input handling with vim like mode to escape insertion mode into win selection mode -> not vim mode still.
-- [ ] play sound when income message / someway notify user about new messages in other chats
+- [ ] someway notify user about new messages in other chats
 
 MUST FIX (UI):
 

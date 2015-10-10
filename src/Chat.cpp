@@ -1,28 +1,27 @@
 #include "Chat.hpp"
 
 void Chat::draw(Session& current_session) {
-    int j = 0;
-    int i = current_session.messages.size() - 1;
-
     if (current_session.messages.empty()) {
         return;
     }
 
-    do {
-        mvwprintw(win, current_session.chat_line + 1 - current_session.delta, 1,
-                  "%s", current_session.messages[i].content.substr(j, COLS - 24).c_str());
-        current_session.chat_line++;
+    int line = current_session.chat_line;
+    int i = current_session.messages.size() - 1;
 
-        if ( current_session.chat_line > LINES - 7) {
-            current_session.delta++;
-            wborder(win, ' ', ' ', ' ',
-                    ' ', ' ', ' ', ' ', ' ');
+    int j = current_session.delta;
+    if (j > 0) {
+        wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+        int size = current_session.messages[i].content.size();
+        while (size > 0) {
             wscrl(win, 1);
-            draw_borders();
+            size--;
         }
+        draw_borders();
+    }
 
-        j += COLS - 24;
-    } while (j <  current_session.messages[i].content.size());
+    for (auto it = current_session.messages[i].content.end() - 1 ; it >= current_session.messages[i].content.begin(); --it, line--) {
+        mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
+    }
 
     wrefresh(win);
 }
@@ -30,8 +29,14 @@ void Chat::draw(Session& current_session) {
 void Chat::chat_context_switch(const Session& current_session) {
     wclear(win);
 
-    for (int i = current_session.delta; i < current_session.messages.size(); i++) {
-        mvwprintw(win, i + 1 - current_session.delta, 1, "%s", current_session.messages[i].content.c_str());
+    int line = current_session.chat_line;
+    int i = current_session.messages.size() - 1;
+
+    for (; i >= current_session.delta; i--) {
+        for (auto it = current_session.messages[i].content.end() - 1;
+            it >= current_session.messages[i].content.begin(); --it, line--) {
+            mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
+        }
     }
     draw_borders();
 }

@@ -54,7 +54,19 @@ void SlackUI::setup_ncurses() {
     curs_set(0);
 }
 
-void SlackUI::add_message(const RosterItem& item,
-                          const std::string& content) {
-    sessions[item.channel].messages.emplace_back(item, content);
+void SlackUI::add_message(const RosterItem& item, const std::string& content) {
+    int j = 0;
+
+    std::vector <std::string> substr;
+
+    do {
+        substr.push_back(content.substr(j, COLS - 24).c_str());
+        j += COLS - 24;
+        sessions[item.channel].chat_line++;
+        if (sessions[item.channel].chat_line > LINES - 6) {
+            sessions[item.channel].delta++;
+        }
+    } while (j <  content.size());
+
+    sessions[item.channel].messages.emplace_back(item, substr);
 }

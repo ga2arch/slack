@@ -11,8 +11,6 @@ public:
 
     ~Window();
 
-    void resize_win(int y, int x, int start_y, int start_x);
-
 protected:
     WINDOW* win;
 
