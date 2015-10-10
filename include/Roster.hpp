@@ -44,13 +44,16 @@ public:
 
     void add_group(const std::string& channel,
                    const std::string& name);
-    
+
     RosterItem get_user(const std::string& id);
     RosterItem get_group(const std::string& id);
 
     void remove_user(const std::string& id);
-    
+
     std::string get_active_channel();
+
+    void change_status(const std::string& status, const RosterItem& user);
+
 private:
     int active;
 

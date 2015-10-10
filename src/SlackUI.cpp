@@ -52,6 +52,10 @@ void SlackUI::setup_ncurses() {
     noecho();
     ESCDELAY = 25;
     curs_set(0);
+    start_color();
+    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(2, COLOR_GREEN, COLOR_BLACK);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
 }
 
 void SlackUI::add_message(const RosterItem& item, const std::string& content) {
