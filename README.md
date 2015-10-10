@@ -8,7 +8,8 @@ TODO:
 - [x] delta and chat_line (chat.hpp) per-chat
 - [x] start program with focus on roster win, to choose user to chat with
 - [x] Add groups support
-- [ ] update delta and message_line even if it is not a current_session message
+- [ ] add channel support
+- [ ] split every message in (COLS - 24) substr. Print chat message in chat_context_switch() from the bottom.
 - [ ] properly format sent and received messages: https://api.slack.com/docs/formatting.
 - [x] Better text input handling with vim like mode to escape insertion mode into win selection mode -> not vim mode still.
 - [ ] play sound when income message / someway notify user about new messages in other chats
@@ -19,5 +20,4 @@ MUST FIX (UI):
 - [ ] key_left/right support in Input?
 - [x] fix scrolling in Input win too
 - [ ] Make everything terminal window size agnostic
-- [ ] fix resize: it is quite broken now.
 - [ ] scroll even Roster win if needed
