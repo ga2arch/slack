@@ -17,7 +17,6 @@ public:
           SlackClient *cl);
 
     int wait();
-    void resize_win(int y, int x, int start_y, int start_x);
 
 private:
     SlackClient* client;

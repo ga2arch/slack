@@ -21,7 +21,6 @@ int Input::wait() {
     do {
         c = wgetch(win);
         switch (c) {
-            case KEY_RESIZE:
             case KEY_ESC: // ESC or resize event;
             case KEY_TAB:
                 return c;
@@ -68,10 +67,4 @@ int Input::wait() {
     wclear(win);
     draw_borders();
     return 0;
-}
-
-void Input::resize_win(int y, int x, int start_y, int start_x) {
-    Window::resize_win(y, x, start_y, start_x);
-
-    mvwprintw(win, 1, 4, input_str.c_str());
 }

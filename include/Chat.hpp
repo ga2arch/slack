@@ -14,10 +14,8 @@ public:
         idlok(win, TRUE);};
 
     void draw(Session& current_session);
-    void draw_all(const Session& current_session);
-    void resize_win(int y, int x,
-                    int start_y, int start_x,
-                    Session& current_session);
+    void chat_context_switch(const Session& current_session);
+
     void print_starting_message();
 };
 

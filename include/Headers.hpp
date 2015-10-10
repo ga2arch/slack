@@ -12,7 +12,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <thread>
-#include <future>
 
 // WebSocket
 #include <websocketpp/config/asio_client.hpp>
