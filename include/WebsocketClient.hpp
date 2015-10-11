@@ -31,11 +31,11 @@ class WebsocketClient {
 public:
     void connect(std::string uri) {
         auto temp = split(uri, '/');
-
+        
         auto host = temp[2];
         auto path = "/" + temp[3] + "/" + temp[4];
         auto https_url = "https" + uri.substr(3, uri.length()-1);
-
+        
         std::list<std::string> headers;
         headers.push_back("GET " + path + " HTTP/1.1");
         headers.push_back("Host: " + host );
@@ -43,7 +43,7 @@ public:
         headers.push_back("Connection: upgrade");
         headers.push_back("Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==");
         headers.push_back("Sec-WebSocket-Version: 13");
-
+        
         curl = curl_easy_init();
         curl_easy_setopt(curl, CURLOPT_URL, https_url.c_str());
         curl_easy_setopt(curl, CURLOPT_CONNECT_ONLY, 1L);
@@ -52,7 +52,7 @@ public:
         long s;
         auto status = curl_easy_getinfo(curl, CURLINFO_LASTSOCKET, &s);
         socket = s;
-
+        
         std::string data;
         
         for (const auto& h: headers) {
@@ -61,7 +61,8 @@ public:
         
         data += "\r\n";
         
-        _send(data);
+        std::vector<char> t(data.begin(), data.end());
+        _send(t);
         ping_pong();
         
         receive();
@@ -108,16 +109,16 @@ public:
         return result;
     }
     
-    void _send(const std::string& data) {
+    void _send(const std::vector<char>& data) {
         if (wait_on_socket(0) < 0) {
             throw std::out_of_range("");
         }
         
         size_t sent;
-
-        auto status = curl_easy_send(curl, data.c_str(), data.length(), &sent);
         
-        if (status != CURLE_OK || sent != data.length()) {
+        auto status = curl_easy_send(curl, data.data(), data.size(), &sent);
+        
+        if (status != CURLE_OK || sent != data.size()) {
             throw std::exception();
         }
     }
@@ -143,10 +144,10 @@ public:
                 data.push_back(buff[i]);
             
             /*auto opcode = data[0] & 0x0f;
-            if (opcode == 0x9) {
-                std::cerr << "PING - PONG: " << received << std::endl;
-                send_frame(0xA, data);
-            }*/
+             if (opcode == 0x9) {
+             std::cerr << "PING - PONG: " << received << std::endl;
+             send_frame(0xA, data);
+             }*/
             
             for (auto& event: process_frame(data)) {
                 if (on_message != nullptr) {
@@ -156,7 +157,7 @@ public:
             
             data.clear();
         }
-
+        
     }
     
     void ping_pong() {
@@ -190,7 +191,7 @@ public:
                 index = 4;
                 
             } else if (length == 127) {
-
+                
                 length = 0;
                 length |= ((uint64_t) buff[2]) << 56;
                 length |= ((uint64_t) buff[3]) << 48;
@@ -217,7 +218,7 @@ public:
     void send_frame(int type, const std::string& data) {
         lock.lock();
         
-        std::string frame;
+        std::vector<char> frame;
         
         const uint8_t masking_key[4] = { 0x12, 0x34, 0x56, 0x78 };
         auto len = data.length();
@@ -230,7 +231,7 @@ public:
             frame.push_back( 126 | 0x80 );
             frame.push_back( (len >> 8) & 255 );
             frame.push_back( len        & 255 );
-
+            
         } else {
             frame.push_back( 127 | 0x80 );
             frame.push_back( (len >> 56) & 255 );
@@ -250,7 +251,7 @@ public:
         
         for (auto i=0; i < data.length(); i++)
             frame.push_back( data[i] ^ masking_key[i & 0x3] );
-
+        
         _send(frame);
         
         lock.unlock();
