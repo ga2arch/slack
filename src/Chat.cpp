@@ -7,11 +7,12 @@ void Chat::draw(Session& current_session) {
 
     int line = current_session.chat_line;
     int i = current_session.messages.size() - 1;
-
     int j = current_session.delta;
+    auto content = current_session.messages[i].content;
+    
     if (j > 0) {
         wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-        int size = current_session.messages[i].content.size();
+        int size = content.size();
         while (size > 0) {
             wscrl(win, 1);
             size--;
@@ -19,7 +20,7 @@ void Chat::draw(Session& current_session) {
         draw_borders();
     }
 
-    for (auto it = current_session.messages[i].content.end() - 1 ; it >= current_session.messages[i].content.begin(); --it, line--) {
+    for (auto it = content.cbegin(); it != content.cend(); ++it, line--) {
         mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
     }
 
