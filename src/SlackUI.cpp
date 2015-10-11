@@ -74,3 +74,12 @@ void SlackUI::add_message(const RosterItem& item, const std::string& content) {
 
     sessions[item.channel].messages.emplace_back(item, substr);
 }
+
+const std::string SlackUI::get_last_message_sender(const std::string& channel) {
+    int size = sessions[channel].messages.size();
+    try {
+        return sessions[channel].messages.at(size - 1).item.id;
+    } catch (std::out_of_range&) {
+        return "";
+    }
+}

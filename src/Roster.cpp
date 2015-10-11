@@ -4,14 +4,11 @@ void Roster::draw(std::map<std::string, std::string>& users_status) {
     int i = 0;
     int line = 2;
 
+    wattron(win, A_BOLD);
     if (users.size() > 0) {
-        wattron(win, A_BOLD);
         mvwprintw(win, 1, 1, "USERS:");
-
         for (const auto& kv: users) {
-            wattroff(win, A_BOLD);
             if (users_status.at(kv.first) == "active") {
-                wattron(win, A_BOLD);
                 wattron(win, COLOR_PAIR(2));
             }
             mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
@@ -24,9 +21,7 @@ void Roster::draw(std::map<std::string, std::string>& users_status) {
     i = 0;
 
     if (groups.size() > 0) {
-        wattron(win, A_BOLD);
         mvwprintw(win, line++, 1, "GROUPS:");
-        wattroff(win, A_BOLD);
         for (const auto& kv: groups) {
             mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
             i++;
@@ -107,6 +102,13 @@ int Roster::wait() {
             mvwprintw(win, active + line, 1, "* ");
         }
     } while (c != 10);
+    // properly remove underline notifications for new message
+    if (active < users.size()) {
+        wattroff(win, A_UNDERLINE);
+        auto it = users.begin();
+        std::advance(it, active);
+        mvwprintw(win, active + line, 4, "%.*s", 18, it->second.name.c_str());
+    }
     wattroff(win, A_BOLD);
     return c;
 }
@@ -129,12 +131,10 @@ void Roster::change_status(const std::string& status, const RosterItem& user) {
     for (const auto& kv: users) {
         if (kv.second.name == user.name) {
             if (status == "active") {
-                wattron(win, A_BOLD);
                 wattron(win, COLOR_PAIR(2));
             }
             mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
             wattroff(win, COLOR_PAIR(2));
-            wattroff(win, A_BOLD);
             break;
         }
         i++;
@@ -147,11 +147,9 @@ void Roster::highlight_user(const std::string &id) {
 
     for (const auto& kv: users) {
         if (kv.first == id) {
-            wattron(win, COLOR_PAIR(3));
-            wattron(win, A_BOLD);
+            wattron(win, A_UNDERLINE);
             mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
-            wattroff(win, COLOR_PAIR(3));
-            wattron(win, A_BOLD);
+            wattroff(win, A_UNDERLINE);
             break;
         }
         i++;

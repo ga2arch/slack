@@ -130,9 +130,11 @@ void SlackClient::process_event(const std::string& json) {
         } catch (std::out_of_range&) {
             user.channel = d["channel"].GetString();
         }
-
-        o << user.name << ": " << d["text"].GetString();
-
+        if (ui->get_last_message_sender(user.channel) == user.id) {
+            o << d["text"].GetString();
+        } else {
+            o << user.name << ": " << d["text"].GetString();
+        }
         ui->add_message(user, o.str());
         if (user.channel == ui->roster->get_active_channel()) {
             ui->chat->draw(ui->get_session());
@@ -144,7 +146,11 @@ void SlackClient::process_event(const std::string& json) {
 
     if (d.HasMember("ok") && d.HasMember("text")) {
         auto const reply_to = d["reply_to"].GetInt();
-        o << me.name << ": " << d["text"].GetString();
+        if (ui->get_last_message_sender(sent[reply_to]) == me.id) {
+            o << d["text"].GetString();
+        } else {
+            o << me.name << ": " << d["text"].GetString();
+        }
         me.channel = sent[reply_to];
 
         ui->add_message(me, o.str());

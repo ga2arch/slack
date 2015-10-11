@@ -33,6 +33,7 @@ public:
     Session& get_session();
     void add_message(const RosterItem& item,
                      const std::string& content);
+    const std::string get_last_message_sender(const std::string& channel);
 
     std::unique_ptr<Roster> roster;
     std::unique_ptr<Chat>   chat;

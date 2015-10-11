@@ -23,4 +23,4 @@ MUST FIX (UI):
 - [x] fix scrolling in Input win too
 - [ ] Make everything terminal window size agnostic
 - [ ] scroll even Roster win if needed
-- [ ] do not reprint user name in chat if last message was from the same user
+- [x] do not reprint user name in chat if last message was from the same user
