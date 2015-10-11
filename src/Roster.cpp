@@ -103,7 +103,7 @@ int Roster::wait() {
             mvwprintw(win, active + line, 1, "* ");
         }
     } while (c != 10);
-    // properly remove underline notifications for new message
+    // properly remove notifications for new message
     if (active < users.size()) {
         auto it = users.begin();
         std::advance(it, active);
@@ -134,6 +134,7 @@ std::string Roster::get_active_channel() {
 void Roster::change_status(const std::string& status, const RosterItem& user) {
     int i = 0;
 
+    wattron(win, A_BOLD);
     for (auto& kv: users) {
         if (kv.second.name == user.name) {
             kv.second.status = status;
@@ -146,6 +147,7 @@ void Roster::change_status(const std::string& status, const RosterItem& user) {
         }
         i++;
     }
+    wattroff(win, A_BOLD);
     wrefresh(win);
 }
 

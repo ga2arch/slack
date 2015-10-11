@@ -128,7 +128,7 @@ void SlackClient::process_event(const std::string& json) {
             user.channel = d["channel"].GetString();
         }
         if (ui->get_last_message_sender(user.channel) == user.id) {
-            o << d["text"].GetString();
+            o << std::string(user.name.length() + 2, ' ') << d["text"].GetString();
         } else {
             o << user.name << ": " << d["text"].GetString();
         }
@@ -144,7 +144,7 @@ void SlackClient::process_event(const std::string& json) {
     if (d.HasMember("ok") && d.HasMember("text")) {
         auto const reply_to = d["reply_to"].GetInt();
         if (ui->get_last_message_sender(sent[reply_to]) == me.id) {
-            o << d["text"].GetString();
+            o << std::string(me.name.length() + 2, ' ') << d["text"].GetString();
         } else {
             o << me.name << ": " << d["text"].GetString();
         }

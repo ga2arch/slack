@@ -77,7 +77,7 @@ void Input::input_context_switch(const Session& current_session) {
         col = COLS - 24;
         line--;
     }
-    
+
     do {
         mvwprintw(win, line, col, "%c", current_session.input_str[i]);
         i--;
