@@ -48,8 +48,9 @@ SlackUI::~SlackUI() {
 }
 
 void SlackUI::setup_ncurses() {
+    setlocale(LC_ALL, "");
     initscr();
-    cbreak();
+    raw();
     noecho();
     ESCDELAY = 25;
     curs_set(0);
@@ -61,11 +62,15 @@ void SlackUI::setup_ncurses() {
 
 void SlackUI::add_message(const RosterItem& item, const std::string& content) {
     int j = 0;
+    int len = 0;
 
     std::vector <std::string> substr;
 
     do {
-        substr.push_back(content.substr(j, COLS - 24).c_str());
+        if (j != 0) {
+            len = item.name.length() + 2;
+        }
+        substr.push_back(std::string(len, ' ') + content.substr(j, COLS - 24 - len).c_str());
         j += COLS - 24;
         sessions[item.channel].chat_line++;
         if (sessions[item.channel].chat_line > LINES - 6) {

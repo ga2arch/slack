@@ -18,8 +18,9 @@ void Chat::draw(Session& current_session) {
         }
         draw_borders();
     }
-
-    for (auto it = current_session.messages[i].content.end() - 1 ; it >= current_session.messages[i].content.begin(); --it, line--) {
+    
+    auto m = current_session.messages[i].content;
+    for (auto it = m.rbegin(); it != m.rend(); ++it, line--) {
         mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
     }
 
@@ -33,8 +34,8 @@ void Chat::chat_context_switch(const Session& current_session) {
     int i = current_session.messages.size() - 1;
 
     for (; i >= current_session.delta; i--) {
-        for (auto it = current_session.messages[i].content.end() - 1;
-            it >= current_session.messages[i].content.begin(); --it, line--) {
+        auto m = current_session.messages[i].content;
+        for (auto it = m.rbegin(); it != m.rend(); ++it, line--) {
             mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
         }
     }
