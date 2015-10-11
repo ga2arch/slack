@@ -10,12 +10,6 @@ Window::~Window() {
     delwin(win);
 }
 
-void Window::resize_win(int y, int x, int start_y, int start_x) {
-    delwin(win);
-    win = newwin(y, x, start_y, start_x);
-    draw_borders();
-}
-
 void Window::draw_borders() {
     wborder(win, 0, 0, 0, 0, 0, 0, 0, 0);
     mvwprintw(win, 0, 0, title.c_str());

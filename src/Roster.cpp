@@ -4,21 +4,24 @@ void Roster::draw() {
     int i = 0;
     int line = 2;
 
+    wattron(win, A_BOLD);
     if (users.size() > 0) {
         mvwprintw(win, 1, 1, "USERS:");
-        
         for (const auto& kv: users) {
+            if (kv.second.status == "active") {
+                wattron(win, COLOR_PAIR(2));
+            }
             mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
+            wattroff(win, COLOR_PAIR(2));
             i++;
         }
     }
-    
+
     line += users.size();
     i = 0;
-    
+
     if (groups.size() > 0) {
         mvwprintw(win, line++, 1, "GROUPS:");
-
         for (const auto& kv: groups) {
             mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
             i++;
@@ -30,19 +33,20 @@ void Roster::draw() {
 
 void Roster::add_user(const std::string& id,
                       const std::string& name,
-                      const std::string& channel) {
+                      const std::string& channel,
+                      const std::string& status) {
 
     users.emplace(std::piecewise_construct,
                    std::forward_as_tuple(id),
-                   std::forward_as_tuple(id, name, channel));
+                   std::forward_as_tuple(id, name, channel, status));
 }
 
 void Roster::add_group(const std::string& channel,
                        const std::string& name) {
-    
+
     groups.emplace(std::piecewise_construct,
                    std::forward_as_tuple(channel),
-                   std::forward_as_tuple(channel, name, channel));
+                   std::forward_as_tuple(channel, name, channel, ""));
 }
 
 RosterItem Roster::get_user(const std::string& id) {
@@ -99,6 +103,18 @@ int Roster::wait() {
             mvwprintw(win, active + line, 1, "* ");
         }
     } while (c != 10);
+    // properly remove notifications for new message
+    if (active < users.size()) {
+        auto it = users.begin();
+        std::advance(it, active);
+        if (it->second.status == "active") {
+            wattron(win, COLOR_PAIR(2));
+        }
+        mvwprintw(win, active + line, 3, "%.*s", 18, it->second.name.c_str());
+        wattroff(win, COLOR_PAIR(2));
+        wrefresh(win);
+    }
+
     wattroff(win, A_BOLD);
     return c;
 }
@@ -113,5 +129,39 @@ std::string Roster::get_active_channel() {
         std::advance(it, active - users.size());
         return it->second.channel;
     }
-   
+}
+
+void Roster::change_status(const std::string& status, const RosterItem& user) {
+    int i = 0;
+
+    wattron(win, A_BOLD);
+    for (auto& kv: users) {
+        if (kv.second.name == user.name) {
+            kv.second.status = status;
+            if (status == "active") {
+                wattron(win, COLOR_PAIR(2));
+            }
+            mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
+            wattroff(win, COLOR_PAIR(2));
+            break;
+        }
+        i++;
+    }
+    wattroff(win, A_BOLD);
+    wrefresh(win);
+}
+
+void Roster::highlight_user(const std::string &id) {
+    int i = 0;
+
+    for (const auto& kv: users) {
+        if (kv.first == id) {
+            wattron(win, COLOR_PAIR(3));
+            mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
+            wattroff(win, COLOR_PAIR(3));
+            break;
+        }
+        i++;
+    }
+    wrefresh(win);
 }

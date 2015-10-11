@@ -24,17 +24,15 @@ void SlackUI::show() {
     chat->print_starting_message();
     c = roster->wait();
     if (c != 27) {
-        chat->draw_all(get_session());
+        chat->chat_context_switch(get_session());
     }
     while (c != 27) {
-        c = input->wait();
-        if (c == KEY_RESIZE) {
-            resize();
-        }
+        c = input->wait(get_session().input_str, get_session().line, get_session().col);
         if (c == 9) {
             c = roster->wait();
             if (c != 27) {
-                chat->draw_all(get_session());
+                chat->chat_context_switch(get_session());
+                input->input_context_switch(get_session());
             }
         }
     }
@@ -55,16 +53,34 @@ void SlackUI::setup_ncurses() {
     noecho();
     ESCDELAY = 25;
     curs_set(0);
+    start_color();
+    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(2, COLOR_GREEN, COLOR_BLACK);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
 }
 
-void SlackUI::add_message(const RosterItem& item,
-                          const std::string& content) {
-    sessions[item.channel].messages.emplace_back(item, content);
+void SlackUI::add_message(const RosterItem& item, const std::string& content) {
+    int j = 0;
+
+    std::vector <std::string> substr;
+
+    do {
+        substr.push_back(content.substr(j, COLS - 24).c_str());
+        j += COLS - 24;
+        sessions[item.channel].chat_line++;
+        if (sessions[item.channel].chat_line > LINES - 6) {
+            sessions[item.channel].delta++;
+        }
+    } while (j <  content.size());
+
+    sessions[item.channel].messages.emplace_back(item, substr);
 }
 
-void SlackUI::resize() {
-    endwin();
-    roster->resize_win(LINES, 22, 0, 0);
-    chat->resize_win(LINES-4, COLS-22, 0, 22, get_session());
-    input->resize_win(4, COLS-22, LINES-4, 22);
+const std::string SlackUI::get_last_message_sender(const std::string& channel) {
+    int size = sessions[channel].messages.size();
+    try {
+        return sessions[channel].messages.at(size - 1).item.id;
+    } catch (std::out_of_range&) {
+        return "";
+    }
 }

@@ -11,7 +11,7 @@ Input::Input(int y, int x,
     keypad(win, TRUE);
 }
 
-int Input::wait() {
+int Input::wait(std::string& input_str, int& line, int& col) {
     const int KEY_ESC = 27;
     const int KEY_BS = 127;
     const int KEY_TAB = 9;
@@ -21,13 +21,12 @@ int Input::wait() {
     do {
         c = wgetch(win);
         switch (c) {
-            case KEY_RESIZE:
-            case KEY_ESC: // ESC or resize event;
+            case KEY_ESC: // ESC or tab event;
             case KEY_TAB:
                 return c;
 
             case KEY_BS:
-                if (input_str.length() > 0) {
+                if (!input_str.empty()) {
                     input_str.pop_back();
                     col--;
                     mvwprintw(win, line, col, " ");
@@ -52,7 +51,6 @@ int Input::wait() {
                     } else {
                         col++;
                     }
-
                 }
                 break;
         }
@@ -70,8 +68,24 @@ int Input::wait() {
     return 0;
 }
 
-void Input::resize_win(int y, int x, int start_y, int start_x) {
-    Window::resize_win(y, x, start_y, start_x);
+void Input::input_context_switch(const Session& current_session) {
+    wclear(win);
+    int line = current_session.line;
+    int col = (current_session.col - 1);
+    int i = current_session.input_str.length() - 1;
+    if (col == 0) {
+        col = COLS - 24;
+        line--;
+    }
 
-    mvwprintw(win, 1, 4, input_str.c_str());
+    do {
+        mvwprintw(win, line, col, "%c", current_session.input_str[i]);
+        i--;
+        col--;
+        if (col == 0) {
+            col = COLS - 24;
+            line--;
+        }
+    } while (i >= 0 && line >= 0);
+    draw_borders();
 }

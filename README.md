@@ -8,10 +8,16 @@ TODO:
 - [x] delta and chat_line (chat.hpp) per-chat
 - [x] start program with focus on roster win, to choose user to chat with
 - [x] Add groups support
-- [ ] update delta and message_line even if it is not a current_session message
-- [ ] properly format sent and received messages: https://api.slack.com/docs/formatting.
+- [ ] add channel support
+- [x] split every message in (COLS - 24) substr. Print chat message in chat_context_switch() from the bottom.
+- [ ] properly format received messages: https://api.slack.com/docs/formatting.
+- [ ] get accented chars too in input...
+- [x] properly remove notification (if present) after the switch to a new chat
+- [ ] drop websocketpp(and boost) in favour of a lighter solution?
+- [x] input_str per-chat
 - [x] Better text input handling with vim like mode to escape insertion mode into win selection mode -> not vim mode still.
-- [ ] play sound when income message / someway notify user about new messages in other chats
+- [x] someway notify user about new messages in other chats
+- [ ] ring buffer for messages with a limit of 1000
 
 MUST FIX (UI):
 
@@ -19,5 +25,5 @@ MUST FIX (UI):
 - [ ] key_left/right support in Input?
 - [x] fix scrolling in Input win too
 - [ ] Make everything terminal window size agnostic
-- [ ] fix resize: it is quite broken now.
 - [ ] scroll even Roster win if needed
+- [x] do not reprint user name in chat if last message was from the same user

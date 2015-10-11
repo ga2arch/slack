@@ -1,9 +1,8 @@
 #ifndef Roster_hpp
 #define Roster_hpp
 
-#include <iostream>
+#include <string>
 #include <map>
-#include <vector>
 
 #include "Window.hpp"
 
@@ -11,17 +10,20 @@ struct RosterItem {
     std::string id;
     std::string name;
     std::string channel;
+    std::string status;
 
     RosterItem() {}
 
     RosterItem(const std::string& i,
                const std::string& n,
-               const std::string& c): id(i), name(n), channel(c) {}
+               const std::string& c,
+               const std::string& s): id(i), name(n), channel(c), status(s) {}
 
     RosterItem& operator=(const RosterItem& other) {
         id = other.id;
         name = other.name;
         channel = other.channel;
+        status = other.status;
 
         return *this;
     }
@@ -40,17 +42,22 @@ public:
 
     void add_user(const std::string& id,
                   const std::string& name,
-                  const std::string& channel);
+                  const std::string& channel,
+                  const std::string& status);
 
     void add_group(const std::string& channel,
                    const std::string& name);
-    
+
     RosterItem get_user(const std::string& id);
     RosterItem get_group(const std::string& id);
 
     void remove_user(const std::string& id);
-    
+
     std::string get_active_channel();
+
+    void change_status(const std::string& status, const RosterItem& user);
+    void highlight_user(const std::string &id);
+
 private:
     int active;
 

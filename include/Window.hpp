@@ -2,7 +2,7 @@
 #define Window_hpp
 
 #include <curses.h>
-#include <iostream>
+#include <string>
 
 class Window {
 
@@ -10,8 +10,6 @@ public:
     Window(int y, int x, int start_y, int start_x, const std::string &title);
 
     ~Window();
-
-    void resize_win(int y, int x, int start_y, int start_x);
 
 protected:
     WINDOW* win;
