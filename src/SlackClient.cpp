@@ -8,6 +8,11 @@ void SlackClient::set_ui(SlackUI* ui) {
     this->ui = ui;
 }
 
+std::string SlackClient::get_uri() {
+    auto d = call("rtm.start", "");
+    return d["url"].GetString();
+}
+
 const std::string SlackClient::fetch_data() {
     Log::d() << "Getting websocket url ...";
 
@@ -68,12 +73,9 @@ void SlackClient::connect(const std::string& uri) {
     Log::d() << "Attempting connection ..." << std::endl;
     wc.connect(uri);
     
-    wc.receive();
-    for (;;) {
-        auto event = wc.receive();
-        Log::d() << "Event: " << event << std::endl;
-        std::async([&]() { process_event(event); });
-    }
+    wc.set_on_message([&](std::string event) {
+        process_event(event);
+    });
 }
 
 void SlackClient::process_event(const std::string& json) {
@@ -117,7 +119,7 @@ Document SlackClient::call(const std::string &api, const std::string &query) {
     Document d;
     std::ostringstream os;
 
-    const auto token = std::getenv("SLACK_TOKEN");
+    const auto token = "xoxp-11931437713-11927529271-11928957968-33c1fab682"; //std::getenv("SLACK_TOKEN");
     const auto base_url = "https://slack.com/api/";
     const auto url = base_url + api + "?token=" + token + "&" + query;
 

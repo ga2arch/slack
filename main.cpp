@@ -18,4 +18,6 @@ int main(int argc, char const* argv[]) {
     std::thread([&]() { c.start(); }).detach();
     ui.show();
     
+    
+    
 }
