@@ -25,9 +25,9 @@
 
 
 class WebsocketClient {
-    
+
     using OnMessageCallback = std::function<void(std::string)>;
-    
+
 public:
     void connect(std::string uri) {
         auto temp = split(uri, '/');
@@ -48,72 +48,71 @@ public:
         curl_easy_setopt(curl, CURLOPT_URL, https_url.c_str());
         curl_easy_setopt(curl, CURLOPT_CONNECT_ONLY, 1L);
         curl_easy_perform(curl);
-        
+
         long s;
         auto status = curl_easy_getinfo(curl, CURLINFO_LASTSOCKET, &s);
         socket = s;
         
         std::string data;
-        
+
         for (const auto& h: headers) {
             data += h + "\r\n";
         }
-        
+
         data += "\r\n";
-        
-        std::vector<char> t(data.begin(), data.end());
-        _send(t);
+
+        _send(std::vector<char>(data.begin(), data.end()));
         ping_pong();
-        
+
         receive();
     }
-    
+
     void set_on_message(OnMessageCallback cb) {
         on_message = cb;
     }
-    
+
     std::vector<std::string> split(const std::string &s,
                                    char delim) {
-        
+
         std::vector<std::string> elems;
         std::stringstream ss(s);
         std::string item;
-        
+
         while (std::getline(ss, item, delim)) {
             elems.push_back(item);
         }
-        
+
         return elems;
     }
-    
+
     int wait_on_socket(bool for_recv) {
         int result;
         fd_set infd, outfd, errfd;
-        
+
         do {
             FD_ZERO(&infd);
             FD_ZERO(&outfd);
             FD_ZERO(&errfd);
-            
+
             FD_SET(socket, &errfd);
-            
+
             if (for_recv) {
                 FD_SET(socket, &infd);
             } else {
                 FD_SET(socket, &outfd);
             }
-            
+
             result = select(socket + 1, &infd, &outfd, &errfd, nullptr);
         } while (result == -1 && errno == EINTR);
-        
+
         return result;
     }
     
-    void _send(const std::vector<char>& data) {
+    void _send(std::vector<char> data) {
         if (wait_on_socket(0) < 0) {
             throw std::out_of_range("");
         }
-        
+
         size_t sent;
         
         auto status = curl_easy_send(curl, data.data(), data.size(), &sent);
@@ -122,44 +121,38 @@ public:
             throw std::exception();
         }
     }
-    
+
     void receive() {
         std::vector<unsigned char> data;
         size_t received;
         bool first = true;
-        
+
         for (;;) {
             char buff[4096] = {0};
-            
+
             wait_on_socket(1);
             auto status = curl_easy_recv(curl, buff, 4096, &received);
-            
+
             if (status != CURLE_OK) {
                 break;
             }
-            
-            if (first) { first = false; continue; };
-            
+
+            if (first) { first = false; continue; }; // FIX ME, HANDLE HEADER
+
             for (auto i=0; i < received; i++)
                 data.push_back(buff[i]);
-            
-            /*auto opcode = data[0] & 0x0f;
-             if (opcode == 0x9) {
-             std::cerr << "PING - PONG: " << received << std::endl;
-             send_frame(0xA, data);
-             }*/
-            
+
             for (auto& event: process_frame(data)) {
                 if (on_message != nullptr) {
-                    std::async([&]() { on_message(event); });
+                    std::async(std::launch::async, [&]() { on_message(event); });
                 }
             }
-            
+
             data.clear();
         }
         
     }
-    
+
     void ping_pong() {
         std::thread([&]() {
             for (;;) {
@@ -169,27 +162,27 @@ public:
             }
         }).detach();
     }
-    
+
     std::vector<std::string> process_frame(const std::vector<unsigned char>& data) {
         std::vector<std::string> events;
-        
+
         int offset = 0;
-        
+
         while (data.size() > offset && data.size() > 3) {
             auto buff = std::vector<unsigned char>(data.begin()+offset, data.end());
             if (buff.size() < 3) break;
-            
+
             int length = buff[1] & 127;
             int index = 2;
-            
+
             if (length == 126) {
-                
+
                 length = 0;
                 length |= ((unsigned char) buff[2]) << 8;
                 length |= ((unsigned char) buff[3]) << 0;
-                
+
                 index = 4;
-                
+
             } else if (length == 127) {
                 
                 length = 0;
@@ -201,32 +194,31 @@ public:
                 length |= ((uint64_t) buff[7]) << 16;
                 length |= ((uint64_t) buff[8]) << 8;
                 length |= ((uint64_t) buff[9]) << 0;
-                
+
                 index = 10;
-                
+
             }
-            
+
             std::string event(buff.begin()+index, buff.begin()+index+length);
             events.push_back(event);
-            
+
             offset = index+length;
         }
-        
+
         return events;
     }
-    
+
     void send_frame(int type, const std::string& data) {
         lock.lock();
-        
         std::vector<char> frame;
-        
+
         const uint8_t masking_key[4] = { 0x12, 0x34, 0x56, 0x78 };
         auto len = data.length();
         frame.push_back(type);
-        
+
         if (len <= 125) {
             frame.push_back( (len & 255) | 0x80 );
-            
+
         } else if (len >= 126 && len <= 65535) {
             frame.push_back( 126 | 0x80 );
             frame.push_back( (len >> 8) & 255 );
@@ -243,36 +235,36 @@ public:
             frame.push_back( (len >> 8)  & 255 );
             frame.push_back( len         & 255 );
         }
-        
+
         frame.push_back( masking_key[0] );
         frame.push_back( masking_key[1] );
         frame.push_back( masking_key[2] );
         frame.push_back( masking_key[3] );
-        
+
         for (auto i=0; i < data.length(); i++)
             frame.push_back( data[i] ^ masking_key[i & 0x3] );
         
         _send(frame);
-        
+
         lock.unlock();
     }
-    
+
     void send(const std::string& data) {
         send_frame(129, data);
     }
-    
+
     ~WebsocketClient() {
         curl_easy_cleanup(curl);
     }
-    
+
 private:
     OnMessageCallback on_message;
-    
+
     CURL* curl;
     curl_socket_t socket;
-    
+
     std::mutex lock;
-    
+
 };
 
 #endif /* Websockets_h */
