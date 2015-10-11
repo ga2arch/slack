@@ -1,9 +1,8 @@
 #ifndef Roster_hpp
 #define Roster_hpp
 
-#include <iostream>
+#include <string>
 #include <map>
-#include <vector>
 
 #include "Window.hpp"
 

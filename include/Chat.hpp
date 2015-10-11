@@ -1,8 +1,7 @@
 #ifndef Chat_hpp
 #define Chat_hpp
 
-#include <iostream>
-#include <vector>
+#include <string>
 #include "Window.hpp"
 #include "Session.hpp"
 

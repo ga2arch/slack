@@ -9,10 +9,6 @@
 #ifndef SlackUI_hpp
 #define SlackUI_hpp
 
-#include <stdio.h>
-#include <iostream>
-#include <mutex>
-#include <memory>
 #include <map>
 
 #include "Log.hpp"

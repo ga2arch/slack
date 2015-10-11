@@ -9,7 +9,6 @@
 #ifndef Session_h
 #define Session_h
 
-#include <iostream>
 #include <vector>
 
 #include "Roster.hpp"

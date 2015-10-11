@@ -2,7 +2,7 @@
 #define Window_hpp
 
 #include <curses.h>
-#include <iostream>
+#include <string>
 
 class Window {
 

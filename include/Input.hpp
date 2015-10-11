@@ -1,8 +1,6 @@
 #ifndef Input_hpp
 #define Input_hpp
 
-#include <iostream>
-#include <vector>
 #include <string>
 #include "Window.hpp"
 
