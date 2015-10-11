@@ -29,6 +29,17 @@ int Input::wait(std::string& input_str, int& line, int& col) {
                 if (!input_str.empty()) {
                     input_str.pop_back();
                     col--;
+                    if (col == 0) {
+                        col = COLS - 24;
+                        if (line == 1) {
+                            wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+                            wscrl(win, -1);
+                            mvwprintw(win, line, 1, "%s", input_str.c_str());
+                            draw_borders();
+                        } else {
+                            line--;
+                        }
+                    }
                     mvwprintw(win, line, col, " ");
                     wmove(win, line, col);
                 }
