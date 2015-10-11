@@ -11,8 +11,6 @@ void SlackClient::set_ui(SlackUI* ui) {
 }
 
 const std::string SlackClient::fetch_data() {
-    std::map<std::string, std::string> users_status;
-
     Log::d() << "Getting websocket url ...";
 
     auto d = call("rtm.start", "");
@@ -31,6 +29,7 @@ const std::string SlackClient::fetch_data() {
 
         std::string name = u["profile"]["real_name"].GetString();
         const std::string id = u["id"].GetString();
+        const std::string status = u["presence"].GetString();
 
         name = name.empty() ? u["name"].GetString() : name;
 
@@ -50,9 +49,7 @@ const std::string SlackClient::fetch_data() {
             continue;
         };
 
-        users_status.emplace(id, u["presence"].GetString());
-
-        ui->roster->add_user(id, name, channel);
+        ui->roster->add_user(id, name, channel, status);
     }
 
     // Get Groups
@@ -65,7 +62,7 @@ const std::string SlackClient::fetch_data() {
         ui->roster->add_group(channel, name);
     }
 
-    ui->roster->draw(users_status);
+    ui->roster->draw();
 
     return d["url"].GetString();
 }

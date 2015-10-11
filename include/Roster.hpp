@@ -10,17 +10,20 @@ struct RosterItem {
     std::string id;
     std::string name;
     std::string channel;
+    std::string status;
 
     RosterItem() {}
 
     RosterItem(const std::string& i,
                const std::string& n,
-               const std::string& c): id(i), name(n), channel(c) {}
+               const std::string& c,
+               const std::string& s): id(i), name(n), channel(c), status(s) {}
 
     RosterItem& operator=(const RosterItem& other) {
         id = other.id;
         name = other.name;
         channel = other.channel;
+        status = other.status;
 
         return *this;
     }
@@ -35,11 +38,12 @@ public:
     };
 
     int wait();
-    void draw(std::map<std::string, std::string>& users_status);
+    void draw();
 
     void add_user(const std::string& id,
                   const std::string& name,
-                  const std::string& channel);
+                  const std::string& channel,
+                  const std::string& status);
 
     void add_group(const std::string& channel,
                    const std::string& name);

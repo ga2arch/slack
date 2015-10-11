@@ -1,6 +1,6 @@
 #include "Roster.hpp"
 
-void Roster::draw(std::map<std::string, std::string>& users_status) {
+void Roster::draw() {
     int i = 0;
     int line = 2;
 
@@ -8,7 +8,7 @@ void Roster::draw(std::map<std::string, std::string>& users_status) {
     if (users.size() > 0) {
         mvwprintw(win, 1, 1, "USERS:");
         for (const auto& kv: users) {
-            if (users_status.at(kv.first) == "active") {
+            if (kv.second.status == "active") {
                 wattron(win, COLOR_PAIR(2));
             }
             mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
@@ -33,11 +33,12 @@ void Roster::draw(std::map<std::string, std::string>& users_status) {
 
 void Roster::add_user(const std::string& id,
                       const std::string& name,
-                      const std::string& channel) {
+                      const std::string& channel,
+                      const std::string& status) {
 
     users.emplace(std::piecewise_construct,
                    std::forward_as_tuple(id),
-                   std::forward_as_tuple(id, name, channel));
+                   std::forward_as_tuple(id, name, channel, status));
 }
 
 void Roster::add_group(const std::string& channel,
@@ -45,7 +46,7 @@ void Roster::add_group(const std::string& channel,
 
     groups.emplace(std::piecewise_construct,
                    std::forward_as_tuple(channel),
-                   std::forward_as_tuple(channel, name, channel));
+                   std::forward_as_tuple(channel, name, channel, ""));
 }
 
 RosterItem Roster::get_user(const std::string& id) {
@@ -102,6 +103,18 @@ int Roster::wait() {
             mvwprintw(win, active + line, 1, "* ");
         }
     } while (c != 10);
+    // properly remove underline notifications for new message
+    if (active < users.size()) {
+        auto it = users.begin();
+        std::advance(it, active);
+        if (it->second.status == "active") {
+            wattron(win, COLOR_PAIR(2));
+        }
+        mvwprintw(win, active + line, 3, "%.*s", 18, it->second.name.c_str());
+        wattroff(win, COLOR_PAIR(2));
+        wrefresh(win);
+    }
+
     wattroff(win, A_BOLD);
     return c;
 }
@@ -121,8 +134,9 @@ std::string Roster::get_active_channel() {
 void Roster::change_status(const std::string& status, const RosterItem& user) {
     int i = 0;
 
-    for (const auto& kv: users) {
+    for (auto& kv: users) {
         if (kv.second.name == user.name) {
+            kv.second.status = status;
             if (status == "active") {
                 wattron(win, COLOR_PAIR(2));
             }
