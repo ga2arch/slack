@@ -2,6 +2,7 @@
 #define Input_hpp
 
 #include <string>
+
 #include "Window.hpp"
 #include "Session.hpp"
 
@@ -15,9 +16,9 @@ public:
           const std::string &title,
           SlackClient *cl);
 
-    int wait(std::string& input_str, int& line, int& col);
+    int wait(std::string& input_str, int line, int col);
 
-    void input_context_switch(const Session& current_session);
+    void change_session(const Session& session);
 
 private:
     SlackClient* client;

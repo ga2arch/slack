@@ -23,16 +23,21 @@ void SlackUI::show() {
 
     chat->print_starting_message();
     c = roster->wait();
+    
+    auto session = get_session();
+    
     if (c != 27) {
-        chat->chat_context_switch(get_session());
+        chat->change_session(session);
     }
     while (c != 27) {
-        c = input->wait(get_session().input_str, get_session().line, get_session().col);
+        c = input->wait(session.input_str, session.line, session.col);
+
         if (c == 9) {
             c = roster->wait();
+            
             if (c != 27) {
-                chat->chat_context_switch(get_session());
-                input->input_context_switch(get_session());
+                chat->change_session(session);
+                input->change_session(session);
             }
         }
     }

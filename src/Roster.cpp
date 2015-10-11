@@ -7,10 +7,12 @@ void Roster::draw() {
     wattron(win, A_BOLD);
     if (users.size() > 0) {
         mvwprintw(win, 1, 1, "USERS:");
+        
         for (const auto& kv: users) {
             if (kv.second.status == "active") {
                 wattron(win, COLOR_PAIR(2));
             }
+            
             mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
             wattroff(win, COLOR_PAIR(2));
             i++;
@@ -22,6 +24,7 @@ void Roster::draw() {
 
     if (groups.size() > 0) {
         mvwprintw(win, line++, 1, "GROUPS:");
+        
         for (const auto& kv: groups) {
             mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
             i++;

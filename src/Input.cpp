@@ -11,9 +11,9 @@ Input::Input(int y, int x,
     keypad(win, TRUE);
 }
 
-int Input::wait(std::string& input_str, int& line, int& col) {
+int Input::wait(std::string& input_str, int line, int col) {
     const int KEY_ESC = 27;
-    const int KEY_BS = 127;
+    const int KEY_BS  = 127;
     const int KEY_TAB = 9;
     int c;
 
@@ -48,8 +48,9 @@ int Input::wait(std::string& input_str, int& line, int& col) {
             default:
                 if (isprint(c)) {
                     input_str.push_back(c);
-
+                    
                     mvwprintw(win, line, col, "%c", c);
+                    
                     if (col ==  COLS - 24) {
                         col = 1;
                         if (line == 2) {
@@ -79,11 +80,13 @@ int Input::wait(std::string& input_str, int& line, int& col) {
     return 0;
 }
 
-void Input::input_context_switch(const Session& current_session) {
+void Input::change_session(const Session& current_session) {
     wclear(win);
+    
     int line = current_session.line;
-    int col = (current_session.col - 1);
-    int i = current_session.input_str.length() - 1;
+    int col  = current_session.col - 1;
+    int i    = current_session.input_str.length() - 1;
+    
     if (col == 0) {
         col = COLS - 24;
         line--;
@@ -93,10 +96,12 @@ void Input::input_context_switch(const Session& current_session) {
         mvwprintw(win, line, col, "%c", current_session.input_str[i]);
         i--;
         col--;
+        
         if (col == 0) {
             col = COLS - 24;
             line--;
         }
     } while (i >= 0 && line >= 0);
+    
     draw_borders();
 }
