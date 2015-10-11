@@ -74,7 +74,9 @@ void SlackClient::connect(const std::string& uri) {
     Log::d() << "Attempting connection ..." << std::endl;
 
     wc.set_on_message([&](std::string event) {
+        lock.lock();
         process_event(event);
+        lock.unlock();
     });
 
     wc.connect(uri);

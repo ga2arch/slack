@@ -35,6 +35,8 @@ private:
     int sent_id = 0;
 
     RosterItem me;
+    
+    std::mutex lock;
 };
 
 #include "SlackUI.hpp"
