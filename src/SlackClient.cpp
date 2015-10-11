@@ -72,11 +72,12 @@ const std::string SlackClient::fetch_data() {
 
 void SlackClient::connect(const std::string& uri) {
     Log::d() << "Attempting connection ..." << std::endl;
-    wc.connect(uri);
     
     wc.set_on_message([&](std::string event) {
         process_event(event);
     });
+    
+    wc.connect(uri);
 }
 
 void SlackClient::process_event(const std::string& json) {
@@ -93,11 +94,13 @@ void SlackClient::process_event(const std::string& json) {
         } catch (std::out_of_range&) {
             user.channel = d["channel"].GetString();
         }
+        
         if (ui->get_last_message_sender(user.channel) == user.id) {
             o << std::string(user.name.length() + 2, ' ') << d["text"].GetString();
         } else {
             o << user.name << ": " << d["text"].GetString();
         }
+        
         ui->add_message(user, o.str());
         if (user.channel == ui->roster->get_active_channel()) {
             ui->chat->draw(ui->get_session());

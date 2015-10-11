@@ -12,6 +12,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <thread>
+#include <future>
 
 // CurlCPP
 #include <curlpp/cURLpp.hpp>

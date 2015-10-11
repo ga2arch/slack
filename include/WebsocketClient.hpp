@@ -149,8 +149,6 @@ public:
             }*/
             
             for (auto& event: process_frame(data)) {
-                std::cerr << event << std::endl;
-                
                 if (on_message != nullptr) {
                     std::async([&]() { on_message(event); });
                 }
