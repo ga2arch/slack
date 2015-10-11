@@ -138,7 +138,7 @@ Document SlackClient::call(const std::string &api, const std::string &query) {
     Document d;
     std::ostringstream os;
 
-    const auto token = "xoxp-11931437713-11927529271-11928957968-33c1fab682"; //std::getenv("SLACK_TOKEN");
+    const auto token = std::getenv("SLACK_TOKEN");
     const auto base_url = "https://slack.com/api/";
     const auto url = base_url + api + "?token=" + token + "&" + query;
 
