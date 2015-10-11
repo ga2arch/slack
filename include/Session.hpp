@@ -25,6 +25,10 @@ class Session {
 
 public:
     std::vector<Message> messages;
+    std::string input_str;
+
+    int line = 1;
+    int col = 1;
     int delta = 0;
     int chat_line = 0;
 

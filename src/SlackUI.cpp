@@ -27,11 +27,12 @@ void SlackUI::show() {
         chat->chat_context_switch(get_session());
     }
     while (c != 27) {
-        c = input->wait();
+        c = input->wait(get_session().input_str, get_session().line, get_session().col);
         if (c == 9) {
             c = roster->wait();
             if (c != 27) {
                 chat->chat_context_switch(get_session());
+                input->input_context_switch(get_session());
             }
         }
     }

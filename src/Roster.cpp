@@ -102,13 +102,6 @@ int Roster::wait() {
             mvwprintw(win, active + line, 1, "* ");
         }
     } while (c != 10);
-    // properly remove underline notifications for new message
-    if (active < users.size()) {
-        wattroff(win, A_UNDERLINE);
-        auto it = users.begin();
-        std::advance(it, active);
-        mvwprintw(win, active + line, 4, "%.*s", 18, it->second.name.c_str());
-    }
     wattroff(win, A_BOLD);
     return c;
 }
@@ -147,9 +140,9 @@ void Roster::highlight_user(const std::string &id) {
 
     for (const auto& kv: users) {
         if (kv.first == id) {
-            wattron(win, A_UNDERLINE);
+            wattron(win, COLOR_PAIR(3));
             mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
-            wattroff(win, A_UNDERLINE);
+            wattroff(win, COLOR_PAIR(3));
             break;
         }
         i++;

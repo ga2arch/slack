@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Window.hpp"
+#include "Session.hpp"
 
 class SlackClient;
 
@@ -14,15 +15,12 @@ public:
           const std::string &title,
           SlackClient *cl);
 
-    int wait();
+    int wait(std::string& input_str, int& line, int& col);
+
+    void input_context_switch(const Session& current_session);
 
 private:
     SlackClient* client;
-
-    std::string input_str;
-
-    int line = 1;
-    int col = 1;
 
 };
 

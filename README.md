@@ -10,8 +10,11 @@ TODO:
 - [x] Add groups support
 - [ ] add channel support
 - [x] split every message in (COLS - 24) substr. Print chat message in chat_context_switch() from the bottom.
-- [ ] properly format sent and received messages: https://api.slack.com/docs/formatting.
+- [ ] properly format received messages: https://api.slack.com/docs/formatting.
+- [ ] get accented chars too in input...
+- [ ] properly remove notification (if present) after the switch to a new chat
 - [ ] drop websocketpp(and boost) in favour of a lighter solution?
+- [x] input_str per-chat
 - [x] Better text input handling with vim like mode to escape insertion mode into win selection mode -> not vim mode still.
 - [x] someway notify user about new messages in other chats
 - [ ] ring buffer for messages with a limit of 1000
