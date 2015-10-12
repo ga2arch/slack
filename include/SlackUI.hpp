@@ -37,7 +37,7 @@ public:
     std::unique_ptr<Chat>   chat;
     std::unique_ptr<Input>  input;
     
-    std::mutex ui_lock;
+    std::timed_mutex ui_lock;
     
     bool ready = false;
 

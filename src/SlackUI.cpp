@@ -13,8 +13,11 @@ void SlackUI::set_client(SlackClient* client) {
 }
 
 void SlackUI::show() {
+    using S = std::chrono::seconds;
+    
     const std::string start_mesg = "The client is connecting...";
-    const std::string choose_mesg = "Please select an user to chat with using arrows (up/down) and enter.";
+    const std::string choose_mesg = "Please select an user to chat with using arrow keys (up/down) and enter.";
+    const std::string connection_issue = "Connection timed out. Check your connection and retry. Leaving.";
 
     setup_ncurses();
 
@@ -23,19 +26,22 @@ void SlackUI::show() {
     input  = std::make_unique<Input>(4, COLS-22, LINES-4, 22, "InputBox", client);
 
     chat->print_starting_message(start_mesg);
-    ui_lock.lock();
-    chat->print_starting_message(choose_mesg);
-    ui_lock.unlock();
-    return main_ui_cycle();
+    if (ui_lock.try_lock_for(S(30))) {
+        chat->print_starting_message(choose_mesg);
+        ui_lock.unlock();
+        return main_ui_cycle();
+    }
+    chat->print_starting_message(connection_issue);
+    sleep(1);
 }
 
 void SlackUI::main_ui_cycle() {
     int c;
     
     c = roster->wait();
-    ready = true;
     if (c != 27) {
         chat->chat_context_switch(get_session());
+        ready = true;
     }
     while (c != 27) {
         c = input->wait(get_session().input_str, get_session().line, get_session().col);

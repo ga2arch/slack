@@ -66,17 +66,13 @@ const std::string SlackClient::fetch_data() {
     }
 
     ui->roster->draw();
+    ui->ui_lock.unlock();
 
     return d["url"].GetString();
 }
 
 void SlackClient::connect(const std::string& uri) {
     Log::d() << "Attempting connection ..." << std::endl;
-
-    
-    wc.set_on_connect([&]() {
-        ui->ui_lock.unlock();
-    });
     
     wc.set_on_message([&](std::string event) {
         lock.lock();
