@@ -151,11 +151,11 @@ void Roster::change_status(const std::string& status, const RosterItem& user) {
     wrefresh(win);
 }
 
-void Roster::highlight_user(const std::string &id) {
+void Roster::highlight_user(const std::string &channel) {
     int i = 0;
 
     for (const auto& kv: users) {
-        if (kv.first == id) {
+        if (kv.second.channel == channel) {
             wattron(win, COLOR_PAIR(3));
             mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
             wattroff(win, COLOR_PAIR(3));

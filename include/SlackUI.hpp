@@ -10,6 +10,7 @@
 #define SlackUI_hpp
 
 #include <map>
+#include <mutex>
 
 #include "Log.hpp"
 #include "Chat.hpp"
@@ -26,6 +27,7 @@ public:
 
     void set_client(SlackClient* client);
     void show();
+    void main_ui_cycle();
     Session& get_session();
     void add_message(const RosterItem& item,
                      const std::string& content);
@@ -34,6 +36,8 @@ public:
     std::unique_ptr<Roster> roster;
     std::unique_ptr<Chat>   chat;
     std::unique_ptr<Input>  input;
+    
+    std::mutex ui_lock;
 
 private:
     void setup_ncurses();

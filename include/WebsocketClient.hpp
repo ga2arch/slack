@@ -27,7 +27,8 @@
 class WebsocketClient {
 
     using OnMessageCallback = std::function<void(std::string)>;
-
+    using OnConnectCallback = std::function<void()>;
+    
 public:
     void connect(std::string uri) {
         auto temp = split(uri, '/');
@@ -70,7 +71,11 @@ public:
     void set_on_message(OnMessageCallback cb) {
         on_message = cb;
     }
-
+    
+    void set_on_connect(OnConnectCallback cb) {
+        on_connect = cb;
+    }
+    
     std::vector<std::string> split(const std::string &s,
                                    char delim) {
 
@@ -137,7 +142,11 @@ public:
                 break;
             }
 
-            if (first) { first = false; continue; }; // FIX ME, HANDLE HEADER
+            if (first) { // FIX ME, HANDLE HEADER
+                first = false; 
+                std::async(std::launch::async, [&]() { on_connect(); });
+                continue; 
+            }; 
 
             for (auto i=0; i < received; i++)
                 data.push_back(buff[i]);
@@ -259,7 +268,8 @@ public:
 
 private:
     OnMessageCallback on_message;
-
+    OnConnectCallback on_connect;
+    
     CURL* curl;
     curl_socket_t socket;
 

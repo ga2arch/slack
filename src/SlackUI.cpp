@@ -13,7 +13,8 @@ void SlackUI::set_client(SlackClient* client) {
 }
 
 void SlackUI::show() {
-    int c;
+    const std::string start_mesg = "The client is connecting...";
+    const std::string choose_mesg = "Please select an user to chat with using arrows (up/down) and enter.";
 
     setup_ncurses();
 
@@ -21,7 +22,15 @@ void SlackUI::show() {
     chat   = std::make_unique<Chat>(LINES-4, COLS-22, 0, 22, "Chat");
     input  = std::make_unique<Input>(4, COLS-22, LINES-4, 22, "InputBox", client);
 
-    chat->print_starting_message();
+    chat->print_starting_message(start_mesg);
+    ui_lock.lock();
+    chat->print_starting_message(choose_mesg);
+    return main_ui_cycle();
+}
+
+void SlackUI::main_ui_cycle() {
+    int c;
+    
     c = roster->wait();
     if (c != 27) {
         chat->chat_context_switch(get_session());
@@ -36,6 +45,7 @@ void SlackUI::show() {
             }
         }
     }
+    ui_lock.unlock();
 }
 
 Session& SlackUI::get_session() {

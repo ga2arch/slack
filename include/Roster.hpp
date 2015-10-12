@@ -56,7 +56,7 @@ public:
     std::string get_active_channel();
 
     void change_status(const std::string& status, const RosterItem& user);
-    void highlight_user(const std::string &id);
+    void highlight_user(const std::string &channel);
 
 private:
     int active;

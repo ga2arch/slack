@@ -19,6 +19,7 @@ TODO:
 - [x] someway notify user about new messages in other chats
 - [ ] ring buffer for messages with a limit of 1000
 - [ ] multi companies support
+- [ ] proper checks for connection errors in websocket
 
 MUST FIX (UI):
 

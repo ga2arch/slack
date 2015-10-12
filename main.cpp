@@ -16,8 +16,6 @@ int main(int argc, char const* argv[]) {
     c.set_ui(&ui);
 
     std::thread([&]() { c.start(); }).detach();
+    ui.ui_lock.lock();
     ui.show();
-    
-    
-    
 }

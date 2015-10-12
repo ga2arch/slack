@@ -73,6 +73,11 @@ const std::string SlackClient::fetch_data() {
 void SlackClient::connect(const std::string& uri) {
     Log::d() << "Attempting connection ..." << std::endl;
 
+    
+    wc.set_on_connect([&]() {
+        ui->ui_lock.unlock();
+    });
+    
     wc.set_on_message([&](std::string event) {
         lock.lock();
         process_event(event);
@@ -97,33 +102,37 @@ void SlackClient::process_event(const std::string& json) {
             user.channel = d["channel"].GetString();
         }
 
-        if (ui->get_last_message_sender(user.channel) == user.id) {
-            o << std::string(user.name.length() + 2, ' ') << d["text"].GetString();
-        } else {
-            o << user.name << ": " << d["text"].GetString();
+        if (ui->get_last_message_sender(user.channel) != user.id) {
+            ui->add_message(user, user.name);
+            if (user.channel == ui->roster->get_active_channel()) {
+                ui->chat->draw(ui->get_session());
+            }
         }
-
+        o << " " << d["text"].GetString();
         ui->add_message(user, o.str());
         if (user.channel == ui->roster->get_active_channel()) {
             ui->chat->draw(ui->get_session());
         } else {
-            ui->roster->highlight_user(user.id);
+            ui->roster->highlight_user(user.channel);
         }
         o.clear();
     }
 
     if (d.HasMember("ok") && d.HasMember("text")) {
         auto const reply_to = d["reply_to"].GetInt();
-        if (ui->get_last_message_sender(sent[reply_to]) == me.id) {
-            o << std::string(me.name.length() + 2, ' ') << d["text"].GetString();
-        } else {
-            o << me.name << ": " << d["text"].GetString();
-        }
         me.channel = sent[reply_to];
-
+        if (ui->get_last_message_sender(sent[reply_to]) != me.id) {
+            ui->add_message(me, me.name);
+            if (me.channel == ui->roster->get_active_channel()) {
+                ui->chat->draw(ui->get_session());
+            }
+        } 
+        o << " " << d["text"].GetString();
         ui->add_message(me, o.str());
         if (me.channel == ui->roster->get_active_channel()) {
             ui->chat->draw(ui->get_session());
+        } else {
+            ui->roster->highlight_user(me.channel);
         }
         o.clear();
     }

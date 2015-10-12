@@ -15,7 +15,7 @@ public:
     void draw(Session& current_session);
     void chat_context_switch(const Session& current_session);
 
-    void print_starting_message();
+    void print_starting_message(const std::string& mesg);
 };
 
 #endif
