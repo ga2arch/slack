@@ -30,6 +30,7 @@ set(SOURCES
 	src/Input.cpp
 	src/Chat.cpp
 	src/Roster.cpp
+	src/Session.cpp
 
 	include/SlackClient.hpp
 	include/SlackUI.hpp
@@ -60,3 +61,4 @@ target_link_libraries(slack
 
 set_property(TARGET slack PROPERTY CXX_STANDARD 14)
 #cotire(slack)
+

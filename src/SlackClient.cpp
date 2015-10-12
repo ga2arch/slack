@@ -98,14 +98,12 @@ void SlackClient::process_event(const std::string& json) {
         }
 
         if (ui->get_last_message_sender(user.channel) == user.id) {
-            o << " " << d["text"].GetString();
+            o << std::string(user.name.length() + 2, ' ') << d["text"].GetString();
         } else {
-            o << " " << d["text"].GetString();
+            o << user.name << ": " << d["text"].GetString();
         }
 
-        ui->add_message(user, user.name);
         ui->add_message(user, o.str());
-
         if (user.channel == ui->roster->get_active_channel()) {
             ui->chat->draw(ui->get_session());
         } else {
@@ -116,13 +114,11 @@ void SlackClient::process_event(const std::string& json) {
 
     if (d.HasMember("ok") && d.HasMember("text")) {
         auto const reply_to = d["reply_to"].GetInt();
-        
         if (ui->get_last_message_sender(sent[reply_to]) == me.id) {
-            o << " " << d["text"].GetString();
+            o << std::string(me.name.length() + 2, ' ') << d["text"].GetString();
         } else {
-            o << me.name << "\n " << d["text"].GetString();
+            o << me.name << ": " << d["text"].GetString();
         }
-        
         me.channel = sent[reply_to];
 
         ui->add_message(me, o.str());
@@ -134,7 +130,7 @@ void SlackClient::process_event(const std::string& json) {
     // online/offline events
     if (d.HasMember("type") && d["type"] == "presence_change") { // why it throws an exception here during program startup?
         if (me.id != d["user"].GetString()) {
-            const auto& x = ui->roster->get_user(d["user"].GetString());
+            const RosterItem &x = ui->roster->get_user(d["user"].GetString());
             ui->roster->change_status(d["presence"].GetString(), x);
         }
     }

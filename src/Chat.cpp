@@ -7,10 +7,10 @@ void Chat::draw(Session& current_session) {
 
     int line = current_session.chat_line;
     int i = current_session.messages.size() - 1;
-    int delta = current_session.delta;
+    int j = current_session.delta;
     auto content = current_session.messages[i].content;
     
-    if (delta > 0) {
+    if (j > 0) {
         wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
         int size = content.size();
         while (size > 0) {
@@ -21,22 +21,21 @@ void Chat::draw(Session& current_session) {
     }
 
     for (auto it = content.cbegin(); it != content.cend(); ++it, line--) {
-        mvwprintw(win, line - delta, 1, "%s", (*it).c_str());
+        mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
     }
 
     wrefresh(win);
 }
 
-void Chat::change_session(const Session& current_session) {
+void Chat::chat_context_switch(const Session& current_session) {
     wclear(win);
 
     int line = current_session.chat_line;
     int i = current_session.messages.size() - 1;
 
     for (; i >= current_session.delta; i--) {
-        auto content = current_session.messages[i].content;
-        
-        for (auto it = content.rbegin(); it != content.rend(); ++it, line--) {
+        auto m = current_session.messages[i].content;
+        for (auto it = m.rbegin(); it != m.rend(); ++it, line--) {
             mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
         }
     }
@@ -48,15 +47,8 @@ void Chat::print_starting_message() {
     const std::string start_mesg = "Please select an user to chat with using arrows (up/down) and enter.";
 
     wattron(win, A_BOLD);
-    
-    mvwprintw(win, (LINES - 6) / 2 - 1,
-                   (COLS - 24 - hello_mesg.length()) / 2,
-                   hello_mesg.c_str());
-    
-    mvwprintw(win, (LINES - 6) / 2 + 1,
-                   (COLS - 24 - start_mesg.length()) / 2,
-                   start_mesg.c_str());
-    
+    mvwprintw(win, (LINES - 6) / 2 - 1, (COLS - 24 - hello_mesg.length()) / 2, hello_mesg.c_str());
+    mvwprintw(win, (LINES - 6) / 2 + 1, (COLS - 24 - start_mesg.length()) / 2, start_mesg.c_str());
     wrefresh(win);
     wattroff(win, A_BOLD);
 
