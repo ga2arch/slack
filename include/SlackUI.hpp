@@ -39,7 +39,7 @@ public:
     
     std::mutex ui_lock;
     
-    int ready = 0;
+    bool ready = false;
 
 private:
     void setup_ncurses();

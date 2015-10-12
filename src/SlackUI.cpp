@@ -33,7 +33,7 @@ void SlackUI::main_ui_cycle() {
     int c;
     
     c = roster->wait();
-    ready = 1;
+    ready = true;
     if (c != 27) {
         chat->chat_context_switch(get_session());
     }
