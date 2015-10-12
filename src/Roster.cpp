@@ -105,16 +105,20 @@ int Roster::wait() {
         }
     } while (c != 10);
     // properly remove notifications for new message
-    active = current_active;
-    if (active < users.size()) {
-        auto it = users.begin();
-        std::advance(it, active);
-        if (it->second.status == "active") {
-            wattron(win, COLOR_PAIR(2));
+    if (active != current_active) {
+        active = current_active;
+        if (active < users.size()) {
+            auto it = users.begin();
+            std::advance(it, active);
+            if (it->second.status == "active") {
+                wattron(win, COLOR_PAIR(2));
+            }
+            mvwprintw(win, active + line, 3, "%.*s", 18, it->second.name.c_str());
+            wattroff(win, COLOR_PAIR(2));
+            wrefresh(win);
         }
-        mvwprintw(win, active + line, 3, "%.*s", 18, it->second.name.c_str());
-        wattroff(win, COLOR_PAIR(2));
-        wrefresh(win);
+    } else {
+        c = 0;
     }
 
     wattroff(win, A_BOLD);

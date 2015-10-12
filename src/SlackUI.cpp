@@ -47,7 +47,7 @@ void SlackUI::main_ui_cycle() {
         c = input->wait(get_session().input_str, get_session().line, get_session().col);
         if (c == 9) {
             c = roster->wait();
-            if (c != 27) {
+            if ((c != 27) && (c != 0)) {
                 chat->chat_context_switch(get_session());
                 input->input_context_switch(get_session());
             }
