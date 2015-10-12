@@ -25,6 +25,7 @@ MUST FIX (UI):
 
 - [x] fix backspace in wgetch: it should remove latest input_str char and move back cursor
 - [ ] key_left/right support in Input?
+- [x] assure no messages is printed during startup (while connecting)
 - [x] fix scrolling in Input win too
 - [ ] Make everything terminal window size agnostic
 - [ ] scroll even Roster win if needed

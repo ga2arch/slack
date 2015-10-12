@@ -104,13 +104,13 @@ void SlackClient::process_event(const std::string& json) {
 
         if (ui->get_last_message_sender(user.channel) != user.id) {
             ui->add_message(user, user.name);
-            if (user.channel == ui->roster->get_active_channel()) {
+            if ((user.channel == ui->roster->get_active_channel()) && (ui->ready)) {
                 ui->chat->draw(ui->get_session());
             }
         }
         o << " " << d["text"].GetString();
         ui->add_message(user, o.str());
-        if (user.channel == ui->roster->get_active_channel()) {
+        if ((user.channel == ui->roster->get_active_channel()) && (ui->ready)) {
             ui->chat->draw(ui->get_session());
         } else {
             ui->roster->highlight_user(user.channel);
@@ -123,13 +123,13 @@ void SlackClient::process_event(const std::string& json) {
         me.channel = sent[reply_to];
         if (ui->get_last_message_sender(sent[reply_to]) != me.id) {
             ui->add_message(me, me.name);
-            if (me.channel == ui->roster->get_active_channel()) {
+            if ((me.channel == ui->roster->get_active_channel()) && (ui->ready)) {
                 ui->chat->draw(ui->get_session());
             }
         } 
         o << " " << d["text"].GetString();
         ui->add_message(me, o.str());
-        if (me.channel == ui->roster->get_active_channel()) {
+        if ((me.channel == ui->roster->get_active_channel()) && (ui->ready)) {
             ui->chat->draw(ui->get_session());
         } else {
             ui->roster->highlight_user(me.channel);

@@ -38,6 +38,8 @@ public:
     std::unique_ptr<Input>  input;
     
     std::mutex ui_lock;
+    
+    int ready = 0;
 
 private:
     void setup_ncurses();

@@ -25,6 +25,7 @@ void SlackUI::show() {
     chat->print_starting_message(start_mesg);
     ui_lock.lock();
     chat->print_starting_message(choose_mesg);
+    ui_lock.unlock();
     return main_ui_cycle();
 }
 
@@ -32,6 +33,7 @@ void SlackUI::main_ui_cycle() {
     int c;
     
     c = roster->wait();
+    ready = 1;
     if (c != 27) {
         chat->chat_context_switch(get_session());
     }
@@ -45,7 +47,6 @@ void SlackUI::main_ui_cycle() {
             }
         }
     }
-    ui_lock.unlock();
 }
 
 Session& SlackUI::get_session() {

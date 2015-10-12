@@ -65,26 +65,27 @@ int Roster::wait() {
     const int KEY_ESC = 27;
     int c, old_active;
     int line = 2;
+    int current_active = active;
 
     wattron(win, A_BOLD);
 
-    if ((active >= users.size()) && (users.size() != 0)) {
+    if ((current_active >= users.size()) && (users.size() != 0)) {
         line++;
     }
 
-    mvwprintw(win, active + line, 1, "* ");
+    mvwprintw(win, current_active + line, 1, "* ");
     do {
-        old_active = active;
+        old_active = current_active;
         c = wgetch(win);
         switch (c) {
             case KEY_UP:
-                if (active > 0) {
-                    active--;
+                if (current_active > 0) {
+                    current_active--;
                 }
                 break;
             case KEY_DOWN:
-                if (active < users.size()+groups.size() - 1) {
-                    active++;
+                if (current_active < users.size()+groups.size() - 1) {
+                    current_active++;
                 }
                 break;
             case KEY_ESC:
@@ -93,17 +94,18 @@ int Roster::wait() {
                 break;
         }
 
-        if (active != old_active) {
+        if (current_active != old_active) {
             mvwprintw(win, old_active + line, 1, "  ");
-            if ((active >= users.size()) && (line == 2)) {
+            if ((current_active >= users.size()) && (line == 2)) {
                 line++;
-            } else if ((active < users.size()) && (line == 3)) {
+            } else if ((current_active < users.size()) && (line == 3)) {
                 line--;
             }
-            mvwprintw(win, active + line, 1, "* ");
+            mvwprintw(win, current_active + line, 1, "* ");
         }
     } while (c != 10);
     // properly remove notifications for new message
+    active = current_active;
     if (active < users.size()) {
         auto it = users.begin();
         std::advance(it, active);
