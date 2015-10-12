@@ -20,6 +20,7 @@ TODO:
 - [ ] ring buffer for messages with a limit of 1000
 - [ ] multi companies support
 - [ ] proper checks for connection errors in websocket
+- [x] leave program if no socket connection could be established (time out 30seconds)
 
 MUST FIX (UI):
 

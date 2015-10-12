@@ -17,7 +17,7 @@ void SlackUI::show() {
     
     const std::string start_mesg = "The client is connecting...";
     const std::string choose_mesg = "Please select an user to chat with using arrow keys (up/down) and enter.";
-    const std::string connection_issue = "Connection timed out. Check your connection and retry. Leaving.";
+    const std::string connection_issue = "Could not connect. Check your connection and retry.";
 
     setup_ncurses();
 
@@ -32,7 +32,7 @@ void SlackUI::show() {
         return main_ui_cycle();
     }
     chat->print_starting_message(connection_issue);
-    sleep(1);
+    sleep(2);
 }
 
 void SlackUI::main_ui_cycle() {
