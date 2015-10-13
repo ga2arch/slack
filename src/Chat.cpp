@@ -6,11 +6,9 @@ void Chat::draw(Session& current_session) {
     }
 
     int line = current_session.chat_line;
-    int i = current_session.messages.size() - 1;
-    int delta = current_session.delta;
-    auto content = current_session.messages[i].content;
+    auto content = current_session.messages.back().content;
     
-    if (delta > 0) {
+    if (current_session.delta > 0) {
         wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
         int size = content.size();
         while (size > 0) {
