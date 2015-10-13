@@ -85,7 +85,6 @@ void SlackClient::connect(const std::string& uri) {
 
 void SlackClient::process_event(const std::string& json) {
     Document d;
-    std::ostringstream o;
     
     d.Parse(json.c_str());
 
@@ -104,14 +103,13 @@ void SlackClient::process_event(const std::string& json) {
                 ui->chat->draw(ui->get_session());
             }
         }
-        o << " " << d["text"].GetString();
-        ui->add_message(user, o.str());
+        std::string str = format_message(d["text"].GetString());
+        ui->add_message(user, " " + str);
         if ((user.channel == ui->roster->get_active_channel()) && (ui->ready)) {
             ui->chat->draw(ui->get_session());
         } else {
             ui->roster->highlight_user(user.channel);
         }
-        o.clear();
     }
 
     if (d.HasMember("ok") && d.HasMember("text")) {
@@ -123,14 +121,13 @@ void SlackClient::process_event(const std::string& json) {
                 ui->chat->draw(ui->get_session());
             }
         } 
-        o << " " << d["text"].GetString();
-        ui->add_message(me, o.str());
+        std::string str = format_message(d["text"].GetString());
+        ui->add_message(me, " " + str);
         if ((me.channel == ui->roster->get_active_channel()) && (ui->ready)) {
             ui->chat->draw(ui->get_session());
         } else {
             ui->roster->highlight_user(me.channel);
         }
-        o.clear();
     }
     // online/offline events
     if (d.HasMember("type") && d["type"] == "presence_change") { // why it throws an exception here during program startup?
@@ -169,9 +166,28 @@ void SlackClient::send_message(const std::string& message) {
 
     writer.String(channel);
     writer.String("text");
-    writer.String(message.c_str());
+    writer.String(message);
     writer.EndObject();
-
+    
     sent[sent_id] = channel;
     wc.send(buffer.GetString());
+}
+
+std::string SlackClient::format_message(std::string str) {
+    int index = str.find("&amp;");
+    while (index != std::string::npos) {
+        str.replace(index, 5, "&");
+        index = str.find("&amp;");
+    }
+    index = str.find("&lt;");
+    while (index != std::string::npos) {
+        str.replace(index, 4, "<");
+        index = str.find("&lt;");
+    }
+    index = str.find("&gt;");
+    while (index != std::string::npos) {
+        str.replace(index, 4, ">");
+        index = str.find("&gt;");
+    }
+    return str;
 }

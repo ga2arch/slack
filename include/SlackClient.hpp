@@ -27,6 +27,8 @@ private:
     Document call(const std::string& api, const std::string& query);
 
     std::string get_direct_channel(const std::string& userid);
+    
+    std::string format_message(std::string str);
 
     SlackUI* ui;
     WebsocketClient wc;

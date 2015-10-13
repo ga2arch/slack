@@ -15,11 +15,11 @@ int Input::wait(std::string& input_str, int& line, int& col) {
     const int KEY_ESC = 27;
     const int KEY_BS = 127;
     const int KEY_TAB = 9;
-    int c;
+    wint_t c;
 
     wmove(win, line, col);
     do {
-        c = wgetch(win);
+        wget_wch(win, &c);
         switch (c) {
             case KEY_ESC: // ESC or tab event;
             case KEY_TAB:
@@ -46,10 +46,9 @@ int Input::wait(std::string& input_str, int& line, int& col) {
                 break;
 
             default:
-                if (isprint(c)) {
+                if ((c != KEY_UP) && (c != KEY_DOWN) && (c != KEY_LEFT) && (c != KEY_RIGHT)) {
                     input_str.push_back(c);
-
-                    mvwprintw(win, line, col, "%c", c);
+                    mvwprintw(win, line, col, "%lc", c);
                     if (col ==  COLS - 24) {
                         col = 1;
                         if (line == 2) {
@@ -69,11 +68,8 @@ int Input::wait(std::string& input_str, int& line, int& col) {
 
     col = 1;
     line = 1;
-
     client->send_message(input_str);
-
     input_str.clear();
-
     wclear(win);
     draw_borders();
     return 0;

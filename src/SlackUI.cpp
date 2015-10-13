@@ -65,7 +65,6 @@ SlackUI::~SlackUI() {
 }
 
 void SlackUI::setup_ncurses() {
-    setlocale(LC_ALL, "");
     initscr();
     raw();
     noecho();
