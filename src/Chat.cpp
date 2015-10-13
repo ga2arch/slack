@@ -18,7 +18,7 @@ void Chat::draw(Session& current_session) {
         draw_borders();
     }
 
-    for (auto it = content.cbegin(); it != content.cend(); ++it, line--) {
+    for (auto it = content.rbegin(); it != content.rend(); ++it, line--) {
         mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
     }
 
