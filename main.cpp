@@ -8,6 +8,7 @@
 #include "WebsocketClient.hpp"
 
 int main(int argc, char const* argv[]) {
+    setlocale(LC_ALL, "");
 
     SlackUI ui;
     SlackClient c;

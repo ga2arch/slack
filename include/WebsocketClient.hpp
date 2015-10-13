@@ -61,7 +61,7 @@ public:
 
         data += "\r\n";
 
-        _send(std::vector<char>(data.begin(), data.end()));
+        _send(data);
         ping_pong();
 
         receive();
@@ -108,22 +108,22 @@ public:
         return result;
     }
     
-    void _send(std::vector<char> data) {
+    void _send(std::string data) {
         if (wait_on_socket(0) < 0) {
             throw std::out_of_range("");
         }
 
         size_t sent;
-        
+
         auto status = curl_easy_send(curl, data.data(), data.size(), &sent);
-        
+
         if (status != CURLE_OK || sent != data.size()) {
             throw std::exception();
         }
     }
 
     void receive() {
-        std::vector<unsigned char> data;
+        std::string data;
         size_t received;
         bool first = true;
 
@@ -132,16 +132,17 @@ public:
 
             wait_on_socket(1);
             auto status = curl_easy_recv(curl, buff, 4096, &received);
-
+ 
             if (status != CURLE_OK) {
+                Log::d() << "Failed to receive data." << std::endl;
                 break;
             }
             // FIX ME, HANDLE HEADER  
-            if (first) { first = false; continue;}; 
+            if (first) { first = false; continue;};
 
             for (auto i=0; i < received; i++)
                 data.push_back(buff[i]);
-
+            
             for (auto& event: process_frame(data)) {
                 if (on_message != nullptr) {
                     std::async(std::launch::async, [&]() { on_message(event); });
@@ -163,13 +164,13 @@ public:
         }).detach();
     }
 
-    std::vector<std::string> process_frame(const std::vector<unsigned char>& data) {
+    std::vector<std::string> process_frame(const std::string& data) {
         std::vector<std::string> events;
 
         int offset = 0;
 
         while (data.size() > offset && data.size() > 3) {
-            auto buff = std::vector<unsigned char>(data.begin()+offset, data.end());
+            auto buff = std::string(data.begin()+offset, data.end());
             if (buff.size() < 3) break;
 
             int length = buff[1] & 127;
@@ -201,19 +202,19 @@ public:
 
             std::string event(buff.begin()+index, buff.begin()+index+length);
             events.push_back(event);
-
             offset = index+length;
         }
-
+        
         return events;
     }
 
     void send_frame(int type, const std::string& data) {
         lock.lock();
-        std::vector<char> frame;
+        std::string frame;
 
         const uint8_t masking_key[4] = { 0x12, 0x34, 0x56, 0x78 };
         auto len = data.length();
+        
         frame.push_back(type);
 
         if (len <= 125) {
@@ -241,10 +242,14 @@ public:
         frame.push_back( masking_key[2] );
         frame.push_back( masking_key[3] );
 
-        for (auto i=0; i < data.length(); i++)
+        for (auto i=0; i < len; i++)
             frame.push_back( data[i] ^ masking_key[i & 0x3] );
         
-        _send(frame);
+        try {
+            _send(frame);
+        } catch (std::exception &) {
+            Log::d() << "Could not send." << std::endl;
+        }
 
         lock.unlock();
     }
