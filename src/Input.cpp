@@ -15,54 +15,57 @@ int Input::wait(std::string& input_str, int& line, int& col) {
     const int KEY_ESC = 27;
     const int KEY_BS = 127;
     const int KEY_TAB = 9;
-    wint_t c;
+    int c;
 
     wmove(win, line, col);
     do {
-        wget_wch(win, &c);
+        c = wgetch(win);
         switch (c) {
-            case KEY_ESC: // ESC or tab event;
-            case KEY_TAB:
-                return c;
-
-            case KEY_BS:
-                if (!input_str.empty()) {
-                    input_str.pop_back();
-                    col--;
-                    if (col == 0) {
-                        col = COLS - 24;
-                        if (line == 1) {
-                            wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-                            wscrl(win, -1);
-                            mvwprintw(win, line, 1, "%s", input_str.c_str());
-                            draw_borders();
-                        } else {
-                            line--;
-                        }
-                    }
-                    mvwprintw(win, line, col, " ");
-                    wmove(win, line, col);
-                }
-                break;
-
-            default:
-                if ((c != KEY_UP) && (c != KEY_DOWN) && (c != KEY_LEFT) && (c != KEY_RIGHT)) {
-                    input_str.push_back(c);
-                    mvwprintw(win, line, col, "%lc", c);
-                    if (col ==  COLS - 24) {
-                        col = 1;
-                        if (line == 2) {
-                            wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-                            wscrl(win, 1);
-                            draw_borders();
-                        } else {
-                            line++;
-                        }
+        case KEY_ESC: // ESC or tab event;
+        case KEY_TAB:
+            return c;
+            
+        case KEY_BS:
+            if (!input_str.empty()) {
+                input_str.pop_back();
+                col--;
+                if (col == 0) {
+                    col = COLS - 24;
+                    if (line == 1) {
+                        wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+                        wscrl(win, -1);
+                        mvwprintw(win, line, 1, "%s", input_str.c_str());
+                        draw_borders();
                     } else {
-                        col++;
+                        line--;
                     }
                 }
-                break;
+                mvwprintw(win, line, col, " ");
+                wmove(win, line, col);
+            }
+            break;
+        case KEY_UP:
+        case KEY_DOWN:
+        case KEY_RIGHT:
+        case KEY_LEFT: 
+            break;
+        
+        default:
+            input_str.push_back(c);
+            mvwprintw(win, line, col, "%lc", c);
+            if (col ==  COLS - 24) {
+                col = 1;
+                if (line == 2) {
+                    wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+                    wscrl(win, 1);
+                    draw_borders();
+                } else {
+                    line++;
+                }
+            } else {
+                col++;
+            }
+            break;
         }
     } while (c != 10 && input_str.length() < 4000);
 
