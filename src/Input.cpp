@@ -48,6 +48,7 @@ int Input::wait(std::string& input_str, int& line, int& col) {
         case KEY_DOWN:
         case KEY_RIGHT:
         case KEY_LEFT: 
+        case 10: //enter
             break;
         
         default:
