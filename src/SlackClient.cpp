@@ -104,7 +104,7 @@ void SlackClient::process_event(const std::string& json) {
             }
         }
         std::string str = format_message(d["text"].GetString());
-        ui->add_message(user, " " + str);
+        ui->add_message(user, str);
         if ((user.channel == ui->roster->get_active_channel()) && (ui->ready)) {
             ui->chat->draw(ui->get_session());
         } else {
@@ -122,7 +122,7 @@ void SlackClient::process_event(const std::string& json) {
             }
         } 
         std::string str = format_message(d["text"].GetString());
-        ui->add_message(me, " " + str);
+        ui->add_message(me, str);
         if ((me.channel == ui->roster->get_active_channel()) && (ui->ready)) {
             ui->chat->draw(ui->get_session());
         } else {

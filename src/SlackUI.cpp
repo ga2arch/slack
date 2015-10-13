@@ -79,21 +79,17 @@ void SlackUI::setup_ncurses() {
 
 void SlackUI::add_message(const RosterItem& item, const std::string& content) {
     int j = 0;
-    int i = 0;
     std::vector <std::string> substr;
 
     do {
-        if (j > 0) {
-            i = 1;
-        } //dirty hack to put a space in front of every line
-        substr.push_back(std::string(i,' ') + content.substr(j, COLS - 24).c_str());
+        substr.push_back(content.substr(j, COLS - 24).c_str());
         j += COLS - 24;
         sessions[item.channel].chat_line++;
         if (sessions[item.channel].chat_line > LINES - 6) {
             sessions[item.channel].delta++;
+            sessions[item.channel].scroll_lines++;
         }
     } while (j < content.length());
-
     sessions[item.channel].messages.emplace_back(item, substr);
 }
 

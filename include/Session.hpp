@@ -31,6 +31,7 @@ public:
     int col = 1;
     int delta = 0;
     int chat_line = 0;
+    int scroll_lines = 0;
 
 };
 

@@ -8,10 +8,11 @@ void Chat::draw(Session& current_session) {
     int line = current_session.chat_line;
     auto content = current_session.messages.back().content;
     
-    if (current_session.delta > 0) {
+    if (current_session.scroll_lines > 0) {
         wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-        wscrl(win, content.size());
+        wscrl(win, current_session.scroll_lines);
         draw_borders();
+        current_session.scroll_lines = 0;
     }
 
     for (auto it = content.rbegin(); it != content.rend(); ++it, line--) {
@@ -27,7 +28,7 @@ void Chat::chat_context_switch(const Session& current_session) {
     int line = current_session.chat_line;
     int i = current_session.messages.size() - 1;
 
-    for (; i >= current_session.delta; i--) {
+    for (; (i >= 0) && (current_session.chat_line - line < LINES - 6) ; i--) {
         auto m = current_session.messages[i].content;
         for (auto it = m.rbegin(); it != m.rend(); ++it, line--) {
             mvwprintw(win, line  - current_session.delta, 1, "%s", (*it).c_str());
