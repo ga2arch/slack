@@ -10,11 +10,7 @@ void Chat::draw(Session& current_session) {
     
     if (current_session.delta > 0) {
         wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-        int size = content.size();
-        while (size > 0) {
-            wscrl(win, 1);
-            size--;
-        }
+        wscrl(win, content.size());
         draw_borders();
     }
 
