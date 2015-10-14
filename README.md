@@ -1,7 +1,20 @@
 # slack++
 c++ slack ncurses client
 
-TODO:
+Slack++ is gonna be rewritten in Qt.
+In master you'll find ncurses version while Qt version is not ready; 
+when we think the qt version reaches a good shape, we'll move it to master and remove previous ncurses based application.
+
+To build master you need: 
+
+* rapidjson
+* curlpp
+* cmake
+
+and a fairly recent c++ compiler.
+It was tested on Archlinux and Mac.
+
+OLD TODO (ncurses version) :
 
 - [x] Create a class for every pane
 - [x] Send messagges to user
@@ -11,7 +24,6 @@ TODO:
 - [ ] add channel support
 - [x] split every message in (COLS - 24) substr. Print chat message in chat_context_switch() from the bottom.
 - [x] properly format received messages: https://api.slack.com/docs/formatting.
-- [ ] get accented chars too in input...
 - [x] properly remove notification (if present) after the switch to a new chat
 - [x] drop websocketpp(and boost) in favour of a lighter solution?
 - [x] input_str per-chat
@@ -23,7 +35,7 @@ TODO:
 - [x] leave program if no socket connection could be established (time out 30seconds)
 - [ ] drop curlpp in favour of libcurl
 
-MUST FIX (UI):
+MUST FIX (UI, ncurses version):
 
 - [x] fix backspace in wgetch: it should remove latest input_str char and move back cursor
 - [x] assure no messages is printed during startup (while connecting)
@@ -32,8 +44,4 @@ MUST FIX (UI):
 - [ ] scroll even Roster win if needed
 - [x] do not reprint user name in chat if last message was from the same user
 - [x] scroll chat back (with up arrow). May be implement a history call to display old messages from previous sessions?
-
-PROBABLY WON'T IMPLEMENT:
-
-- [ ] key_left/right support in Input
-- [ ] terminal window resize support
+- [ ] get accented chars too in input...
