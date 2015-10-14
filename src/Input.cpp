@@ -23,6 +23,7 @@ int Input::wait(std::string& input_str, int& line, int& col) {
         switch (c) {
         case KEY_ESC: // ESC or tab event;
         case KEY_TAB:
+        case KEY_UP:
             return c;
             
         case KEY_BS:
@@ -44,7 +45,6 @@ int Input::wait(std::string& input_str, int& line, int& col) {
                 wmove(win, line, col);
             }
             break;
-        case KEY_UP:
         case KEY_DOWN:
         case KEY_RIGHT:
         case KEY_LEFT: 

@@ -31,6 +31,7 @@ MUST FIX (UI):
 - [ ] Make everything terminal window size agnostic
 - [ ] scroll even Roster win if needed
 - [x] do not reprint user name in chat if last message was from the same user
+- [x] scroll chat back (with up arrow). May be implement a history call to display old messages from previous sessions?
 
 PROBABLY WON'T IMPLEMENT:
 

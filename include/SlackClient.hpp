@@ -14,7 +14,6 @@ class SlackClient {
 public:
     void set_ui(SlackUI* ui);
     void start();
-    std::string get_uri();
     void send_message(const std::string& message);
 
 private:

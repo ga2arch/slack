@@ -8,11 +8,6 @@ void SlackClient::set_ui(SlackUI* ui) {
     this->ui = ui;
 }
 
-std::string SlackClient::get_uri() {
-    auto d = call("rtm.start", "");
-    return d["url"].GetString();
-}
-
 const std::string SlackClient::fetch_data() {
     Log::d() << "Getting websocket url ...";
 
@@ -79,7 +74,6 @@ void SlackClient::connect(const std::string& uri) {
         process_event(event);
         lock.unlock();
     });
-
     wc.connect(uri);
 }
 

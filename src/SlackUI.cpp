@@ -51,6 +51,8 @@ void SlackUI::main_ui_cycle() {
                 chat->chat_context_switch(get_session());
                 input->input_context_switch(get_session());
             }
+        } else if (c == KEY_UP) {
+            chat->scroll_back(get_session());
         }
     }
 }

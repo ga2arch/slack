@@ -13,9 +13,10 @@ public:
         idlok(win, TRUE);};
 
     void draw(Session& current_session);
-    void chat_context_switch(const Session& current_session);
+    void chat_context_switch(Session& current_session);
 
     void print_starting_message(const std::string& mesg);
+    void scroll_back(Session& current_session);
 };
 
 #endif
