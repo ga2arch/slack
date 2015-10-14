@@ -53,6 +53,8 @@ void SlackUI::main_ui_cycle() {
             }
         } else if (c == KEY_UP) {
             chat->scroll_back(get_session());
+        } else if (c == KEY_DOWN) {
+            chat->scroll_forward(get_session());
         }
     }
 }

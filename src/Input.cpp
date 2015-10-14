@@ -5,8 +5,6 @@ Input::Input(int y, int x,
              const std::string &title,
              SlackClient *cl): Window(y, x, start_y, start_x, title), client(cl) {
 
-    scrollok(win, TRUE);
-    idlok(win, TRUE);
     noecho();
     keypad(win, TRUE);
 }
@@ -22,8 +20,9 @@ int Input::wait(std::string& input_str, int& line, int& col) {
         c = wgetch(win);
         switch (c) {
         case KEY_ESC: // ESC or tab event;
-        case KEY_TAB:
-        case KEY_UP:
+        case KEY_TAB: // tab to switch to roster selection mode
+        case KEY_UP:   // go back in chat history
+        case KEY_DOWN:  // go forward in chat history
             return c;
             
         case KEY_BS:
@@ -45,7 +44,6 @@ int Input::wait(std::string& input_str, int& line, int& col) {
                 wmove(win, line, col);
             }
             break;
-        case KEY_DOWN:
         case KEY_RIGHT:
         case KEY_LEFT: 
         case 10: //enter

@@ -4,6 +4,8 @@ Window::Window(int y, int x, int start_y, int start_x, const std::string &title)
     win = newwin(y, x, start_y, start_x);
     this->title = title;
     draw_borders();
+    scrollok(win, TRUE);
+    idlok(win, TRUE);
 };
 
 Window::~Window() {

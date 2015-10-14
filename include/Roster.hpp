@@ -58,9 +58,9 @@ public:
     void change_status(const std::string& status, const RosterItem& user);
     void highlight_user(const std::string &channel);
 
-private:
+private:    
     int active;
-
+    
     std::map<std::string, RosterItem> users;
     std::map<std::string, RosterItem> groups;
 

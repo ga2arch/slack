@@ -7,6 +7,7 @@ void Chat::draw(Session& current_session) {
 
     int line = current_session.chat_line;
     int size = current_session.messages.size();
+    
     if (current_session.scroll_lines > 0) {
         wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
         wscrl(win, current_session.scroll_lines);
@@ -71,5 +72,26 @@ void Chat::scroll_back(Session& current_session) {
     }
     
     draw_borders();
+}
+
+void Chat::scroll_forward(Session& current_session) {
+    if (current_session.scrolled_back == 0) {
+        return;
+    }
     
+    int line = current_session.chat_line;
+    
+    current_session.scrolled_back--;
+    
+    int index = current_session.messages.size() - current_session.scrolled_back - 1;
+    auto content = current_session.messages.at(index).content;
+    wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+    wscrl(win, content.size());
+    current_session.scroll_lines -= content.size();
+    
+    for (auto it = content.rbegin(); it != content.rend(); ++it, line--) {
+        mvwprintw(win, line - current_session.delta, 1, "%s", (*it).c_str());
+    }
+    
+    draw_borders();
 }
