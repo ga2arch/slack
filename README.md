@@ -12,4 +12,4 @@ To build master you need:
 * cmake
 
 and a fairly recent c++ compiler.
-It was tested on Archlinux and Mac.
+It was tested on Archlinux and MacOS 10.10.
