@@ -1,20 +1,22 @@
-#include <iostream>
-#include <mutex>
+#include "slackui.h"
+#include "slackclient.h"
+#include <QApplication>
 #include <thread>
 #include <future>
 
-#include "SlackUI.hpp"
-#include "SlackClient.hpp"
-#include "WebsocketClient.hpp"
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    SlackUI w;
+   // SlackClient cl;
 
-int main(int argc, char const* argv[]) {
-    SlackUI ui;
-    SlackClient c;
+   // w.set_client(&cl);
+   // cl.set_ui(&w);
 
-    ui.set_client(&c);
-    c.set_ui(&ui);
+    // std::thread([&]() { cl.start(); }).detach();
 
-    std::thread([&]() { c.start(); }).detach();
-    ui.ui_lock.lock();
-    ui.show();
+    w.setWindowTitle("slack++");
+    w.show();
+
+    return a.exec();
 }
