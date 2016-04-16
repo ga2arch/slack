@@ -1,7 +1,9 @@
 #ifndef Window_hpp
 #define Window_hpp
 
-#define _XOPEN_SOURCE_EXTENDED
+#ifndef _XOPEN_SOURCE_EXTENDED
+    #define _XOPEN_SOURCE_EXTENDED
+#endif
 #include <curses.h>
 #include <string>
 
