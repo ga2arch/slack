@@ -1,6 +1,7 @@
 #ifndef Window_hpp
 #define Window_hpp
 
+#define _XOPEN_SOURCE_EXTENDED
 #include <curses.h>
 #include <string>
 

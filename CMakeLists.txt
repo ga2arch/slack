@@ -50,7 +50,6 @@ endif(LIBNOTIFY_FOUND)
 find_package(Threads)
 
 set(CURSES_NEED_NCURSES TRUE)
-set(CURSES_NEED_WIDE TRUE)
 find_package(Curses REQUIRED)
 
 target_include_directories(slack
@@ -69,4 +68,3 @@ target_link_libraries(slack
 
 set_property(TARGET slack PROPERTY CXX_STANDARD 14)
 #cotire(slack)
-
