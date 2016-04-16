@@ -1,13 +1,4 @@
-//
-//  Websockets.hpp
-//  slack++
-//
-//  Created by Gabriele Carrettoni on 10/10/15.
-//
-//
-
-#ifndef Websockets_h
-#define Websockets_h
+#pragma once
 
 #include <iostream>
 #include <sstream>
@@ -265,5 +256,3 @@ private:
     CURL *curl;
     curl_socket_t socket;
 };
-
-#endif /* Websockets_h */

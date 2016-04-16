@@ -7,7 +7,7 @@
 #include "SlackClient.hpp"
 #include "WebsocketClient.hpp"
 
-int main(int argc, char const* argv[]) {
+int main(int argc, char* argv[]) {
     SlackUI ui;
     SlackClient c;
 
@@ -17,10 +17,10 @@ int main(int argc, char const* argv[]) {
     auto token = std::getenv("SLACK_TOKEN");
     if (!token) {
         if (argc == 1) {
-            std::cerr << "No token specified. Run with " << argv[0] << " YOUR_COMPANY_TOKEN\n";
+            std::cerr << "No token specified. Run with " << argv[0] << " $YOUR_COMPANY_TOKEN" << std::endl;
             exit(EXIT_FAILURE);
         }
-        strcpy(token, argv[1]);
+        token = argv[1];
     }
     
     assert(token != nullptr);

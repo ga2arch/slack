@@ -1,13 +1,4 @@
-//
-//  Session.h
-//  slack++
-//
-//  Created by Gabriele Carrettoni on 08/10/15.
-//
-//
-
-#ifndef Session_h
-#define Session_h
+#pragma once
 
 #include <vector>
 #include <array>
@@ -40,5 +31,3 @@ public:
     int scrolled_back = 0;
     int last_mess = 0;
 };
-
-#endif /* Session_h */

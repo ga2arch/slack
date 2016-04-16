@@ -1,13 +1,4 @@
-//
-//  Headers.hpp
-//  slack++
-//
-//  Created by Gabriele Carrettoni on 03/10/15.
-//
-//
-
-#ifndef Headers_h
-#define Headers_h
+#pragma once
 
 #include <iostream>
 #include <cstdlib>
@@ -25,5 +16,3 @@
 #include "rapidjson/stringbuffer.h"
 
 #include "Log.hpp"
-
-#endif /* Headers_h */

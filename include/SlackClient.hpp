@@ -1,5 +1,4 @@
-#ifndef SlackClient_H
-#define SlackClient_H
+#pragma once
 
 #include "Headers.hpp"
 #include "Roster.hpp"
@@ -43,5 +42,3 @@ private:
 };
 
 #include "SlackUI.hpp"
-
-#endif

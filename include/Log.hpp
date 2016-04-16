@@ -1,13 +1,4 @@
-//
-//  Log.h
-//  slack++
-//
-//  Created by Gabriele Carrettoni on 06/10/15.
-//
-//
-
-#ifndef Log_h
-#define Log_h
+#pragma once
 
 #include <fstream>
 
@@ -36,5 +27,3 @@ private:
     std::fstream debug;
 
 };
-
-#endif /* Log_h */

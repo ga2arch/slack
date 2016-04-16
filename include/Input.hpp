@@ -1,5 +1,4 @@
-#ifndef Input_hpp
-#define Input_hpp
+#pragma once
 
 #include <string>
 #include "Window.hpp"
@@ -29,5 +28,3 @@ private:
 };
 
 #include "SlackClient.hpp"
-
-#endif

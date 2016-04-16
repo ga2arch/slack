@@ -1,5 +1,4 @@
-#ifndef Roster_hpp
-#define Roster_hpp
+#pragma once
 
 #include <string>
 #include <map>
@@ -67,5 +66,3 @@ private:
     std::map<std::string, RosterItem> groups;
 
 };
-
-#endif

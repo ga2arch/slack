@@ -1,5 +1,4 @@
-#ifndef Window_hpp
-#define Window_hpp
+#pragma once
 
 #ifndef _XOPEN_SOURCE_EXTENDED
     #define _XOPEN_SOURCE_EXTENDED
@@ -22,5 +21,3 @@ protected:
     void draw_borders();
 
 };
-
-#endif

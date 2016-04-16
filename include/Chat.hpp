@@ -1,5 +1,4 @@
-#ifndef Chat_hpp
-#define Chat_hpp
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -20,5 +19,3 @@ public:
     int scroll_forward(Session& current_session);
 
 };
-
-#endif

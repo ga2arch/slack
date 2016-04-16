@@ -7,6 +7,7 @@ TODO:
 - [x] drop curlpp in favour of libcurl
 - [ ] notification silenced per-chat or globally
 - [x] libnotify optional
+- [ ] add timestamp to messages
 - [ ] cleanup code...private things etc etc
 
 MUST FIX (UI):

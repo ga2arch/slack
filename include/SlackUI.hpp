@@ -1,13 +1,4 @@
-//
-//  SlackUI.hpp
-//  slack++
-//
-//  Created by Gabriele Carrettoni on 04/10/15.
-//
-//
-
-#ifndef SlackUI_hpp
-#define SlackUI_hpp
+#pragma once
 
 #include <map>
 #include <mutex>
@@ -58,5 +49,3 @@ private:
     SlackClient *client;
     std::map<std::string, Session> sessions;
 };
-
-#endif
