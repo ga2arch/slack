@@ -29,6 +29,7 @@ public:
                      bool sender,
                      bool me);
     const std::string get_last_message_sender(const std::string& channel);
+    void set_company_name(const std::string& name);
 
     std::unique_ptr<Roster> roster;
     std::unique_ptr<Chat>   chat;

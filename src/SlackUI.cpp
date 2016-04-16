@@ -21,7 +21,6 @@ void SlackUI::show() {
 
     setup_ncurses();
 
-    roster = std::make_unique<Roster>(LINES, 22, 0, 0, "Roster");
     chat   = std::make_unique<Chat>(LINES-4, COLS-22, 0, 22, "Chat");
     input  = std::make_unique<Input>(4, COLS-22, LINES-4, 22, "InputBox", client);
 
@@ -156,4 +155,8 @@ const std::string SlackUI::get_last_message_sender(const std::string& channel) {
     } catch (std::out_of_range&) {
         return "";
     }
+}
+
+void SlackUI::set_company_name(const std::string &name) {
+    roster = std::make_unique<Roster>(LINES, 22, 0, 0, name);
 }

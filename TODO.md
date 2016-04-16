@@ -5,10 +5,11 @@ TODO:
 - [x] when changing chat, save old chat history position (if scrolled back) and restore new chat position
 - [ ] properly check for connection errors in websocket
 - [x] drop curlpp in favour of libcurl
-- [ ] notification silenced per-chat or globally
+- [ ] notification silenced per-chat and globally
 - [x] libnotify optional
 - [x] add timestamp to messages
 - [x] owner's messages should not trigger libnotify notifications
+- [x] add company name to UI
 - [ ] cleanup code...private things etc etc
 
 MUST FIX (UI):

@@ -14,6 +14,8 @@ Window::~Window() {
 
 void Window::draw_borders() {
     wborder(win, 0, 0, 0, 0, 0, 0, 0, 0);
+    wattron(win, A_BOLD);
     mvwprintw(win, 0, 0, title.c_str());
+    wattroff(win, A_BOLD);
     wrefresh(win);
 }
