@@ -1,7 +1,7 @@
 #ifndef Window_hpp
 #define Window_hpp
 
-#include <cursesw.h>
+#include <curses.h>
 #include <string>
 
 class Window {
