@@ -1,17 +1,17 @@
 #include "SlackClient.hpp"
 
-void SlackClient::start() {
-    connect(fetch_data());
+void SlackClient::start(const std::string token) {
+    connect(fetch_data(token));
 }
 
 void SlackClient::set_ui(SlackUI* ui) {
     this->ui = ui;
 }
 
-const std::string SlackClient::fetch_data() {
+const std::string SlackClient::fetch_data(const std::string& token) {
     Log::d() << "Getting websocket url ...";
 
-    auto d = call("rtm.start", "");
+    auto d = call("rtm.start", "", token);
 
     Log::d() << " OK" << std::endl;
 
@@ -123,13 +123,9 @@ static size_t write_data(void* ptr, size_t size, size_t nmemb, void* userdata) {
     return (os->write(static_cast<char*>(ptr), len)) ? len : 0;
 }
 
-Document SlackClient::call(const std::string &api, const std::string &query) {
+Document SlackClient::call(const std::string &api, const std::string &query, const std::string &token) {
     Document d;
     std::ostringstream os;
-
-    const auto token = std::getenv("SLACK_TOKEN");
-    
-    assert(token != nullptr);
     
     const auto base_url = "https://slack.com/api/";
     const auto url = base_url + api + "?token=" + token + "&" + query;

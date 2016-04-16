@@ -13,17 +13,17 @@ class SlackClient {
 
 public:
     void set_ui(SlackUI* ui);
-    void start();
+    void start(const std::string token);
     void send_message(const std::wstring& message);
 
 private:
-    const std::string fetch_data();
+    const std::string fetch_data(const std::string& token);
 
     void connect(const std::string& uri);
 
     void process_event(const std::string& json);
 
-    Document call(const std::string& api, const std::string& query);
+    Document call(const std::string& api, const std::string& query, const std::string& token);
 
     std::string get_direct_channel(const std::string& userid);
     
