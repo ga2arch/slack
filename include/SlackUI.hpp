@@ -48,14 +48,14 @@ private:
     void setup_ncurses();
 #ifdef LIBNOTIFY_FOUND
     void notify_send(const std::string& name, const std::string& mesg);
+#endif
     void quit_notification();
     
+#ifdef LIBNOTIFY_FOUND
     NotifyNotification *n = NULL;
 #endif
-    
     bool ready = false;
     SlackClient *client;
-    
     std::map<std::string, Session> sessions;
 };
 

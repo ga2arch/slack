@@ -137,13 +137,15 @@ void SlackUI::notify_send(const std::string& name, const std::string& mesg) {
     notify_notification_set_timeout(n, 5000);
     notify_notification_show(n, 0);
 }
+#endif
 
 void SlackUI::quit_notification() {
+#ifdef LIBNOTIFY_FOUND
     if (n) {
         notify_notification_close(n, NULL);
     }
-}
 #endif
+}
 
 const std::string SlackUI::get_last_message_sender(const std::string& channel) {
     int size = sessions[channel].last_mess;
