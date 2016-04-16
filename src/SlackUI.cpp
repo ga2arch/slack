@@ -37,8 +37,10 @@ void SlackUI::show() {
 
 void SlackUI::main_ui_cycle() {
     int c;
-    
+
+#ifdef LIBNOTIFY_FOUND
     notify_init("Slack++");
+#endif
     c = roster->wait();
     if (c != 27) {
         chat->draw(get_session(), LINES - 6);
@@ -67,7 +69,9 @@ void SlackUI::main_ui_cycle() {
             }
         }
     }
+#ifdef LIBNOTIFY_FOUND
     notify_uninit();
+#endif
 }
 
 Session& SlackUI::get_session() {
