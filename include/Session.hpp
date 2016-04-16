@@ -10,6 +10,7 @@
 #define Session_h
 
 #include <vector>
+#include <array>
 
 #include "Roster.hpp"
 
