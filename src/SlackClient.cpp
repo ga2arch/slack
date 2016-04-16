@@ -81,12 +81,12 @@ void SlackClient::process_event(const std::string& json) {
     d.Parse(json.c_str());
 
     if (d.HasMember("type") && d["type"] == "message") {
-        auto user = me;
-
+        RosterItem user;
+        
         try {
             user = ui->roster->get_user(d["user"].GetString());
         } catch (std::out_of_range&) {
-            user.channel = d["channel"].GetString();
+            return;
         }
 
         if (ui->get_last_message_sender(user.channel) != user.id) {
