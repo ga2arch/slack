@@ -27,6 +27,7 @@ private:
     std::string get_direct_channel(const std::string& userid);
     
     std::string format_message(std::string str);
+    std::string timeStampToHReadble(const std::string& rawtime);
     
 //     size_t write_data(void* ptr, size_t size, size_t nmemb, void* userdata);
 
@@ -37,8 +38,6 @@ private:
     int sent_id = 0;
 
     RosterItem me;
-    
-    std::mutex lock;
 };
 
 #include "SlackUI.hpp"

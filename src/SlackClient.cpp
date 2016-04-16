@@ -70,9 +70,7 @@ void SlackClient::connect(const std::string& uri) {
     Log::d() << "Attempting connection ..." << std::endl;
     
     wc.set_on_message([&](std::string event) {
-        lock.lock();
         process_event(event);
-        lock.unlock();
     });
     wc.connect(uri);
 }
@@ -92,21 +90,22 @@ void SlackClient::process_event(const std::string& json) {
         }
 
         if (ui->get_last_message_sender(user.channel) != user.id) {
-            ui->add_message(user, user.name + ':', true);
+            ui->add_message(user, user.name + ':', true, false);
         }
         std::string str = format_message(d["text"].GetString());
-        ui->add_message(user, str, false);
+        std::string timestamp = timeStampToHReadble(d["ts"].GetString());
+        ui->add_message(user, timestamp + " " + str, false, false);
     }
 
     if (d.HasMember("ok") && d.HasMember("text")) {
         auto const reply_to = d["reply_to"].GetInt();
         me.channel = sent[reply_to];
         if (ui->get_last_message_sender(sent[reply_to]) != me.id) {
-            ui->add_message(me, me.name + ':', true);
+            ui->add_message(me, me.name + ':', true, true);
         }
         std::string str = format_message(d["text"].GetString());
-        ui->add_message(me, str, false);
-        // check if user is the active one, if ui is ready
+        std::string timestamp = timeStampToHReadble(d["ts"].GetString());
+        ui->add_message(me, timestamp + " " + str, false, true);
     }
     // online/offline events
     if (d.HasMember("type") && d["type"] == "presence_change") {
@@ -189,4 +188,13 @@ std::string SlackClient::format_message(std::string str) {
         index = str.find("&gt;");
     }
     return str;
+}
+
+std::string SlackClient::timeStampToHReadble(const std::string& rawtime) {
+    struct tm * dt;
+    char buffer [30];
+    long time = std::stol(rawtime, nullptr);
+    dt = localtime(&time);
+    strftime(buffer, sizeof(buffer), "%H:%M", dt);
+    return std::string(buffer);
 }

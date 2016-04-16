@@ -97,7 +97,7 @@ void SlackUI::setup_ncurses() {
     init_pair(3, COLOR_CYAN, COLOR_BLACK);
 }
 
-void SlackUI::add_message(const RosterItem& item, const std::string& content, bool sender) {
+void SlackUI::add_message(const RosterItem& item, const std::string& content, bool sender, bool me) {
     int j = 0;
     bool check = false;
 
@@ -119,7 +119,9 @@ void SlackUI::add_message(const RosterItem& item, const std::string& content, bo
         if (!sender) {
             roster->highlight_user(item.channel);
 #ifdef LIBNOTIFY_FOUND
-            notify_send(item.name, content.substr(0, 40));
+            if (!me) {
+                notify_send(item.name, content.substr(0, 40));
+            }
 #endif
         }
         if (sessions[item.channel].scrolled_back > 0) {
