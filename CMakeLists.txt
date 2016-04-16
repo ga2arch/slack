@@ -13,20 +13,6 @@ if(CCACHE_FOUND)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-find_package(OpenSSL REQUIRED)
-find_package(RapidJSON REQUIRED)
-find_package(CURL REQUIRED)
-find_package(Libnotify)
-if(LIBNOTIFY_FOUND)
-    message("Using libnotify")
-    add_definitions( -DLIBNOTIFY_FOUND)
-endif(LIBNOTIFY_FOUND)
-find_package(Threads)
-
-set(CURSES_NEED_NCURSES TRUE)
-set(CURSES_NEED_WIDE TRUE)
-find_package(Curses REQUIRED)
-
 include_directories(include src)
 
 set(SOURCES
@@ -51,12 +37,27 @@ set(SOURCES
 
 add_executable(slack main.cpp ${SOURCES})
 
+find_package(OpenSSL REQUIRED)
+find_package(RapidJSON REQUIRED)
+find_package(CURL REQUIRED)
+find_package(Libnotify)
+if(LIBNOTIFY_FOUND)
+    message("Using libnotify")
+    add_definitions( -DLIBNOTIFY_FOUND)
+    target_include_directories(slack PRIVATE ${LIBNOTIFY_INCLUDE_DIRS})
+    target_link_libraries (slack ${LIBNOTIFY_LIBRARIES})
+endif(LIBNOTIFY_FOUND)
+find_package(Threads)
+
+set(CURSES_NEED_NCURSES TRUE)
+set(CURSES_NEED_WIDE TRUE)
+find_package(Curses REQUIRED)
+
 target_include_directories(slack
 	PRIVATE ${OPENSSL_INCLUDE_DIRS}
 	PRIVATE ${RAPIDJSON_INCLUDE_DIRS}
 	PRIVATE ${CURL_INCLUDE_DIRS}
 	PRIVATE ${CURSES_INCLUDE_DIR}
-	PRIVATE ${LIBNOTIFY_INCLUDE_DIRS}
 	PUBLIC include)
 
 target_link_libraries(slack
@@ -64,7 +65,6 @@ target_link_libraries(slack
 	${OPENSSL_CRYPTO_LIBRARY}
 	${CURL_LIBRARIES}
 	${CURSES_LIBRARIES}
-	${LIBNOTIFY_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT})
 
 set_property(TARGET slack PROPERTY CXX_STANDARD 14)
