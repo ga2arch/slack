@@ -13,11 +13,9 @@
 #include <cstdlib>
 #include <thread>
 #include <future>
-
-// CurlCPP
-#include <curlpp/cURLpp.hpp>
-#include <curlpp/Easy.hpp>
-#include <curlpp/Options.hpp>
+#include <locale>
+#include <codecvt>
+#include <string>
 
 // Rapidjson
 #define RAPIDJSON_HAS_STDSTRING 1

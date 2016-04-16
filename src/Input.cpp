@@ -9,67 +9,54 @@ Input::Input(int y, int x,
     keypad(win, TRUE);
 }
 
-int Input::wait(std::string& input_str, int& line, int& col) {
+int Input::wait(std::wstring& input_str, int& col) {
     const int KEY_ESC = 27;
     const int KEY_BS = 127;
     const int KEY_TAB = 9;
-    int c;
+    wint_t c;
 
-    wmove(win, line, col);
+    highlight(col);
     do {
-        c = wgetch(win);
+        wget_wch(win, &c);
         switch (c) {
-        case KEY_ESC: // ESC or tab event;
+        case KEY_ESC: // ESC to quit;
         case KEY_TAB: // tab to switch to roster selection mode
         case KEY_UP:   // go back in chat history
         case KEY_DOWN:  // go forward in chat history
             return c;
             
         case KEY_BS:
-            if (!input_str.empty()) {
-                input_str.pop_back();
+            if (!input_str.empty() && col > 0) {
                 col--;
-                if (col == 0) {
-                    col = COLS - 24;
-                    if (line == 1) {
-                        wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-                        wscrl(win, -1);
-                        mvwprintw(win, line, 1, "%s", input_str.c_str());
-                        draw_borders();
-                    } else {
-                        line--;
-                    }
-                }
-                mvwprintw(win, line, col, " ");
-                wmove(win, line, col);
+                input_str.erase(col, 1);
+                fixed_print_input(input_str, col);
             }
             break;
+        
         case KEY_RIGHT:
-        case KEY_LEFT: 
+            if (col < input_str.length()) {
+                col++;
+                highlight(col);
+            }
+            break;
+        case KEY_LEFT:
+            if (col > 0) {
+                col--;
+                highlight(col);
+            }
+            break;
         case 10: //enter
             break;
         
         default:
-            input_str.push_back(c);
-            mvwprintw(win, line, col, "%lc", c);
-            if (col ==  COLS - 24) {
-                col = 1;
-                if (line == 2) {
-                    wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-                    wscrl(win, 1);
-                    draw_borders();
-                } else {
-                    line++;
-                }
-            } else {
-                col++;
-            }
+            input_str.insert(col, 1, c);
+            col++;
+            fixed_print_input(input_str, col);
             break;
         }
-    } while (c != 10 && input_str.length() < 4000);
+    } while (c != 10 && input_str.length() < 1000);
 
-    col = 1;
-    line = 1;
+    col = 0;
     client->send_message(input_str);
     input_str.clear();
     wclear(win);
@@ -77,24 +64,37 @@ int Input::wait(std::string& input_str, int& line, int& col) {
     return 0;
 }
 
-void Input::input_context_switch(const Session& current_session) {
+void Input::fixed_print_input(const std::wstring& str, const int &column) {
+    int col = 1, line = 1;
+    int i = 0;
+    
     wclear(win);
-    int line = current_session.line;
-    int col = (current_session.col - 1);
-    int i = current_session.input_str.length() - 1;
-    if (col == 0) {
-        col = COLS - 24;
-        line--;
-    }
-
-    do {
-        mvwprintw(win, line, col, "%c", current_session.input_str[i]);
-        i--;
-        col--;
-        if (col == 0) {
-            col = COLS - 24;
-            line--;
+    while (i < str.length()) {
+        mvwprintw(win, line, col, "%lc", str[i]);
+        i++;
+        col++;
+        if (col == COLS - 23) {
+            col = 1;
+            if (line == 2) {
+                wscrl(win, 1);
+            } else {
+                line++;
+            }
         }
-    } while (i >= 0 && line >= 0);
+    }
     draw_borders();
+    highlight(column);
+}
+
+void Input::input_context_switch(const Session& sess) {
+    fixed_print_input(sess.input_str,  sess.col);
+}
+
+void Input::highlight(int col) {
+    int row = 1;
+    if (col >= COLS - 24) {
+        row = 2;
+    }
+    wmove(win, row, col % (COLS - 24) + 1);
+    wrefresh(win);
 }

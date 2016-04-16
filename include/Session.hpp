@@ -15,25 +15,29 @@
 
 struct Message {
     RosterItem item;
-    std::vector <std::string> content;
+    std::string content;
+    bool sender;
 
     Message(const RosterItem& i,
-            const std::vector <std::string>& c): item(i), content(c) {}
+            const std::string& c,
+            bool x): item(i), content(c), sender(x) {}
+
+    Message() {}
 };
 
 class Session {
 
 public:
-    std::vector<Message> messages;
-    std::string input_str;
+    void add_message(const RosterItem& item, const std::string& str, bool x);
+    
+    std::array<Message, 1000> messages;
+    std::wstring input_str;
 
-    int line = 1;
-    int col = 1;
+    int col = 0;
     int delta = 0;
     int chat_line = 0;
-    int scroll_lines = 0;
     int scrolled_back = 0;
-
+    int last_mess = 0;
 };
 
 #endif /* Session_h */

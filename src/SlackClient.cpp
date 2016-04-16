@@ -92,39 +92,24 @@ void SlackClient::process_event(const std::string& json) {
         }
 
         if (ui->get_last_message_sender(user.channel) != user.id) {
-            ui->add_message(user, user.name);
-            if ((user.channel == ui->roster->get_active_channel()) && (ui->ready)) {
-                ui->chat->draw(ui->get_session());
-            }
+            ui->add_message(user, user.name + ':', true);
         }
         std::string str = format_message(d["text"].GetString());
-        ui->add_message(user, str);
-        if ((user.channel == ui->roster->get_active_channel()) && (ui->ready)) {
-            ui->chat->draw(ui->get_session());
-        } else {
-            ui->roster->highlight_user(user.channel);
-        }
+        ui->add_message(user, str, false);
     }
 
     if (d.HasMember("ok") && d.HasMember("text")) {
         auto const reply_to = d["reply_to"].GetInt();
         me.channel = sent[reply_to];
         if (ui->get_last_message_sender(sent[reply_to]) != me.id) {
-            ui->add_message(me, me.name);
-            if ((me.channel == ui->roster->get_active_channel()) && (ui->ready)) {
-                ui->chat->draw(ui->get_session());
-            }
-        } 
-        std::string str = format_message(d["text"].GetString());
-        ui->add_message(me, str);
-        if ((me.channel == ui->roster->get_active_channel()) && (ui->ready)) {
-            ui->chat->draw(ui->get_session());
-        } else {
-            ui->roster->highlight_user(me.channel);
+            ui->add_message(me, me.name + ':', true);
         }
+        std::string str = format_message(d["text"].GetString());
+        ui->add_message(me, str, false);
+        // check if user is the active one, if ui is ready
     }
     // online/offline events
-    if (d.HasMember("type") && d["type"] == "presence_change") { // why it throws an exception here during program startup?
+    if (d.HasMember("type") && d["type"] == "presence_change") {
         if (me.id != d["user"].GetString()) {
             const RosterItem &x = ui->roster->get_user(d["user"].GetString());
             ui->roster->change_status(d["presence"].GetString(), x);
@@ -132,21 +117,43 @@ void SlackClient::process_event(const std::string& json) {
     }
 }
 
+static size_t write_data(void* ptr, size_t size, size_t nmemb, void* userdata) {
+    std::ostream* os = static_cast<std::ostream*>(userdata);
+    std::streamsize len = size * nmemb;
+    return (os->write(static_cast<char*>(ptr), len)) ? len : 0;
+}
+
 Document SlackClient::call(const std::string &api, const std::string &query) {
     Document d;
     std::ostringstream os;
 
     const auto token = std::getenv("SLACK_TOKEN");
+    
+    assert(token != nullptr);
+    
     const auto base_url = "https://slack.com/api/";
     const auto url = base_url + api + "?token=" + token + "&" + query;
-
-    os << curlpp::options::Url(url);
+    
+    CURL *curl = curl_easy_init();
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_data);
+    curl_easy_setopt(curl, CURLOPT_FILE, &os);
+    CURLcode res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+    
+    assert(res == CURLE_OK);
+    
+    long respcode; //response code of the http transaction
+    curl_easy_getinfo(curl,CURLINFO_RESPONSE_CODE, &respcode);
+    
+    assert(respcode == 200);
+    
     d.Parse(os.str().c_str());
-
     return d;
 }
 
-void SlackClient::send_message(const std::string& message) {
+void SlackClient::send_message(const std::wstring& message) {
     StringBuffer buffer;
     auto channel = ui->roster->get_active_channel().c_str();
 
@@ -160,7 +167,9 @@ void SlackClient::send_message(const std::string& message) {
 
     writer.String(channel);
     writer.String("text");
-    writer.String(message);
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    std::string s = converter.to_bytes(message);
+    writer.String(s);
     writer.EndObject();
     
     sent[sent_id] = channel;

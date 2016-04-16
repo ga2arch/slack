@@ -1,15 +1,27 @@
 # slack++
 c++ slack ncurses client
 
-Slack++ is gonna be rewritten in Qt.
-In master you'll find ncurses version while Qt version is not ready; 
-when we think the qt version reaches a good shape, we'll move it to master and remove previous ncurses based application.
-
-To build master you need: 
+To build you need:
 
 * rapidjson
-* curlpp
 * cmake
+* openssl
+* libcurl
+
+** Optional:**
+
+* libnotify
 
 and a fairly recent c++ compiler.
 It was tested on Archlinux and Mac OS X 10.10.
+
+## How to build & run?
+
+    $ mkdir build
+    $ cd build
+    $ cmake -G "Unix Makefiles" ../
+    $ make
+    $ ./slack
+
+You've got to export SLACK_TOKEN from eg .bashrc, eg: by adding at the end of .bashrc in your home:
+export SLACK_TOKEN=xxxxxxxxxxxxx

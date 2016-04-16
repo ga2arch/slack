@@ -67,8 +67,6 @@ int Roster::wait() {
     int line = 2;
     int current_active = active;
 
-    wattron(win, A_BOLD);
-
     if ((current_active >= users.size()) && (users.size() != 0)) {
         line++;
     }
@@ -104,25 +102,26 @@ int Roster::wait() {
             mvwprintw(win, current_active + line, 1, "* ");
         }
     } while (c != 10);
-    // properly remove notifications for new message
     if (active != current_active) {
         active = current_active;
-        if (active < users.size()) {
-            auto it = users.begin();
-            std::advance(it, active);
-            if (it->second.status == "active") {
-                wattron(win, COLOR_PAIR(2));
-            }
-            mvwprintw(win, active + line, 3, "%.*s", 18, it->second.name.c_str());
-            wattroff(win, COLOR_PAIR(2));
-            wrefresh(win);
-        }
     } else {
         c = 0;
     }
 
-    wattroff(win, A_BOLD);
     return c;
+}
+
+void Roster::remove_highlight() {
+    if (active < users.size()) {
+        auto it = users.begin();
+        std::advance(it, active);
+        if (it->second.status == "active") {
+            wattron(win, COLOR_PAIR(2));
+        }
+        mvwprintw(win, active + 2, 3, "%.*s", 18, it->second.name.c_str());
+        wattroff(win, COLOR_PAIR(2));
+        wrefresh(win);
+    }
 }
 
 std::string Roster::get_active_channel() {
@@ -140,7 +139,6 @@ std::string Roster::get_active_channel() {
 void Roster::change_status(const std::string& status, const RosterItem& user) {
     int i = 0;
 
-    wattron(win, A_BOLD);
     for (auto& kv: users) {
         if (kv.second.name == user.name) {
             kv.second.status = status;
@@ -153,7 +151,6 @@ void Roster::change_status(const std::string& status, const RosterItem& user) {
         }
         i++;
     }
-    wattroff(win, A_BOLD);
     wrefresh(win);
 }
 

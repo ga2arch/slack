@@ -38,25 +38,36 @@ void SlackUI::show() {
 void SlackUI::main_ui_cycle() {
     int c;
     
+    notify_init("Slack++");
     c = roster->wait();
     if (c != 27) {
-        chat->chat_context_switch(get_session());
+        chat->draw(get_session(), LINES - 6);
         ready = true;
+        roster->remove_highlight();
+        quit_notification();
     }
     while (c != 27) {
-        c = input->wait(get_session().input_str, get_session().line, get_session().col);
+        c = input->wait(get_session().input_str, get_session().col);
         if (c == 9) {
             c = roster->wait();
             if ((c != 27) && (c != 0)) {
-                chat->chat_context_switch(get_session());
+                chat->draw(get_session(), LINES - 6);
                 input->input_context_switch(get_session());
+                if (get_session().scrolled_back == 0) {
+                    roster->remove_highlight();
+                    quit_notification();
+                }
             }
         } else if (c == KEY_UP) {
             chat->scroll_back(get_session());
         } else if (c == KEY_DOWN) {
-            chat->scroll_forward(get_session());
+            if (chat->scroll_forward(get_session()) == 0) {
+                roster->remove_highlight();
+                quit_notification();
+            }
         }
     }
+    notify_uninit();
 }
 
 Session& SlackUI::get_session() {
@@ -74,31 +85,64 @@ void SlackUI::setup_ncurses() {
     raw();
     noecho();
     ESCDELAY = 25;
-    curs_set(0);
+    curs_set(2);
+    notimeout(stdscr, TRUE);
     start_color();
     init_pair(1, COLOR_BLUE, COLOR_BLACK);
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     init_pair(3, COLOR_CYAN, COLOR_BLACK);
 }
 
-void SlackUI::add_message(const RosterItem& item, const std::string& content) {
+void SlackUI::add_message(const RosterItem& item, const std::string& content, bool sender) {
     int j = 0;
-    std::vector <std::string> substr;
+    bool check = false;
 
     do {
-        substr.push_back(content.substr(j, COLS - 24).c_str());
+        sessions[item.channel].add_message(item, content.substr(j, COLS - 24).c_str(), sender);
         j += COLS - 24;
         sessions[item.channel].chat_line++;
         if (sessions[item.channel].chat_line > LINES - 6) {
             sessions[item.channel].delta++;
-            sessions[item.channel].scroll_lines++;
+        }
+        // check if user is the active one, if ui is ready and if current session is not scrolled back
+        if ((item.channel == roster->get_active_channel()) && (ready) && (sessions[item.channel].scrolled_back == 0)) {
+            chat->draw(sessions[item.channel], 1);
+            check = true;
         }
     } while (j < content.length());
-    sessions[item.channel].messages.emplace_back(item, substr);
+
+    if (!check) {
+        if (!sender) {
+            roster->highlight_user(item.channel);
+#ifdef LIBNOTIFY_FOUND
+            notify_send(item.name, content.substr(0, 40));
+#endif
+        }
+        if (sessions[item.channel].scrolled_back > 0) {
+            sessions[item.channel].scrolled_back += j / (COLS - 24);
+        }
+    }
+
+    input->highlight(sessions[item.channel].col);
 }
 
+#ifdef LIBNOTIFY_FOUND
+void SlackUI::notify_send(const std::string& name, const std::string& mesg) {
+    std::string noti = "New message from " + name + ":\n" + mesg;
+    n = notify_notification_new ("Slack++", noti.c_str(), 0);
+    notify_notification_set_timeout(n, 5000);
+    notify_notification_show(n, 0);
+}
+
+void SlackUI::quit_notification() {
+    if (n) {
+        notify_notification_close(n, NULL);
+    }
+}
+#endif
+
 const std::string SlackUI::get_last_message_sender(const std::string& channel) {
-    int size = sessions[channel].messages.size();
+    int size = sessions[channel].last_mess;
     try {
         return sessions[channel].messages.at(size - 1).item.id;
     } catch (std::out_of_range&) {

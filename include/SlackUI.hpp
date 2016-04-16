@@ -12,6 +12,10 @@
 #include <map>
 #include <mutex>
 
+#ifdef LIBNOTIFY_FOUND
+#include <libnotify/notify.h>
+#endif
+
 #include "Log.hpp"
 #include "Chat.hpp"
 #include "Input.hpp"
@@ -30,7 +34,8 @@ public:
     void main_ui_cycle();
     Session& get_session();
     void add_message(const RosterItem& item,
-                     const std::string& content);
+                     const std::string& content,
+                     bool sender);
     const std::string get_last_message_sender(const std::string& channel);
 
     std::unique_ptr<Roster> roster;
@@ -38,14 +43,19 @@ public:
     std::unique_ptr<Input>  input;
     
     std::timed_mutex ui_lock;
-    
-    bool ready = false;
 
 private:
     void setup_ncurses();
-    void resize();
-
+#ifdef LIBNOTIFY_FOUND
+    void notify_send(const std::string& name, const std::string& mesg);
+    void quit_notification();
+    
+    NotifyNotification *n = NULL;
+#endif
+    
+    bool ready = false;
     SlackClient *client;
+    
     std::map<std::string, Session> sessions;
 };
 

@@ -14,7 +14,7 @@ class SlackClient {
 public:
     void set_ui(SlackUI* ui);
     void start();
-    void send_message(const std::string& message);
+    void send_message(const std::wstring& message);
 
 private:
     const std::string fetch_data();
@@ -28,6 +28,8 @@ private:
     std::string get_direct_channel(const std::string& userid);
     
     std::string format_message(std::string str);
+    
+//     size_t write_data(void* ptr, size_t size, size_t nmemb, void* userdata);
 
     SlackUI* ui;
     WebsocketClient wc;

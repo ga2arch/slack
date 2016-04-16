@@ -11,18 +11,14 @@
 
 #include <iostream>
 #include <sstream>
+#include <list>
 #include <vector>
 #include <mutex>
 #include <unistd.h>
 
 #include <sys/time.h>
 #include <sys/types.h>
-#include <curlpp/cURLpp.hpp>
-#include <curlpp/Easy.hpp>
-#include <curlpp/Options.hpp>
-#include <curlpp/Exception.hpp>
-#include <curlpp/Infos.hpp>
-
+#include <curl/curl.h>
 
 class WebsocketClient {
 
@@ -264,12 +260,10 @@ public:
 
 private:
     OnMessageCallback on_message;
-    
-    CURL* curl;
-    curl_socket_t socket;
 
     std::mutex lock;
-
+    CURL *curl;
+    curl_socket_t socket;
 };
 
 #endif /* Websockets_h */

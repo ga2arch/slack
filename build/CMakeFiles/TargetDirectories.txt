@@ -1,0 +1,3 @@
+/home/federico/Progetti/slack/build/CMakeFiles/edit_cache.dir
+/home/federico/Progetti/slack/build/CMakeFiles/rebuild_cache.dir
+/home/federico/Progetti/slack/build/CMakeFiles/slack.dir
