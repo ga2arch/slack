@@ -35,7 +35,7 @@ set(SOURCES
 	include/Session.hpp
 	include/WebsocketClient.hpp)
 
-add_executable(slack main.cpp ${SOURCES})
+add_executable(slack++ main.cpp ${SOURCES})
 
 find_package(OpenSSL REQUIRED)
 find_package(RapidJSON REQUIRED)
@@ -44,27 +44,27 @@ find_package(Libnotify)
 if(LIBNOTIFY_FOUND)
     message("Using libnotify")
     add_definitions( -DLIBNOTIFY_FOUND)
-    target_include_directories(slack PRIVATE ${LIBNOTIFY_INCLUDE_DIRS})
-    target_link_libraries (slack ${LIBNOTIFY_LIBRARIES})
+    target_include_directories(slack++ PRIVATE ${LIBNOTIFY_INCLUDE_DIRS})
+    target_link_libraries (slack++ ${LIBNOTIFY_LIBRARIES})
 endif(LIBNOTIFY_FOUND)
 find_package(Threads)
 
 set(CURSES_NEED_NCURSES TRUE)
 find_package(Curses REQUIRED)
 
-target_include_directories(slack
+target_include_directories(slack++
 	PRIVATE ${OPENSSL_INCLUDE_DIRS}
 	PRIVATE ${RAPIDJSON_INCLUDE_DIRS}
 	PRIVATE ${CURL_INCLUDE_DIRS}
 	PRIVATE ${CURSES_INCLUDE_DIR}
 	PUBLIC include)
 
-target_link_libraries(slack
+target_link_libraries(slack++
 	${OPENSSL_SSL_LIBRARY}
 	${OPENSSL_CRYPTO_LIBRARY}
 	${CURL_LIBRARIES}
 	${CURSES_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT})
 
-set_property(TARGET slack PROPERTY CXX_STANDARD 14)
+set_property(TARGET slack++ PROPERTY CXX_STANDARD 14)
 #cotire(slack)

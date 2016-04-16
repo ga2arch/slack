@@ -13,9 +13,13 @@ Window::~Window() {
 }
 
 void Window::draw_borders() {
+    int row, col;
+    
+    getmaxyx(win, row, col);
+    
     wborder(win, 0, 0, 0, 0, 0, 0, 0, 0);
     wattron(win, A_BOLD);
-    mvwprintw(win, 0, 0, title.c_str());
+    mvwprintw(win, 0, 0, "%.*s", col, title.c_str());
     wattroff(win, A_BOLD);
     wrefresh(win);
 }
