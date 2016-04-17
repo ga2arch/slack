@@ -118,6 +118,9 @@ void SlackClient::process_event(const std::string& json) {
         me.latest_ts = d["ts"].GetString();
         std::string timestamp = ts_h_readable(me.latest_ts);
         ui->add_message(me, timestamp + " " + str, false, true);
+        // FIXME: here we don't account for different chat:
+        // eg, if same user (me) writes to 2 chats in 5s, me.updating will still evaluate as true
+        // even if i changed chat
         if (!me.updating) {
             im_mark(&me);
         }
@@ -237,5 +240,6 @@ void SlackClient::update_mark(RosterItem *item) {
     writer.EndObject();
     
     wc.send(buffer.GetString());
+
     item->updating = false;
 }
