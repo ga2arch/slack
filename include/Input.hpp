@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <cwctype>
+
 #include "Window.hpp"
 #include "Session.hpp"
 

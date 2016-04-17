@@ -32,7 +32,13 @@ int Input::wait(std::wstring& input_str, int& col) {
                 fixed_print_input(input_str, col);
             }
             break;
-        
+        case KEY_DC:
+            if (!input_str.empty() && col < input_str.length()) {
+                input_str.erase(col, 1);
+                fixed_print_input(input_str, col);
+            }
+            break;
+            
         case KEY_RIGHT:
             if (col < input_str.length()) {
                 col++;
@@ -49,9 +55,11 @@ int Input::wait(std::wstring& input_str, int& col) {
             break;
         
         default:
-            input_str.insert(col, 1, c);
-            col++;
-            fixed_print_input(input_str, col);
+            if (iswprint(c)) {
+                input_str.insert(col, 1, c);
+                col++;
+                fixed_print_input(input_str, col);
+            }
             break;
         }
     } while (c != 10 && input_str.length() < 1000);

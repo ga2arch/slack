@@ -43,6 +43,7 @@ private:
     void notify_send(const std::string& name, const std::string& mesg);
 #endif
     void quit_notification();
+    void remove_notification();
     
 #ifdef LIBNOTIFY_FOUND
     NotifyNotification *n = NULL;

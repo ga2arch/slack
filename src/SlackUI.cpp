@@ -44,8 +44,7 @@ void SlackUI::main_ui_cycle() {
     if (c != 27) {
         chat->draw(get_session(), LINES - 6);
         ready = true;
-        roster->remove_highlight();
-        quit_notification();
+        remove_notification();
     }
     while (c != 27) {
         c = input->wait(get_session().input_str, get_session().col);
@@ -55,22 +54,25 @@ void SlackUI::main_ui_cycle() {
                 chat->draw(get_session(), LINES - 6);
                 input->input_context_switch(get_session());
                 if (get_session().scrolled_back == 0) {
-                    roster->remove_highlight();
-                    quit_notification();
+                    remove_notification();
                 }
             }
         } else if (c == KEY_UP) {
             chat->scroll_back(get_session());
         } else if (c == KEY_DOWN) {
             if (chat->scroll_forward(get_session()) == 0) {
-                roster->remove_highlight();
-                quit_notification();
+                remove_notification();
             }
         }
     }
 #ifdef LIBNOTIFY_FOUND
     notify_uninit();
 #endif
+}
+
+void SlackUI::remove_notification() {
+    roster->remove_highlight();
+    quit_notification();
 }
 
 Session& SlackUI::get_session() {

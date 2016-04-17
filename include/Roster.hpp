@@ -10,19 +10,23 @@ struct RosterItem {
     std::string name;
     std::string channel;
     std::string status;
+    int unread_counter;
+    bool muted;
 
     RosterItem() {}
 
     RosterItem(const std::string& i,
                const std::string& n,
                const std::string& c,
-               const std::string& s): id(i), name(n), channel(c), status(s) {}
+               const std::string& s): id(i), name(n), channel(c), status(s), unread_counter(0), muted(false) {}
 
     RosterItem& operator=(const RosterItem& other) {
         id = other.id;
         name = other.name;
         channel = other.channel;
         status = other.status;
+        unread_counter = other.unread_counter;
+        muted = other.muted;
 
         return *this;
     }

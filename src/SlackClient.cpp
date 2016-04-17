@@ -20,6 +20,7 @@ const std::string SlackClient::fetch_data(const std::string& token) {
     const auto& users  = d["users"];
     const auto& ims    = d["ims"];
     const auto& groups = d["groups"];
+    //const auto& channels = d["channels"];
     
     const std::string company_name = d["team"]["name"].GetString();
     ui->set_company_name(company_name);

@@ -10,12 +10,15 @@ TODO:
 - [x] add timestamp to messages
 - [x] owner's messages should not trigger libnotify notifications
 - [x] add company name to UI
+- [x] add new messages counter beside user name in ROster
+- [ ] send "message read" events to slack (to avoid N unread messages when entering in slack site): https://api.slack.com/events/im_marked
 - [ ] cleanup code...private things etc etc
 
 MUST FIX (UI):
 
 - [ ] Make everything terminal window size agnostic
 - [ ] scroll even Roster win if needed
+- [x] support del button in Input
 - [x] scroll chat back (with up arrow).
 - [x] proper unicode support
 - [x] re-focus input after chat redraw
@@ -25,6 +28,6 @@ MUST FIX (UI):
 
 LONGTERM AIMS:
 
-- [ ] multi companies support
+- [ ] multi companies support (is it needed?)
 - [ ] handle more things...(eg: inline code, tags...)
 - [ ] chat history call

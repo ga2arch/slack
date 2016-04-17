@@ -11,7 +11,7 @@ void Roster::draw() {
             if (kv.second.status == "active") {
                 wattron(win, COLOR_PAIR(2));
             }
-            mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
+            mvwprintw(win, i + line, 3, "%.*s", 16, kv.second.name.c_str());
             wattroff(win, COLOR_PAIR(2));
             i++;
         }
@@ -23,7 +23,7 @@ void Roster::draw() {
     if (groups.size() > 0) {
         mvwprintw(win, line++, 1, "GROUPS:");
         for (const auto& kv: groups) {
-            mvwprintw(win, i + line, 3, "%.*s", 18, kv.second.name.c_str());
+            mvwprintw(win, i + line, 3, "%.*s", 16, kv.second.name.c_str());
             i++;
         }
     }
@@ -118,7 +118,9 @@ void Roster::remove_highlight() {
         if (it->second.status == "active") {
             wattron(win, COLOR_PAIR(2));
         }
-        mvwprintw(win, active + 2, 3, "%.*s", 18, it->second.name.c_str());
+        mvwprintw(win, active + 2, 3, "%.*s", 16, it->second.name.c_str());
+        it ->second.unread_counter = 0;
+        mvwprintw(win, active + 2, 19, "  ");
         wattroff(win, COLOR_PAIR(2));
         wrefresh(win);
     }
@@ -145,7 +147,7 @@ void Roster::change_status(const std::string& status, const RosterItem& user) {
             if (status == "active") {
                 wattron(win, COLOR_PAIR(2));
             }
-            mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
+            mvwprintw(win, i + 2, 3, "%.*s", 16, kv.second.name.c_str());
             wattroff(win, COLOR_PAIR(2));
             break;
         }
@@ -157,10 +159,16 @@ void Roster::change_status(const std::string& status, const RosterItem& user) {
 void Roster::highlight_user(const std::string &channel) {
     int i = 0;
 
-    for (const auto& kv: users) {
+    for (auto& kv: users) {
         if (kv.second.channel == channel) {
             wattron(win, COLOR_PAIR(3));
-            mvwprintw(win, i + 2, 3, "%.*s", 18, kv.second.name.c_str());
+            mvwprintw(win, i + 2, 3, "%.*s", 16, kv.second.name.c_str());
+            kv.second.unread_counter++;
+            if (kv.second.unread_counter < 10) {
+                mvwprintw(win, i + 2, 20, "%d", kv.second.unread_counter);
+            } else {
+                mvwprintw(win, i + 2, 19, "9+");
+            }
             wattroff(win, COLOR_PAIR(3));
             break;
         }
