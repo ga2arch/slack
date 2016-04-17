@@ -31,8 +31,6 @@ private:
     void im_mark(RosterItem *item);
     void update_mark(RosterItem *item);
     
-//     size_t write_data(void* ptr, size_t size, size_t nmemb, void* userdata);
-
     SlackUI* ui;
     WebsocketClient wc;
 

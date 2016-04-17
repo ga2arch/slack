@@ -48,7 +48,6 @@ const std::string SlackClient::fetch_data() {
         if (id == me.id) {
             me.name = name;
             me.channel = channel;
-
             continue;
         };
 
@@ -82,7 +81,7 @@ void SlackClient::connect(const std::string& uri) {
 
 void SlackClient::process_event(const std::string& json) {
     Document d;
-    
+
     d.Parse(json.c_str());
     
     // other users messages
@@ -226,6 +225,7 @@ void SlackClient::im_mark(RosterItem *item) {
     }).detach();
 }
 
+// FIXME: not working...
 void SlackClient::update_mark(RosterItem *item) {
     StringBuffer buffer;
     
