@@ -1,17 +1,18 @@
 #include "SlackClient.hpp"
 
 void SlackClient::start(const std::string token) {
-    connect(fetch_data(token));
+    auth_token = token;
+    connect(fetch_data());
 }
 
 void SlackClient::set_ui(SlackUI* ui) {
     this->ui = ui;
 }
 
-const std::string SlackClient::fetch_data(const std::string& token) {
+const std::string SlackClient::fetch_data() {
     Log::d() << "Getting websocket url ...";
 
-    auto d = call("rtm.start", "", token);
+    auto d = call("rtm.start", "");
 
     Log::d() << " OK" << std::endl;
 
@@ -83,7 +84,8 @@ void SlackClient::process_event(const std::string& json) {
     Document d;
     
     d.Parse(json.c_str());
-
+    
+    // other users messages
     if (d.HasMember("type") && d["type"] == "message") {
         RosterItem user;
         
@@ -97,10 +99,15 @@ void SlackClient::process_event(const std::string& json) {
             ui->add_message(user, user.name + ':', true, false);
         }
         std::string str = format_message(d["text"].GetString());
-        std::string timestamp = timeStampToHReadble(d["ts"].GetString());
+        user.latest_ts = d["ts"].GetString();
+        std::string timestamp = ts_h_readable(user.latest_ts);
         ui->add_message(user, timestamp + " " + str, false, false);
+        if (!user.updating) {
+            im_mark(&user);
+        }
     }
-
+    
+    // my messages
     if (d.HasMember("ok") && d.HasMember("text")) {
         auto const reply_to = d["reply_to"].GetInt();
         me.channel = sent[reply_to];
@@ -108,9 +115,14 @@ void SlackClient::process_event(const std::string& json) {
             ui->add_message(me, me.name + ':', true, true);
         }
         std::string str = format_message(d["text"].GetString());
-        std::string timestamp = timeStampToHReadble(d["ts"].GetString());
+        me.latest_ts = d["ts"].GetString();
+        std::string timestamp = ts_h_readable(me.latest_ts);
         ui->add_message(me, timestamp + " " + str, false, true);
+        if (!me.updating) {
+            im_mark(&me);
+        }
     }
+    
     // online/offline events
     if (d.HasMember("type") && d["type"] == "presence_change") {
         if (me.id != d["user"].GetString()) {
@@ -126,12 +138,12 @@ static size_t write_data(void* ptr, size_t size, size_t nmemb, void* userdata) {
     return (os->write(static_cast<char*>(ptr), len)) ? len : 0;
 }
 
-Document SlackClient::call(const std::string &api, const std::string &query, const std::string &token) {
+Document SlackClient::call(const std::string &api, const std::string &query) {
     Document d;
     std::ostringstream os;
     
     const auto base_url = "https://slack.com/api/";
-    const auto url = base_url + api + "?token=" + token + "&" + query;
+    const auto url = base_url + api + "?token=" + auth_token + "&" + query;
     
     CURL *curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -163,7 +175,6 @@ void SlackClient::send_message(const std::wstring& message) {
     writer.String("type");
     writer.String("message");
     writer.String("channel");
-
     writer.String(channel);
     writer.String("text");
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
@@ -194,11 +205,37 @@ std::string SlackClient::format_message(std::string str) {
     return str;
 }
 
-std::string SlackClient::timeStampToHReadble(const std::string& rawtime) {
+std::string SlackClient::ts_h_readable(const std::string& rawtime) {
     struct tm * dt;
     char buffer [30];
     long time = std::stol(rawtime, nullptr);
     dt = localtime(&time);
     strftime(buffer, sizeof(buffer), "%H:%M", dt);
     return std::string(buffer);
+}
+
+
+void SlackClient::im_mark(RosterItem *item) {
+    item->updating = true;
+    std::thread([&, item]() {
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        update_mark(item);
+    }).detach();
+}
+
+void SlackClient::update_mark(RosterItem *item) {
+    StringBuffer buffer;
+    
+    Writer<StringBuffer> writer(buffer);
+    writer.StartObject();
+    writer.String("token");
+    writer.String(auth_token.c_str());
+    writer.String("channel");
+    writer.String(item->channel.c_str());
+    writer.String("ts");
+    writer.String(item->latest_ts.c_str());
+    writer.EndObject();
+    
+    wc.send(buffer.GetString());
+    item->updating = false;
 }

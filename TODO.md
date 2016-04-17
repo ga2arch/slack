@@ -11,7 +11,7 @@ TODO:
 - [x] owner's messages should not trigger libnotify notifications
 - [x] add company name to UI
 - [x] add new messages counter beside user name in ROster
-- [ ] send "message read" events to slack (to avoid N unread messages when entering in slack site): https://api.slack.com/events/im_marked
+- [x] send "message read" events to slack (to avoid N unread messages when entering in slack site)
 - [ ] cleanup code...private things etc etc
 
 MUST FIX (UI):
@@ -30,4 +30,4 @@ LONGTERM AIMS:
 
 - [ ] multi companies support (is it needed?)
 - [ ] handle more things...(eg: inline code, tags...)
-- [ ] chat history call
+- [ ] chat history call : https://api.slack.com/methods/im.history

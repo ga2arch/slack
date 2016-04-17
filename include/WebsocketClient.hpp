@@ -196,7 +196,6 @@ public:
     }
 
     void send_frame(int type, const std::string& data) {
-        lock.lock();
         std::string frame;
 
         const uint8_t masking_key[4] = { 0x12, 0x34, 0x56, 0x78 };
@@ -238,7 +237,6 @@ public:
             Log::d() << "Could not send." << std::endl;
         }
 
-        lock.unlock();
     }
 
     void send(const std::string& data) {
@@ -252,7 +250,6 @@ public:
 private:
     OnMessageCallback on_message;
 
-    std::mutex lock;
     CURL *curl;
     curl_socket_t socket;
 };
