@@ -22,7 +22,7 @@ class Session {
 public:
     void add_message(const RosterItem& item, const std::string& str, bool x);
     
-    std::array<Message, 1000> messages;
+    std::array<Message, 5000> messages;
     std::wstring input_str;
 
     int col = 0;
@@ -30,4 +30,5 @@ public:
     int chat_line = 0;
     int scrolled_back = 0;
     int last_mess = 0;
+    int latest_updated_msg = 0;
 };

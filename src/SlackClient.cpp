@@ -11,8 +11,9 @@ void SlackClient::set_ui(SlackUI* ui) {
 
 const std::string SlackClient::fetch_data() {
     Log::d() << "Getting websocket url ...";
-
-    auto d = call("rtm.start", "");
+    
+    std::vector<std::string> v;
+    auto d = call("rtm.start", v);
 
     Log::d() << " OK" << std::endl;
 
@@ -98,12 +99,8 @@ void SlackClient::process_event(const std::string& json) {
             ui->add_message(user, user.name + ':', true, false);
         }
         std::string str = format_message(d["text"].GetString());
-        user.latest_ts = d["ts"].GetString();
-        std::string timestamp = ts_h_readable(user.latest_ts);
+        std::string timestamp = ts_h_readable(d["ts"].GetString());
         ui->add_message(user, timestamp + " " + str, false, false);
-        if (!user.updating) {
-            im_mark(&user);
-        }
     }
     
     // my messages
@@ -114,15 +111,8 @@ void SlackClient::process_event(const std::string& json) {
             ui->add_message(me, me.name + ':', true, true);
         }
         std::string str = format_message(d["text"].GetString());
-        me.latest_ts = d["ts"].GetString();
-        std::string timestamp = ts_h_readable(me.latest_ts);
+        std::string timestamp = ts_h_readable(d["ts"].GetString());
         ui->add_message(me, timestamp + " " + str, false, true);
-        // FIXME: here we don't account for different chat:
-        // eg, if same user (me) writes to 2 chats in 5s, me.updating will still evaluate as true
-        // even if i changed chat
-        if (!me.updating) {
-            im_mark(&me);
-        }
     }
     
     // online/offline events
@@ -140,12 +130,16 @@ static size_t write_data(void* ptr, size_t size, size_t nmemb, void* userdata) {
     return (os->write(static_cast<char*>(ptr), len)) ? len : 0;
 }
 
-Document SlackClient::call(const std::string &api, const std::string &query) {
+Document SlackClient::call(const std::string &api, const std::vector<std::string> &query) {
     Document d;
     std::ostringstream os;
     
     const auto base_url = "https://slack.com/api/";
-    const auto url = base_url + api + "?token=" + auth_token + "&" + query;
+    auto url = base_url + api + "?token=" + auth_token;
+    
+    for (std::string str : query) {
+        url = url + "&" + str;
+    }
     
     CURL *curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -216,30 +210,16 @@ std::string SlackClient::ts_h_readable(const std::string& rawtime) {
     return std::string(buffer);
 }
 
-
-void SlackClient::im_mark(RosterItem *item) {
-    item->updating = true;
-    std::thread([&, item]() {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        update_mark(item);
-    }).detach();
-}
-
-// FIXME: not working...
-void SlackClient::update_mark(RosterItem *item) {
-    StringBuffer buffer;
+void SlackClient::update_mark() {
+    auto channel = ui->roster->get_active_channel();
+    auto type = ui->roster->get_active_type();
+    auto now = std::time(nullptr);
+    std::stringstream ss;
+    ss << now;
     
-    Writer<StringBuffer> writer(buffer);
-    writer.StartObject();
-    writer.String("token");
-    writer.String(auth_token.c_str());
-    writer.String("channel");
-    writer.String(item->channel.c_str());
-    writer.String("ts");
-    writer.String(item->latest_ts.c_str());
-    writer.EndObject();
+    std::vector<std::string> parameters;
+    parameters.push_back("channel=" + channel);
+    parameters.push_back("ts=" + ss.str());
     
-    wc.send(buffer.GetString());
-
-    item->updating = false;
+    call(type + ".mark", parameters);
 }

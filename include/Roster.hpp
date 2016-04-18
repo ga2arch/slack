@@ -12,15 +12,13 @@ struct RosterItem {
     std::string status;
     int unread_counter;
     bool muted;
-    std::string latest_ts;
-    bool updating;
 
     RosterItem() {}
 
     RosterItem(const std::string& i,
                const std::string& n,
                const std::string& c,
-               const std::string& s): id(i), name(n), channel(c), status(s), unread_counter(0), muted(false), updating(false) {}
+               const std::string& s): id(i), name(n), channel(c), status(s), unread_counter(0), muted(false) {}
 
     RosterItem& operator=(const RosterItem& other) {
         id = other.id;
@@ -29,8 +27,6 @@ struct RosterItem {
         status = other.status;
         unread_counter = other.unread_counter;
         muted = other.muted;
-        latest_ts = other.latest_ts;
-        updating = other.updating;
 
         return *this;
     }
@@ -57,6 +53,7 @@ public:
 
     RosterItem get_user(const std::string& id);
     RosterItem get_group(const std::string& id);
+    std::string get_active_type();
 
     void remove_user(const std::string& id);
 

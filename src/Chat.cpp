@@ -26,7 +26,7 @@ void Chat::draw(Session& sess, int num_lines) {
     }
     while (i > 0) {
         // dim needed because messages is a circular array of 1000 elements
-        int dim = (size - num_lines + 1000) % 1000;
+        int dim = (size - num_lines + 5000) % 5000;
         bool sender = sess.messages.at(dim).sender;
         auto m = sess.messages.at(dim).content;
         if (sender) {
@@ -52,7 +52,9 @@ void Chat::print_starting_message(const std::string& mesg) {
 }
 
 void Chat::scroll_back(Session& sess) {
-    if (sess.scrolled_back == sess.delta) {
+    // our limits are: 5000 (max number of stored messages) and sess.delta (because
+    // we only can scroll back if sess.delta > 0, and our limit is sess.delta
+    if (sess.scrolled_back == std::min(sess.delta, 5000)) {
         return;
     }
     

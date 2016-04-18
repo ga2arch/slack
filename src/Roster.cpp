@@ -138,6 +138,14 @@ std::string Roster::get_active_channel() {
     }
 }
 
+std::string Roster::get_active_type() {
+    if (active < users.size()) {
+        return "im";
+    } else {
+        return "group";
+    }
+}
+
 void Roster::change_status(const std::string& status, const RosterItem& user) {
     int i = 0;
 

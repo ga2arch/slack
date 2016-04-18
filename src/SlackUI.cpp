@@ -1,11 +1,3 @@
-//
-//  SlackUI.cpp
-//  slack++
-//
-//  Created by Gabriele Carrettoni on 04/10/15.
-//
-//
-
 #include "SlackUI.hpp"
 
 void SlackUI::set_client(SlackClient* client) {
@@ -45,6 +37,7 @@ void SlackUI::main_ui_cycle() {
         chat->draw(get_session(), LINES - 6);
         ready = true;
         remove_notification();
+        start_timer();
     }
     while (c != 27) {
         c = input->wait(get_session().input_str, get_session().col);
@@ -65,6 +58,8 @@ void SlackUI::main_ui_cycle() {
             }
         }
     }
+    // before leaving, make sure we updated current chat's mark
+    update_mark();
 #ifdef LIBNOTIFY_FOUND
     notify_uninit();
 #endif
@@ -161,4 +156,22 @@ const std::string SlackUI::get_last_message_sender(const std::string& channel) {
 
 void SlackUI::set_company_name(const std::string &name) {
     roster = std::make_unique<Roster>(LINES, 22, 0, 0, name);
+}
+
+void SlackUI::update_mark() {
+    if (get_session().scrolled_back == 0 && get_session().last_mess != get_session().latest_updated_msg) {
+        client->update_mark();
+        get_session().latest_updated_msg = get_session().last_mess;
+    }
+}
+// update current chat "mark" every 10 seconds
+void SlackUI::timer_func() {
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    update_mark();
+    timer_func();
+}
+
+void SlackUI::start_timer() {
+    t = std::thread(std::bind(&SlackUI::timer_func, this));
+    t.detach();
 }

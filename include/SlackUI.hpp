@@ -44,6 +44,9 @@ private:
 #endif
     void quit_notification();
     void remove_notification();
+    void start_timer();
+    void update_mark();
+    void timer_func();
     
 #ifdef LIBNOTIFY_FOUND
     NotifyNotification *n = NULL;
@@ -51,4 +54,5 @@ private:
     bool ready = false;
     SlackClient *client;
     std::map<std::string, Session> sessions;
+    std::thread t;
 };
