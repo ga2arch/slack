@@ -10,7 +10,7 @@
 int main(int argc, char* argv[]) {
     SlackUI ui;
     SlackClient c;
-
+    
     ui.set_client(&c);
     c.set_ui(&ui);
     
@@ -24,8 +24,7 @@ int main(int argc, char* argv[]) {
     }
     
     assert(token != nullptr);
-
-    std::thread([&]() { c.start(token); }).detach();
-    ui.ui_lock.lock();
+    
+    c.set_token(token);
     ui.show();
 }

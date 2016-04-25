@@ -4,7 +4,6 @@
 #include <cwctype>
 
 #include "Window.hpp"
-#include "Session.hpp"
 
 class SlackClient;
 
@@ -16,11 +15,13 @@ public:
           const std::string &title,
           SlackClient *cl);
 
-    int wait(std::wstring& input_str, int& col);
+    int wait(Session &sess);
 
     void input_context_switch(const Session& current_session);
     
     void highlight(int col);
+    
+    void clear();
 
 private:
     void fixed_print_input(const std::wstring& str, const int &column);

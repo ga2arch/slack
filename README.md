@@ -36,3 +36,15 @@ so you can simply start 2 or more instances of slack++, with every company token
 You can create an alias for each in .bashrc, something like:
 
 alias company="./slack company_token"
+
+
+## Instructions:
+
+* ESC to quit
+* tab to change focus from Input mode to roster selection mode
+* while in roster mode, enter to choose an user to chat with
+* "m" (case insensitive) to mute current focused chat, "n" to mute all chats (muted chats will appear without bold)
+* muted chats won't show any libnotify notification
+* while in input mode, enter to send a message
+* while in input mode, key_up to go back in history, key_down to come back
+* enjoy

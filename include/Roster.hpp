@@ -2,8 +2,21 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Window.hpp"
+
+/* ROSTER WIN STRUCTURE:
+ *
+ * |*| |U: |name....|+9|
+ *
+ * first col: selected or not
+ * second col: space
+ * third col: type (User, Group, Channel)
+ * forth col: name
+ * fifth col: unread messages counter
+ * If user is muted, it will be printed without bold
+ */
 
 struct RosterItem {
     std::string id;
@@ -12,13 +25,16 @@ struct RosterItem {
     std::string status;
     int unread_counter;
     bool muted;
+    char type;
 
     RosterItem() {}
 
     RosterItem(const std::string& i,
                const std::string& n,
                const std::string& c,
-               const std::string& s): id(i), name(n), channel(c), status(s), unread_counter(0), muted(false) {}
+               const std::string& s,
+               const char t): id(i), name(n), channel(c), status(s), type(t),
+               unread_counter(0), muted(false) {}
 
     RosterItem& operator=(const RosterItem& other) {
         id = other.id;
@@ -27,6 +43,7 @@ struct RosterItem {
         status = other.status;
         unread_counter = other.unread_counter;
         muted = other.muted;
+        type = other.type;
 
         return *this;
     }
@@ -35,13 +52,17 @@ struct RosterItem {
 class Roster: public Window {
 
 public:
-    Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title), active(0) {
+    Roster(int y, int x, int start_y, int start_x, const std::string &title) :  Window(y, x, start_y, start_x, title) {
         noecho();
         keypad(win, TRUE);
     };
 
-    int wait();
+    int wait(Session &sess);
     void draw();
+    
+    int get_active();
+    void set_active(int x);
+    void set_current_active();
 
     void add_user(const std::string& id,
                   const std::string& name,
@@ -50,9 +71,12 @@ public:
 
     void add_group(const std::string& channel,
                    const std::string& name);
+    
+    void add_channel(const std::string& channel,
+                   const std::string& name);
 
     RosterItem get_user(const std::string& id);
-    RosterItem get_group(const std::string& id);
+    
     std::string get_active_type();
 
     void remove_user(const std::string& id);
@@ -62,12 +86,21 @@ public:
     void change_status(const std::string& status, const RosterItem& user);
     void highlight_user(const std::string &channel);
     void remove_highlight();
+    
+    std::string get_active_name();
 
 private:
+    void mute_current(int&);
+    void mute_all();
+    RosterItem& get_roster(int);
+    void draw_user(int i, RosterItem &user);
+    void scroll_down(int &current_active);
+    void scroll_up(int &current_active);
+    void scroll_helper(int dir, int &pos);
     
-    int active;
+    int active = 0;
+    int delta = 0;
+    int current_active = 0;
     
     std::map<std::string, RosterItem> users;
-    std::map<std::string, RosterItem> groups;
-
 };

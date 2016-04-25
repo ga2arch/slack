@@ -12,11 +12,12 @@
 #include <curl/curl.h>
 
 class WebsocketClient {
-
-    using OnMessageCallback = std::function<void(std::string)>;
     
 public:
-    void connect(std::string uri) {
+    curl_socket_t socket;
+    std::vector<std::string> events;
+
+    bool connect(std::string uri) {
         auto temp = split(uri, '/');
         
         auto host = temp[2];
@@ -34,28 +35,28 @@ public:
         curl = curl_easy_init();
         curl_easy_setopt(curl, CURLOPT_URL, https_url.c_str());
         curl_easy_setopt(curl, CURLOPT_CONNECT_ONLY, 1L);
-        curl_easy_perform(curl);
-
-        long s;
-        auto status = curl_easy_getinfo(curl, CURLINFO_LASTSOCKET, &s);
-        socket = s;
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
+        CURLcode res = curl_easy_perform(curl);
         
-        std::string data;
+        if (res == CURLE_OK) {
+            long s;
+            curl_easy_getinfo(curl, CURLINFO_LASTSOCKET, &s);
+            socket = s;
+            
+            std::string data;
 
-        for (const auto& h: headers) {
-            data += h + "\r\n";
+            for (const auto& h: headers) {
+                data += h + "\r\n";
+            }
+
+            data += "\r\n";
+
+            _send(data);
+            ping_pong();
+            return true;
         }
-
-        data += "\r\n";
-
-        _send(data);
-        ping_pong();
-
-        receive();
-    }
-
-    void set_on_message(OnMessageCallback cb) {
-        on_message = cb;
+        Log::d() << "An error occurred during connection." << std::endl;
+        return false;
     }
     
     std::vector<std::string> split(const std::string &s,
@@ -71,35 +72,8 @@ public:
 
         return elems;
     }
-
-    int wait_on_socket(bool for_recv) {
-        int result;
-        fd_set infd, outfd, errfd;
-
-        do {
-            FD_ZERO(&infd);
-            FD_ZERO(&outfd);
-            FD_ZERO(&errfd);
-
-            FD_SET(socket, &errfd);
-
-            if (for_recv) {
-                FD_SET(socket, &infd);
-            } else {
-                FD_SET(socket, &outfd);
-            }
-
-            result = select(socket + 1, &infd, &outfd, &errfd, nullptr);
-        } while (result == -1 && errno == EINTR);
-
-        return result;
-    }
     
     void _send(std::string data) {
-        if (wait_on_socket(0) < 0) {
-            throw std::out_of_range("");
-        }
-
         size_t sent;
 
         auto status = curl_easy_send(curl, data.data(), data.size(), &sent);
@@ -112,35 +86,28 @@ public:
     void receive() {
         std::string data;
         size_t received;
-        bool first = true;
 
-        for (;;) {
-            char buff[4096] = {0};
+        char buff[4096] = {0};
 
-            wait_on_socket(1);
-            auto status = curl_easy_recv(curl, buff, 4096, &received);
- 
-            if (status != CURLE_OK) {
-                Log::d() << "Failed to receive data." << std::endl;
-                break;
-            }
-            // FIX ME, HANDLE HEADER  
-            if (first) { first = false; continue;};
+        auto status = curl_easy_recv(curl, buff, 4096, &received);
 
-            for (auto i=0; i < received; i++)
-                data.push_back(buff[i]);
-            
-            for (auto& event: process_frame(data)) {
-                if (on_message != nullptr) {
-                    std::async(std::launch::async, [&]() { on_message(event); });
-                }
-            }
-
-            data.clear();
+        if (status != CURLE_OK) {
+            Log::d() << "Failed to receive data." << std::endl;
+            return;
         }
+        // FIX ME, HANDLE HEADER  
+        if (first) { first = false; return;};
+
+        for (auto i = 0; i < received; i++) {
+            data.push_back(buff[i]);
+        }
+           
+        process_frame(data);
+
+        data.clear();
         
     }
-
+    
     void ping_pong() {
         std::thread([&]() {
             for (;;) {
@@ -151,9 +118,7 @@ public:
         }).detach();
     }
 
-    std::vector<std::string> process_frame(const std::string& data) {
-        std::vector<std::string> events;
-
+    void process_frame(const std::string& data) {
         int offset = 0;
 
         while (data.size() > offset && data.size() > 3) {
@@ -191,8 +156,6 @@ public:
             events.push_back(event);
             offset = index+length;
         }
-        
-        return events;
     }
 
     void send_frame(int type, const std::string& data) {
@@ -248,8 +211,7 @@ public:
     }
 
 private:
-    OnMessageCallback on_message;
-
+    
+    bool first = true;
     CURL *curl;
-    curl_socket_t socket;
 };

@@ -2,6 +2,7 @@
 
 #include <map>
 #include <mutex>
+#include <poll.h>
 
 #ifdef LIBNOTIFY_FOUND
 #include <libnotify/notify.h>
@@ -11,7 +12,6 @@
 #include "Chat.hpp"
 #include "Input.hpp"
 #include "Roster.hpp"
-#include "Session.hpp"
 
 class SlackClient;
 
@@ -21,13 +21,19 @@ public:
     ~SlackUI();
 
     void set_client(SlackClient* client);
+        
     void show();
     void main_ui_cycle();
     Session& get_session();
     void add_message(const RosterItem& item,
                      const std::string& content,
                      bool sender,
-                     bool me);
+                     bool me,
+                     const std::string &channel);
+    void add_history(const RosterItem& item, 
+                     const std::string& content, 
+                     bool sender, 
+                     const std::string &channel);
     const std::string get_last_message_sender(const std::string& channel);
     void set_company_name(const std::string& name);
 
@@ -35,24 +41,23 @@ public:
     std::unique_ptr<Chat>   chat;
     std::unique_ptr<Input>  input;
     
-    std::timed_mutex ui_lock;
-
 private:
     void setup_ncurses();
+    void switch_session();
+    void change_context();
+    void scroll_up();
+    void scroll_down();
 #ifdef LIBNOTIFY_FOUND
-    void notify_send(const std::string& name, const std::string& mesg);
+    void notify_send(const RosterItem &item, const std::string& mesg);
 #endif
     void quit_notification();
     void remove_notification();
-    void start_timer();
-    void update_mark();
-    void timer_func();
+    void start_mark_thread(Session &sess, const std::string& channel, const std::string& type);
+    void update_mark(Session& sess, const std::string& channel, const std::string& type);
     
 #ifdef LIBNOTIFY_FOUND
     NotifyNotification *n = NULL;
 #endif
-    bool ready = false;
     SlackClient *client;
     std::map<std::string, Session> sessions;
-    std::thread t;
 };
