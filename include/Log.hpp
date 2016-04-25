@@ -1,6 +1,9 @@
 #pragma once
 
 #include <fstream>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 class Log {
 
@@ -10,6 +13,10 @@ public:
     }
 
 private:
+    
+    struct passwd *pw = getpwuid(getuid());
+    const char *homedir = pw->pw_dir;
+    
     static Log& get_instance() {
         static Log instance;
 
@@ -17,7 +24,8 @@ private:
     }
 
     Log() {
-        debug.open("slack.logs", std::fstream::out);
+        std::string log_path = homedir;
+        debug.open(log_path + "/.slack.logs", std::fstream::out);
     }
 
     Log(Log const&)            = delete;

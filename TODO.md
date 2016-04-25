@@ -13,7 +13,9 @@ TODO:
 - [x] support https://api.slack.com/methods/channels.mark and https://api.slack.com/methods/groups.mark
 - [x] call mark before changing chat (need to pass SlackUI to Roster)
 - [x] fixed circular array implementation
-- [ ] add a "--help" cmdline switch
+- [x] add a "--help" cmdline switch
+- [x] add a PKGBUILD
+- [x] move log to user home
 - [ ] cleanup code...private things/fix includes
 
 MUST FIX (UI):

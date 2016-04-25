@@ -8,12 +8,14 @@ To build you need:
 * openssl
 * libcurl
 
-** Optional:**
+**Optional**:
 
 * libnotify
 
 and a fairly recent c++ compiler.
 It was tested on Archlinux and Mac OS X 10.10.
+Archlinux user will find a proper PKGBUILD in Arch folder.
+I'm gonna push it to AUR by the way.
 
 ## How to build & run?
 

@@ -1,0 +1,34 @@
+# Maintainer: Federico Di Pierro <nierro92@gmail.com>
+
+pkgname=slack++-git
+_gitname=slack
+_binname=slack++
+pkgver=0.r173.4b0292a
+pkgrel=1
+pkgdesc="A slack client written in c++ and ncurses."
+arch=('i686' 'x86_64')
+url="https://github.com/ga2arch/slack/${_gitname}"
+license=('GPL')
+depends=('ncurses' 'rapidjson' 'openssl' 'curl')
+optdepends=('libnotify: desktop notification support')
+makedepends=('git' 'cmake')
+source=("git://github.com/ga2arch/${_gitname}.git")
+sha256sums=("SKIP")
+
+pkgver() {
+  cd $_gitname
+  printf "0.r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    cd $srcdir/$_gitname
+    mkdir -p build
+    cd build
+    cmake -G "Unix Makefiles" ../
+    make
+}
+
+package() {
+    cd $srcdir/$_gitname/build
+    install -D -m755 $_binname $pkgdir/usr/bin/$_binname
+}
