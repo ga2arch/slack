@@ -31,4 +31,6 @@ build() {
 package() {
     cd $srcdir/$_gitname/build
     install -D -m755 $_binname $pkgdir/usr/bin/$_binname
+    cd ..
+    install -Dm644 Arch/$_gitname.desktop "$pkgdir/usr/share/applications/atom.desktop"
 }
