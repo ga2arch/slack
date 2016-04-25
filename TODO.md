@@ -16,6 +16,7 @@ TODO:
 - [x] add a "--help" cmdline switch
 - [x] add a PKGBUILD
 - [x] move log to user home
+- [x] add a .desktop file
 - [ ] cleanup code...private things/fix includes
 
 MUST FIX (UI):

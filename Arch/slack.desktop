@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Slack++
+Comment=Slack client written in c++ with ncurses UI
+Exec=bash -c '/usr/bin/slack++'
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=Application;
+
