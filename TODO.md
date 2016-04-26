@@ -17,6 +17,7 @@ TODO:
 - [x] add a PKGBUILD
 - [x] move log to user home
 - [x] add a .desktop file
+- [x] fix install file for arch
 - [ ] cleanup code...private things/fix includes
 
 MUST FIX (UI):
@@ -54,6 +55,7 @@ INTERNAL REWORK:
 main thread. Main thread will call > client->process_data that will retrieve data from "wc.get_data()"
 - [x] move websocket on main poll too?
 - [x] using ppoll (linux only) to catch external sigterm and sigint
+- [x] do not pass token from cmdline as it is not safe. Instead, pass to slack++ name of a company, and try to getenv($name_SLACK_TOKEN)
 
 LONGTERM AIMS:
 

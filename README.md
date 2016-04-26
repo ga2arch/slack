@@ -1,6 +1,10 @@
 # slack++
 c++ slack ncurses client
 
+
+![](https://github.com/ga2arch/slack/raw/master/slack++.png)
+
+
 To build you need:
 
 * rapidjson
@@ -23,22 +27,25 @@ I'm gonna push it to AUR by the way.
     $ cd build
     $ cmake -G "Unix Makefiles" ../
     $ make
-    $ ./slack
+    $ ./slack++
 
-You've got to export SLACK_TOKEN, eg: by adding at the end of .bashrc in your home:  
+You've got to export at least SLACK_TOKEN, eg: by adding at the end of .bashrc in your home:  
 
 export SLACK_TOKEN=xxxxxxxxxxxxx
 
-or you can start slack by passing it a company token:
+If you're interested in multiple companies, you can export $companyname_SLACK_TOKEN too.  
+Then you can start slack by passing it your desired company name:  
 
-    $ ./slack COMPANY_TOKEN
+    $ ./slack++ $companyname
     
-This is especially useful as slack++ still hasn't gained multicompany support (and i'm not even sure it will ever gain that),  
-so you can simply start 2 or more instances of slack++, with every company token.  
-You can create an alias for each in .bashrc, something like:
+This is specially useful as slack++ still hasn't gained multicompany support (and i'm not even sure it will ever gain that),  
+so you can simply start 2 or more instances of slack++.  
+You can create an alias for each in .bashrc, something like:  
 
-alias company="./slack company_token"
-
+export mycompany_SLACK_TOKEN=xxxxxxx
+alias company='./slack++ mycompany'
+  
+Then you can even change shipped .desktop file (on linux) to start your desired company. Or, obviously, creating as many desktop file as you need for your companies.  
 
 ## Instructions:
 
@@ -50,3 +57,14 @@ alias company="./slack company_token"
 * while in input mode, enter to send a message
 * while in input mode, key_up to go back in history, key_down to come back
 * enjoy
+
+## Features:
+
+* libnotify support
+* unread counter
+* mute single chat/mute all support (no libnotify notification)
+* history support
+* very low resource usage
+* on linux, SIGTERM and SIGINT will be gracefully handled
+* multi platform (osx and linux)
+

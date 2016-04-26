@@ -13,6 +13,7 @@ depends=('ncurses' 'rapidjson' 'openssl' 'curl')
 optdepends=('libnotify: desktop notification support')
 makedepends=('git' 'cmake')
 source=("git://github.com/ga2arch/${_gitname}.git")
+install=slack++.install
 sha256sums=("SKIP")
 
 pkgver() {
@@ -32,5 +33,5 @@ package() {
     cd $srcdir/$_gitname/build
     install -D -m755 $_binname $pkgdir/usr/bin/$_binname
     cd ..
-    install -Dm644 Arch/$_gitname.desktop "$pkgdir/usr/share/applications/atom.desktop"
+    install -Dm644 Arch/$_binname.desktop $pkgdir/usr/share/applications/$_binname.desktop
 }
