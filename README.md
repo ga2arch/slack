@@ -42,8 +42,8 @@ This is specially useful as slack++ still hasn't gained multicompany support (an
 so you can simply start 2 or more instances of slack++.  
 You can create an alias for each in .bashrc, something like:  
 
-export mycompany_SLACK_TOKEN=xxxxxxx
-alias company='./slack++ mycompany'
+export mycompany_SLACK_TOKEN=xxxxxxx  
+alias company='./slack++ mycompany'  
   
 Then you can even change shipped .desktop file (on linux) to start your desired company. Or, obviously, creating as many desktop file as you need for your companies.  
 
