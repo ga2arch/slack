@@ -1,7 +1,7 @@
 post_install() {
-	echo '--> Remember to export your desired slack tokens, by eg: putting them in .bashrc. Example:'
-	echo '--> export mycompany = xxxxxxxxxxxxxxxx'
-	echo '--> Then run: slack++ mycompany'
-	echo '--> If you're not interested in multiple companies, you can export SLACK_TOKEN and run slack++ with no args.'
+	echo "--> Remember to export your desired slack tokens, by eg: putting them in .bashrc. Example:"
+	echo "--> export mycompany=xxxxxxxxxxxxxxxx"
+	echo "--> Then run: slack++ mycompany"
+	echo "--> If you're not interested in multiple companies, you can export SLACK_TOKEN and run slack++ with no args."
 }
 
