@@ -69,7 +69,7 @@ Then you can even change shipped .desktop file (on linux) to start your desired 
 * multi platform (osx and linux)
 * small log file located in user home (.slack.logs), that will be resetted every time slack++ is started
 
-**IT DOES NOT SUPPORT TERMINAL RESIZE**
+**IT DOES NOT SUPPORT TERMINAL RESIZE**  
 Given our data structure, and the effort that we should put to have proper terminal resize support, we won't implement it.  
 We consider it useless for a ncurses client. If you're willing to, you can send us a pull request.
 
