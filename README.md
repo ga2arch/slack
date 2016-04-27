@@ -19,8 +19,7 @@ To build you need:
 and a fairly recent c++ compiler.  
 Note that cmake is required only at build time.  
 It was tested on Archlinux and Mac OS X 10.10.  
-Archlinux user will find a proper PKGBUILD in Arch folder.  
-I'm gonna push it to AUR by the way.
+Archlinux user will find a proper PKGBUILD in Arch folder. I'm gonna push it to AUR by the way.
 
 ## How to build & run?
 
@@ -68,4 +67,9 @@ Then you can even change shipped .desktop file (on linux) to start your desired 
 * very low resource usage
 * on linux, SIGTERM and SIGINT will be gracefully handled
 * multi platform (osx and linux)
+* small log file located in user home (.slack.logs), that will be resetted every time slack++ is started
+
+**IT DOES NOT SUPPORT TERMINAL RESIZE**
+Given our data structure, and the effort that we should put to have proper terminal resize support, we won't implement it.  
+We consider it useless for a ncurses client. If you're willing to, you can send us a pull request.
 
