@@ -3,13 +3,13 @@
 pkgname=slack++-git
 _gitname=slack
 _binname=slack++
-pkgver=0.r173.4b0292a
+pkgver=0.r179.fcdc1e7
 pkgrel=1
 pkgdesc="A slack client written in c++ and ncurses."
 arch=('i686' 'x86_64')
 url="https://github.com/ga2arch/slack/${_gitname}"
 license=('GPL')
-depends=('ncurses' 'rapidjson' 'openssl' 'curl')
+depends=('ncurses' 'jsoncpp' 'openssl' 'curl')
 optdepends=('libnotify: desktop notification support')
 makedepends=('git' 'cmake')
 source=("git://github.com/ga2arch/${_gitname}.git")

@@ -18,6 +18,7 @@ TODO:
 - [x] move log to user home
 - [x] add a .desktop file
 - [x] fix install file for arch
+- [x] move to jsoncpp
 - [ ] cleanup code...private things/fix includes
 
 MUST FIX (UI):

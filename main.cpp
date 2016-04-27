@@ -1,6 +1,8 @@
 #include <iostream>
 #include "SlackUI.hpp"
 #include "SlackClient.hpp"
+#include <assert.h>
+#include <string.h>
 
 static void check_cmdline(int, char **);
 
@@ -35,7 +37,7 @@ int main(int argc, char* argv[]) {
 static void check_cmdline(int argc, char *argv[]) {
     
     if (argc == 2) {
-        if (std::strcmp(argv[1], "--help") == 0) {
+        if (strcmp(argv[1], "--help") == 0) {
             std::cout << std::endl << "  Slack++: https://github.com/ga2arch/slack." << std::endl;
             std::cout << "  Developed by Gabriele Carrettoni and Federico Di Pierro." << std::endl;
             std::cout << "  GPL licensed software." << std::endl << std::endl;

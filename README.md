@@ -7,7 +7,7 @@ c++ slack ncurses client
 
 To build you need:
 
-* rapidjson
+* jsoncpp
 * cmake
 * openssl
 * libcurl
@@ -16,9 +16,10 @@ To build you need:
 
 * libnotify
 
-and a fairly recent c++ compiler.
-It was tested on Archlinux and Mac OS X 10.10.
-Archlinux user will find a proper PKGBUILD in Arch folder.
+and a fairly recent c++ compiler.  
+Note that cmake is required only at build time.  
+It was tested on Archlinux and Mac OS X 10.10.  
+Archlinux user will find a proper PKGBUILD in Arch folder.  
 I'm gonna push it to AUR by the way.
 
 ## How to build & run?

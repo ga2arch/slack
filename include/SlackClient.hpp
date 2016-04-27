@@ -3,8 +3,9 @@
 #include "Headers.hpp"
 #include "Roster.hpp"
 #include "WebsocketClient.hpp"
-
-using namespace rapidjson;
+#include <json/writer.h>
+#include <json/reader.h>
+#include <json/value.h>
 
 class SlackUI;
 
@@ -27,7 +28,7 @@ private:
     
     void process_event(void);
 
-    Document call(const std::string& api, const std::vector<std::string> &query);
+    Json::Value call(const std::string& api, const std::vector<std::string> &query);
 
     std::string get_direct_channel(const std::string& userid);
     

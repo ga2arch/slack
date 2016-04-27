@@ -38,8 +38,8 @@ set(SOURCES
 add_executable(slack++ main.cpp ${SOURCES})
 
 find_package(OpenSSL REQUIRED)
-find_package(RapidJSON REQUIRED)
 find_package(CURL REQUIRED)
+find_package(Jsoncpp REQUIRED)
 find_package(Libnotify)
 if(LIBNOTIFY_FOUND)
     message("Using libnotify")
@@ -54,8 +54,8 @@ find_package(Curses REQUIRED)
 
 target_include_directories(slack++
 	PRIVATE ${OPENSSL_INCLUDE_DIRS}
-	PRIVATE ${RAPIDJSON_INCLUDE_DIRS}
 	PRIVATE ${CURL_INCLUDE_DIRS}
+	PRIVATE ${JSONCPP_INCLUDE_DIR}
 	PRIVATE ${CURSES_INCLUDE_DIR}
 	PUBLIC include)
 
@@ -63,6 +63,7 @@ target_link_libraries(slack++
 	${OPENSSL_SSL_LIBRARY}
 	${OPENSSL_CRYPTO_LIBRARY}
 	${CURL_LIBRARIES}
+	${JSONCPP_LIBRARY}
 	${CURSES_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT})
 
