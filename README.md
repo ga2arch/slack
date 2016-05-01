@@ -47,6 +47,13 @@ alias company='./slack++ mycompany'
   
 Then you can even change shipped .desktop file (on linux) to start your desired company. Or, obviously, creating as many desktop file as you need for your companies.  
 
+## How to create slack token:
+
+* go to https://api.slack.com/docs/oauth-test-tokens
+* select your desired company and create token for it
+* you'll be asked your password, enter it then confirm
+* you now have your token!
+
 ## Instructions:
 
 * ESC to quit
