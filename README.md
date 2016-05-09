@@ -72,6 +72,8 @@ Then you can even change shipped .desktop file (on linux) to start your desired 
 * mute single chat/mute all support (no libnotify notification)
 * history support
 * very low resource usage
+* mouse support: on Roster: wheels to scroll up/down, left click to select an user, right click to mute it.
+On Input mode: wheels to scroll up/down chat history, right click to change user to chat with.
 * on linux, SIGTERM and SIGINT will be gracefully handled
 * multi platform (osx and linux)
 * small log file located in user home (.slack.logs), that will be resetted every time slack++ is started

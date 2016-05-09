@@ -13,11 +13,14 @@ int Input::wait(Session &sess) {
     const int KEY_ESC = 27;
     const int KEY_BS = 127;
     const int KEY_TAB = 9;
+    const int KEY_ENT = 10;
     wint_t c;
+    MEVENT event;
 
 #if NCURSES_MOUSE_VERSION > 1
-    MEVENT event;
-    mousemask(BUTTON4_PRESSED | BUTTON5_PRESSED, NULL);
+    mousemask(BUTTON3_PRESSED | BUTTON4_PRESSED | BUTTON5_PRESSED, NULL);
+#else
+    mousemask(BUTTON3_PRESSED, NULL);
 #endif
     
     int& col = sess.col;
@@ -34,17 +37,21 @@ int Input::wait(Session &sess) {
     case KEY_TAB: // tab to switch to roster selection mode
     case KEY_UP:   // go back in chat history
     case KEY_DOWN:  // go forward in chat history
-#if NCURSES_MOUSE_VERSION > 1
     case KEY_MOUSE:
-        if(getmouse(&event) == OK) {
+        if (getmouse(&event) == OK) {
+            if (event.bstate & BUTTON3_PRESSED) {
+                c = KEY_TAB;
+            }
+#if NCURSES_MOUSE_VERSION > 1
             /* scroll up and down events associated with mouse wheel */
-            if (event.bstate & BUTTON4_PRESSED) {
+            else if (event.bstate & BUTTON4_PRESSED) {
                 c = KEY_UP;
             } else if (event.bstate & BUTTON5_PRESSED) {
                 c = KEY_DOWN;
             }
-        }
 #endif
+        }
+
         return c;
             
     case KEY_BS:
@@ -73,12 +80,12 @@ int Input::wait(Session &sess) {
             highlight(col);
         }
         break;
-    case 10: //enter
+    case KEY_ENT:
         col = 0;
         client->send_message(input_str);
         input_str.clear();
         fixed_print_input(input_str, 1);
-        return 0;
+        break;
     
     default:
         if (iswprint(c)) {

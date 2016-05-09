@@ -39,6 +39,7 @@ void SlackUI::main_ui_cycle() {
     Window *active_win;
     const int KEY_ESC = 27;
     const int KEY_TAB = 9;
+    const int KEY_ENT = 10;
     
     const int NCURSES_EVT = 0;
     const int SOCKET_EVT = 1;
@@ -81,42 +82,40 @@ void SlackUI::main_ui_cycle() {
 #else
         int ret = poll(main_p, nfds, -1);
 #endif
-        while (ret > 0) {
-            for (int i = 0; i < nfds; i++) {
-                if (main_p[i].revents & POLLIN) {
-                    switch (i) {
-                    case NCURSES_EVT:
-                    // ncurses event
-                        c = active_win->wait(get_session());
-                        switch (c) {
-                        case KEY_TAB:
-                            change_context();
-                            active_win = roster.get();
+        for (int i = 0; i < nfds && ret > 0; i++) {
+            if (main_p[i].revents & POLLIN) {
+                switch (i) {
+                case NCURSES_EVT:
+                // ncurses event
+                    c = active_win->wait(get_session());
+                    switch (c) {
+                    case KEY_TAB:
+                        change_context();
+                        active_win = roster.get();
+                    break;
+                    case KEY_UP:
+                        scroll_up();
                         break;
-                        case KEY_UP:
-                            scroll_up();
-                            break;
-                        case KEY_DOWN:
-                            scroll_down();
-                            break;
-                        case 10:    // enter to select an user to chat with
-                            switch_session();
-                            active_win = input.get();
-                            break;
-                        case KEY_ESC:
-                            quit = true;
-                            break;
-                        default:
-                            break;
-                        }
+                    case KEY_DOWN:
+                        scroll_down();
                         break;
-                    case SOCKET_EVT:
-                    // socket event
-                        client->receive();
+                    case KEY_ENT:    // enter to select an user to chat with
+                        switch_session();
+                        active_win = input.get();
+                        break;
+                    case KEY_ESC:
+                        quit = true;
+                        break;
+                    default:
                         break;
                     }
-                    ret--;
+                    break;
+                case SOCKET_EVT:
+                // socket event
+                    client->receive();
+                    break;
                 }
+                ret--;
             }
         }
     }

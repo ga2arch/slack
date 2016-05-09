@@ -74,19 +74,23 @@ void Roster::remove_user(const std::string& id) {
 
 int Roster::wait(Session &sess) {
     const int KEY_ESC = 27;
+    const int KEY_ENT = 10;
     int c;
-    
+    MEVENT event;
+
+#if NCURSES_MOUSE_VERSION > 1
+    mousemask(BUTTON1_PRESSED | BUTTON3_PRESSED | BUTTON4_PRESSED | BUTTON5_PRESSED, NULL);
+#else
+    mousemask(BUTTON1_PRESSED | BUTTON3_PRESSED, NULL);
+#endif
+
     c = wgetch(win);
     switch (c) {
         case KEY_UP:
-            if (current_active > 0) {
-                scroll_up(current_active);
-            }
+            scroll_up(current_active);
             break;
         case KEY_DOWN:
-            if (current_active < users.size() - 1) {
-                scroll_down(current_active);
-            }
+            scroll_down(current_active);
             break;
         case KEY_ESC:
             return c; // value to return in case of ESC
@@ -98,9 +102,30 @@ int Roster::wait(Session &sess) {
         case 'N':
             mute_all();
             break;
-        case 10:
+        case KEY_ENT:
             active = current_active;
-            return c;
+            return KEY_ENT;
+        case KEY_MOUSE:
+            if (getmouse(&event) == OK) {
+                if (event.bstate & BUTTON1_PRESSED) {
+                    /* like pressing enter */
+                    active = current_active;
+                    return KEY_ENT;
+                }
+                if (event.bstate & BUTTON3_PRESSED) {
+                    /* like pressin 'm' */
+                    mute_current(current_active);
+                }
+                /* scroll up and down events associated with mouse wheel */
+#if NCURSES_MOUSE_VERSION > 1
+                else if (event.bstate & BUTTON4_PRESSED) {
+                    scroll_up(current_active);
+                } else if (event.bstate & BUTTON5_PRESSED) {
+                    scroll_down(current_active);
+                }
+#endif
+            }
+            break;
         default:
             break;
     }
@@ -121,21 +146,25 @@ void Roster::set_current_active() {
 }
 
 void Roster::scroll_down(int &current_active) {
-    mvwprintw(win, current_active + 1 - delta, 1, " ");
-    current_active++;
-    if (current_active - get_real_rows() >= delta) {
-        scroll_helper(1, current_active);
+    if (current_active < users.size() - 1) {
+        mvwprintw(win, current_active + 1 - delta, 1, " ");
+        current_active++;
+        if (current_active - get_real_rows() >= delta) {
+            scroll_helper(1, current_active);
+        }
+        mvwprintw(win, current_active + 1 - delta, 1, "*");
     }
-    mvwprintw(win, current_active + 1 - delta, 1, "*");
 }
 
 void Roster::scroll_up(int &current_active) {
-    mvwprintw(win, current_active + 1 - delta, 1, " ");
-    current_active--;
-    if (current_active < delta) {
-        scroll_helper(-1, current_active);
+    if (current_active > 0) {
+        mvwprintw(win, current_active + 1 - delta, 1, " ");
+        current_active--;
+        if (current_active < delta) {
+            scroll_helper(-1, current_active);
+        }
+        mvwprintw(win, current_active + 1 - delta, 1, "*");
     }
-    mvwprintw(win, current_active + 1 - delta, 1, "*");
 }
 
 void Roster::scroll_helper(int dir, int &pos) {
