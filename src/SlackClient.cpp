@@ -27,8 +27,14 @@ const std::string SlackClient::fetch_data() {
     std::vector<std::string> v;
     v.push_back("simple_latest=true");
     v.push_back("no_unreads=true");
-    auto d = call("rtm.start", v);
-
+    Json::Value d;
+    
+    try {
+        d = call("rtm.start", v);
+    } catch (int n) {
+        return "";
+    }
+    
     if (d.isNull()) {
         return "";
     }
@@ -205,12 +211,12 @@ Json::Value SlackClient::call(const std::string &api, const std::vector<std::str
         goto error;
     }
     
-    reader.parse(os.str().c_str(), d);
+    reader.parse(os.str(), d);
     return d;
     
 error:
     Log::d() << "An error occurred during the call." << std::endl;
-    return nullptr; 
+    throw 1;
 }
 
 void SlackClient::send_message(const std::wstring& message) {
