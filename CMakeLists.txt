@@ -50,7 +50,7 @@ endif(LIBNOTIFY_FOUND)
 find_package(Threads)
 
 set(CURSES_NEED_NCURSES TRUE)
-find_package(Curses REQUIRED)
+find_package(Ncursesw REQUIRED)
 
 target_include_directories(slack++
 	PRIVATE ${OPENSSL_INCLUDE_DIRS}

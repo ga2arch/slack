@@ -1,2 +1,6 @@
 build/
 slack.kdev4
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
