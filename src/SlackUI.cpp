@@ -1,5 +1,4 @@
 #include "SlackUI.hpp"
-#include "signal.h"
 
 static bool quit = false;
 

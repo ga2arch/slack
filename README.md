@@ -11,6 +11,7 @@ To build you need:
 * cmake
 * openssl
 * libcurl
+* ncursesw
 
 **Optional**:
 
