@@ -9,6 +9,7 @@ To build you need:
 
 * jsoncpp
 * cmake
+* pkg-config
 * openssl
 * libcurl
 * ncursesw
