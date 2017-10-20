@@ -3,7 +3,11 @@
 #include <map>
 #include <mutex>
 #include <poll.h>
-#include "signal.h"
+
+#ifdef __linux__
+#include <sys/signalfd.h>
+#include <signal.h>
+#endif
 
 #ifdef LIBNOTIFY_FOUND
 #include <libnotify/notify.h>

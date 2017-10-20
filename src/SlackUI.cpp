@@ -29,9 +29,18 @@ void SlackUI::show() {
 }
 
 #ifdef __linux__
-static void sig_handler (int signum) {
+static void sig_handler(int fd) {
     quit = true;
-    Log::d() << "received " << signum << " signal." << std::endl;
+    
+    struct signalfd_siginfo fdsi;
+    ssize_t s;
+    
+    s = read(fd, &fdsi, sizeof(struct signalfd_siginfo));
+    if (s != sizeof(struct signalfd_siginfo)) {
+        Log::d() << "an error occurred while getting signalfd data." << std::endl;
+    } else {
+        Log::d() << "received " << fdsi.ssi_signo << "signal. Leaving." << std::endl;
+    }
 }
 #endif
 
@@ -43,7 +52,12 @@ void SlackUI::main_ui_cycle() {
     
     const int NCURSES_EVT = 0;
     const int SOCKET_EVT = 1;
+#ifdef __linux__
+    const int SIGNAL_EVT = 2;
+    const int nfds = 3;
+#else
     const int nfds = 2;
+#endif
     
     struct pollfd main_p[nfds];
     
@@ -62,31 +76,27 @@ void SlackUI::main_ui_cycle() {
 #endif
 
 #ifdef __linux__
-    struct sigaction main_act = {{0}};
-    sigset_t mask, main_mask;
+    sigset_t mask;
     
-    main_act.sa_handler = sig_handler;
-    sigaction(SIGINT, &main_act, 0);
-    sigaction(SIGTERM, &main_act, 0);
     sigemptyset(&mask);
     sigaddset(&mask, SIGINT);
     sigaddset(&mask, SIGTERM);
-    sigprocmask(SIG_BLOCK, &mask, &main_mask);
+    sigprocmask(SIG_BLOCK, &mask, NULL);
+    main_p[SOCKET_EVT] = (struct pollfd) {
+        .fd = signalfd(-1, &mask, 0),
+        .events = POLLIN,
+    };
 #endif
     
     active_win = roster.get();
     int c;
     while (!quit) {
-#ifdef __linux__
-        int ret = ppoll(main_p, nfds, NULL, &main_mask);
-#else
         int ret = poll(main_p, nfds, -1);
-#endif
         for (int i = 0; i < nfds && ret > 0; i++) {
             if (main_p[i].revents & POLLIN) {
                 switch (i) {
                 case NCURSES_EVT:
-                // ncurses event
+                    // ncurses event
                     c = active_win->wait(get_session());
                     switch (c) {
                     case KEY_TAB:
@@ -111,17 +121,21 @@ void SlackUI::main_ui_cycle() {
                     }
                     break;
                 case SOCKET_EVT:
-                // socket event
+                    // socket event
                     client->receive();
                     break;
+#ifdef __linux__
+                case SIGNAL_EVT:
+                    // signal event on linux
+                    sig_handler(main_p[SIGNAL_EVT].fd);
+                    break;
+#endif
                 }
                 ret--;
             }
         }
     }
     
-    close(main_p[0].fd);
-    close(main_p[1].fd);
     // before leaving, make sure we updated current chat's mark
     // only if a chat had been selected (ie the user did not leave slack++ immediately)
     update_mark(get_session(),
@@ -189,8 +203,8 @@ Session& SlackUI::get_session() {
 }
 
 SlackUI::~SlackUI() {
-    endwin();
     delwin(stdscr);
+    endwin();
 }
 
 void SlackUI::setup_ncurses() {

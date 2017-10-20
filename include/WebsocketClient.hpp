@@ -39,21 +39,20 @@ public:
         CURLcode res = curl_easy_perform(curl);
         
         if (res == CURLE_OK) {
-            long s;
-            curl_easy_getinfo(curl, CURLINFO_LASTSOCKET, &s);
-            socket = s;
-            
-            std::string data;
-
-            for (const auto& h: headers) {
-                data += h + "\r\n";
+            res = curl_easy_getinfo(curl, CURLINFO_ACTIVESOCKET, &socket);
+            if (res == CURLE_OK) {
+                std::string data;
+                
+                for (const auto& h: headers) {
+                    data += h + "\r\n";
+                }
+                
+                data += "\r\n";
+                
+                _send(data);
+                ping_pong();
+                return true;
             }
-
-            data += "\r\n";
-
-            _send(data);
-            ping_pong();
-            return true;
         }
         Log::d() << "An error occurred during connection." << std::endl;
         return false;
@@ -122,7 +121,7 @@ public:
         int offset = 0;
 
         while (data.size() > offset && data.size() > 3) {
-            auto buff = std::string(data.begin()+offset, data.end());
+            auto buff = std::string(data.begin() + offset, data.end());
             if (buff.size() < 3) break;
 
             int length = buff[1] & 127;
@@ -152,9 +151,9 @@ public:
 
             }
 
-            std::string event(buff.begin()+index, buff.begin()+index+length);
+            std::string event(buff.begin() + index, buff.begin() + index + length);
             events.push_back(event);
-            offset = index+length;
+            offset += index + length;
         }
     }
 

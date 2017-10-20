@@ -192,29 +192,31 @@ Json::Value SlackClient::call(const std::string &api, const std::vector<std::str
     }
     
     CURL *curl = curl_easy_init();
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_data);
-    curl_easy_setopt(curl, CURLOPT_FILE, &os);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
-    CURLcode res = curl_easy_perform(curl);
-    curl_easy_cleanup(curl);
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_data);
+        curl_easy_setopt(curl, CURLOPT_FILE, &os);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
+        CURLcode res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            goto error;
+        }
     
-    if (res != CURLE_OK) {
-       goto error;
+        long respcode; //response code of the http transaction
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &respcode);
+        if (respcode != 200) {
+            goto error;
+        }
+        curl_easy_cleanup(curl);
+        reader.parse(os.str(), d);
+        return d;
     }
-    
-    long respcode; //response code of the http transaction
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &respcode);
-    
-    if (respcode != 200) {
-        goto error;
-    }
-    
-    reader.parse(os.str(), d);
-    return d;
     
 error:
+    if (curl) {
+        curl_easy_cleanup(curl);
+    }
     Log::d() << "An error occurred during the call." << std::endl;
     throw 1;
 }

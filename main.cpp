@@ -4,13 +4,11 @@
 #include <assert.h>
 #include <string.h>
 
-static void check_cmdline(int, char **);
-
-static std::string TOKEN_NAME;
+static void check_cmdline(int, char **,  std::string&);
 
 int main(int argc, char* argv[]) {
-    
-    check_cmdline(argc, argv);
+    std::string TOKEN_NAME;
+    check_cmdline(argc, argv, TOKEN_NAME);
     
     auto token = std::getenv(TOKEN_NAME.c_str());
     if (!token) {
@@ -32,9 +30,10 @@ int main(int argc, char* argv[]) {
     
     c.set_token(token);
     ui.show();
+    return 0;
 }
 
-static void check_cmdline(int argc, char *argv[]) {
+static void check_cmdline(int argc, char *argv[], std::string& TOKEN_NAME) {
     
     if (argc == 2) {
         if (strcmp(argv[1], "--help") == 0) {
