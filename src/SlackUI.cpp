@@ -82,7 +82,7 @@ void SlackUI::main_ui_cycle() {
     sigaddset(&mask, SIGINT);
     sigaddset(&mask, SIGTERM);
     sigprocmask(SIG_BLOCK, &mask, NULL);
-    main_p[SOCKET_EVT] = (struct pollfd) {
+    main_p[SIGNAL_EVT] = (struct pollfd) {
         .fd = signalfd(-1, &mask, 0),
         .events = POLLIN,
     };

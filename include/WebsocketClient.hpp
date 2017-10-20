@@ -207,6 +207,7 @@ public:
 
     ~WebsocketClient() {
         curl_easy_cleanup(curl);
+        curl_global_cleanup();
     }
 
 private:

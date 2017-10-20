@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 project(slack++ VERSION 0.1 LANGUAGES CXX C)
 
 set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Release)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include_directories(include src)
