@@ -14,12 +14,17 @@ int main(int argc, char* argv[]) {
     if (!token) {
         // fallback to default token name
         token = std::getenv("SLACK_TOKEN");
-        if (!token && argc == 1) {
-            std::cerr << "No token specified. Check helper message (\"--help\")" << std::endl;;
-            exit(EXIT_FAILURE);
+        if (!token) {
+            if (argc == 1) {
+                std::cerr << "No token specified. Check helper message (\"--help\")" << std::endl;;
+                exit(EXIT_FAILURE);
+            } else if (argc > 1) {
+                std::cerr << "Neither specific token nor default token found. Check helper message (\"--help\")" << std::endl;;
+                exit(EXIT_FAILURE);
+            }
         }
     }
-    
+ 
     assert(token != nullptr);
     
     SlackUI ui;
