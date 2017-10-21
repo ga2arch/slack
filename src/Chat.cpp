@@ -21,7 +21,7 @@ void Chat::draw(Session& sess, int num_lines, int start, int scroll) {
         if (sender) {
             wattron(win, A_BOLD);
         }
-        mvwprintw(win, start + 1, 1, m.c_str());
+        mvwaddstr(win, start + 1, 1, m.c_str());
         wattroff(win, A_BOLD);
     }
     draw_borders();
