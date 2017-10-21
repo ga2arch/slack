@@ -102,7 +102,7 @@ void SlackUI::main_ui_cycle() {
                     case KEY_TAB:
                         change_context();
                         active_win = roster.get();
-                    break;
+                        break;
                     case KEY_UP:
                         scroll_up();
                         break;

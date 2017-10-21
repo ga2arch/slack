@@ -85,21 +85,25 @@ int Roster::wait(Session &sess) {
 #endif
 
     c = wgetch(win);
-    switch (c) {
+    switch (tolower(c)) {
         case KEY_UP:
-            scroll_up(current_active);
+            scroll_up(1);
             break;
         case KEY_DOWN:
-            scroll_down(current_active);
+            scroll_down(1);
             break;
         case KEY_ESC:
             return c; // value to return in case of ESC
+        case KEY_PPAGE:
+            scroll_up(current_active);
+            break;
+        case KEY_NPAGE:
+            scroll_down(users.size() - current_active - 1);
+            break;
         case 'm':
-        case 'M':
             mute_current(current_active);
             break;
         case 'n':
-        case 'N':
             mute_all();
             break;
         case KEY_ENT:
@@ -119,9 +123,9 @@ int Roster::wait(Session &sess) {
                 /* scroll up and down events associated with mouse wheel */
 #if NCURSES_MOUSE_VERSION > 1
                 else if (event.bstate & BUTTON4_PRESSED) {
-                    scroll_up(current_active);
+                    scroll_up(1);
                 } else if (event.bstate & BUTTON5_PRESSED) {
-                    scroll_down(current_active);
+                    scroll_down(1);
                 }
 #endif
             }
@@ -145,37 +149,57 @@ void Roster::set_current_active() {
     current_active = active;
 }
 
-void Roster::scroll_down(int &current_active) {
-    if (current_active < users.size() - 1) {
+void Roster::scroll_down(int lines) {
+    if (current_active < users.size() - lines) {
         mvwprintw(win, current_active + 1 - delta, 1, " ");
-        current_active++;
-        if (current_active - get_real_rows() >= delta) {
-            scroll_helper(1, current_active);
+        int old_delta = delta;
+        while (lines > 0) {
+            current_active++;
+            if (current_active - get_real_rows() >= delta) {
+                delta++;
+            }
+            lines--;
+        }
+        if (delta != old_delta) {
+            scroll_helper(delta - old_delta);
+            draw_users(current_active + 1 - (delta - old_delta), delta - old_delta);
         }
         mvwprintw(win, current_active + 1 - delta, 1, "*");
     }
 }
 
-void Roster::scroll_up(int &current_active) {
+void Roster::scroll_up(int lines) {
     if (current_active > 0) {
         mvwprintw(win, current_active + 1 - delta, 1, " ");
-        current_active--;
-        if (current_active < delta) {
-            scroll_helper(-1, current_active);
+        int old_delta = delta;
+        while (lines > 0) {
+            current_active--;
+            if (current_active < delta) {
+                delta--;
+            }
+            lines--;
+        }
+        if (delta != old_delta) {
+            scroll_helper(delta - old_delta);
+            draw_users(delta, old_delta - delta);
         }
         mvwprintw(win, current_active + 1 - delta, 1, "*");
     }
 }
 
-void Roster::scroll_helper(int dir, int &pos) {
+void Roster::scroll_helper(int dir) {
     wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
     wscrl(win, dir);
     wattroff(win, A_BOLD);
     draw_borders();
     wattron(win, A_BOLD);
-    delta += dir;
-    RosterItem &user = get_roster(pos);
-    draw_user(pos, user);
+}
+
+void Roster::draw_users(int start, int num) {
+    for (int i = 0; i < num && start + i < users.size(); i++) {
+        RosterItem &user = get_roster(start + i);
+        draw_user(start + i, user);
+    }
 }
 
 void Roster::remove_highlight() {
@@ -199,7 +223,7 @@ RosterItem& Roster::get_roster(int x) {
     return it->second;
 }
 
-void Roster::mute_current(int& current) {
+void Roster::mute_current(int current) {
     RosterItem &x = get_roster(current);
     x.muted = !x.muted;
     if (current - delta < get_real_rows() && current >= delta) {

@@ -7,5 +7,6 @@
 #include <locale>
 #include <codecvt>
 #include <string>
+#include <ctype.h>
 
 #include "Log.hpp"

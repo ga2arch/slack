@@ -90,13 +90,14 @@ public:
     std::string get_active_name();
 
 private:
-    void mute_current(int&);
+    void mute_current(int current);
     void mute_all();
     RosterItem& get_roster(int);
     void draw_user(int i, RosterItem &user);
-    void scroll_down(int &current_active);
-    void scroll_up(int &current_active);
-    void scroll_helper(int dir, int &pos);
+    void draw_users(int start, int num);
+    void scroll_down(int lines);
+    void scroll_up(int lines);
+    void scroll_helper(int dir);
     
     int active = -1;
     int delta = 0;
