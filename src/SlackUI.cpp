@@ -231,7 +231,7 @@ void SlackUI::add_message(const RosterItem& item,
     bool check = false;
 
     do {
-        sessions[channel].add_message(item, content.substr(j, chat->get_real_cols()).c_str(), sender);
+        sessions[channel].add_message(item, content.substr(j, chat->get_real_cols()), sender);
         j += chat->get_real_cols();
         if (sessions[channel].messages.size() > chat->get_real_rows()) {
             sessions[channel].delta++;
@@ -268,7 +268,7 @@ void SlackUI::add_history(const RosterItem& item,
     int j = content.length();
     int length = j % chat->get_real_cols();
     do {
-        sessions[channel].add_history(item, content.substr(j - length, length).c_str(), sender);
+        sessions[channel].add_history(item, content.substr(j - length, length), sender);
         if (sessions[channel].messages.size() > chat->get_real_rows()) {
             sessions[channel].delta++;
         }
