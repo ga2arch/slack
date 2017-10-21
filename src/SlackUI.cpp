@@ -242,8 +242,9 @@ void SlackUI::add_message(const RosterItem& item,
             check = true;
         }
     } while (j < content.length());
-
+    
     if (!check) {
+        /* Whether we are printing new sender (no libnotify notification needed) */
         if (!sender) {
             roster->highlight_user(channel);
 #ifdef LIBNOTIFY_FOUND

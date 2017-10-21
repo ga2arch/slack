@@ -133,6 +133,7 @@ void SlackClient::process_event(void) {
                 user = me;
             }
             std::string channel = d["channel"].asString();
+            /* Add username before this message as user sending message switched */
             if (ui->get_last_message_sender(channel) != user.id) {
                 ui->add_message(user, user.name + ':', true, false, channel);
             }
@@ -142,6 +143,7 @@ void SlackClient::process_event(void) {
                 ui->get_session().oldest_ts = ts - 1;
             }
             std::string timestamp = ts_h_readable(ts);
+            /* Actually add message */
             ui->add_message(user, timestamp + " " + str, false, false, channel);
         }
     

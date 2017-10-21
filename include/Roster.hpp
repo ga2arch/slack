@@ -98,7 +98,7 @@ private:
     void scroll_up(int &current_active);
     void scroll_helper(int dir, int &pos);
     
-    int active = 0;
+    int active = -1;
     int delta = 0;
     int current_active = 0;
     
