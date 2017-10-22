@@ -37,6 +37,8 @@ int Input::wait(Session &sess) {
     case KEY_TAB: // tab to switch to roster selection mode
     case KEY_UP:   // go back in chat history
     case KEY_DOWN:  // go forward in chat history
+    case KEY_PPAGE:
+    case KEY_NPAGE:
     case KEY_MOUSE:
         if (getmouse(&event) == OK) {
             if (event.bstate & BUTTON3_PRESSED) {
@@ -53,7 +55,6 @@ int Input::wait(Session &sess) {
         }
 
         return c;
-            
     case KEY_BS:
         if (!input_str.empty() && col > 0) {
             col--;
@@ -67,7 +68,6 @@ int Input::wait(Session &sess) {
             fixed_print_input(input_str, col);
         }
         break;
-            
     case KEY_RIGHT:
         if (col < input_str.length()) {
             col++;
@@ -86,7 +86,14 @@ int Input::wait(Session &sess) {
         input_str.clear();
         fixed_print_input(input_str, 1);
         break;
-    
+    case KEY_HOME:
+        col = 0;
+        highlight(col);
+        break;
+    case KEY_END:
+        col = input_str.length();
+        highlight(col);
+        break;
     default:
         if (iswprint(c)) {
             input_str.insert(col, 1, c);

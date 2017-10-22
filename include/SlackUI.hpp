@@ -50,8 +50,8 @@ private:
     void setup_ncurses();
     void switch_session();
     void change_context();
-    void scroll_up();
-    void scroll_down();
+    void scroll_up(int lines);
+    void scroll_down(int lines);
 #ifdef LIBNOTIFY_FOUND
     void notify_send(const RosterItem &item, const std::string& mesg);
 #endif

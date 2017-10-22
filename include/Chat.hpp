@@ -17,8 +17,8 @@ public:
     void set_title(std::string s);
 
     void print_starting_message(const std::string& mesg);
-    int scroll_back(Session& current_session);
-    int scroll_forward(Session& current_session);
+    int scroll_back(Session& current_session, int lines);
+    int scroll_forward(Session& current_session, int lines);
 
 private:
     void draw(Session& current_session, int num_lines, int start, int scroll);
