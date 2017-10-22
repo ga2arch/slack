@@ -11,7 +11,6 @@ Input::Input(int y, int x,
 
 int Input::wait(Session &sess) {
     const int KEY_ESC = 27;
-    const int KEY_BS = 127;
     const int KEY_TAB = 9;
     const int KEY_ENT = 10;
     wint_t c;
@@ -54,7 +53,7 @@ int Input::wait(Session &sess) {
 
         return c;
             
-    case KEY_BS:
+    case KEY_BACKSPACE:
         if (!input_str.empty() && col > 0) {
             col--;
             input_str.erase(col, 1);
