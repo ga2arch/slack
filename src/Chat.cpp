@@ -57,24 +57,23 @@ void Chat::print_starting_message(const std::string& mesg) {
     draw_borders();
 }
 
-int Chat::scroll_back(Session& sess) {
-    if (sess.delta == sess.scrolled_back) {
+int Chat::scroll_back(Session& sess, int lines) {
+    if (sess.delta <= sess.scrolled_back + lines) {
         return -1;
     }
     
-    sess.scrolled_back++;
-    draw(sess, 1, 0, -1);
+    sess.scrolled_back += lines;
+    draw(sess, lines, 0, -lines);
     return 0;
 }
 
-int Chat::scroll_forward(Session& sess) {
+int Chat::scroll_forward(Session& sess, int lines) {
     if (sess.scrolled_back == 0) {
         return -1;
     }
     
-    sess.scrolled_back--;
-    draw(sess, 1, get_real_rows() - 1, 1);
-    
+    sess.scrolled_back -= lines;
+    draw(sess, lines, get_real_rows() - lines, lines);
     return sess.scrolled_back;
 }
 

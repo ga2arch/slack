@@ -104,10 +104,16 @@ void SlackUI::main_ui_cycle() {
                         active_win = roster.get();
                         break;
                     case KEY_UP:
-                        scroll_up();
+                        scroll_up(1);
                         break;
                     case KEY_DOWN:
-                        scroll_down();
+                        scroll_down(1);
+                        break;
+                    case KEY_PPAGE:
+                        scroll_up(chat->get_real_rows());
+                        break;
+                    case KEY_NPAGE:
+                        scroll_down(chat->get_real_rows());
                         break;
                     case KEY_ENT:    // enter to select an user to chat with
                         switch_session();
@@ -174,20 +180,20 @@ void SlackUI::change_context() {
     roster->set_active(-1);
 }
 
-void SlackUI::scroll_up() {
-    if (chat->scroll_back(get_session()) == -1 && get_session().has_more) {
+void SlackUI::scroll_up(int lines) {
+    if (chat->scroll_back(get_session(), lines) == -1 && get_session().has_more) {
         int old_size = get_session().messages.size();
         std::string type = roster->get_active_type();
         client->get_history(roster->get_active_channel(), type);
         if (get_session().messages.size() > old_size) {
-            chat->scroll_back(get_session());
+            chat->scroll_back(get_session(), lines);
         }
     }
     input->highlight(get_session().col);
 }
 
-void SlackUI::scroll_down() {
-    if (chat->scroll_forward(get_session()) == 0) {
+void SlackUI::scroll_down(int lines) {
+    if (chat->scroll_forward(get_session(), lines) == 0) {
         remove_notification();
     }
     input->highlight(get_session().col);
