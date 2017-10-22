@@ -161,8 +161,9 @@ void Roster::scroll_down(int lines) {
             lines--;
         }
         if (delta != old_delta) {
-            scroll_helper(delta - old_delta);
-            draw_users(current_active + 1 - (delta - old_delta), delta - old_delta);
+            old_delta = std::min(delta - old_delta, get_real_rows());
+            scroll_helper(old_delta);
+            draw_users(current_active + 1 - old_delta, old_delta);
         }
         mvwprintw(win, current_active + 1 - delta, 1, "*");
     }
@@ -180,8 +181,9 @@ void Roster::scroll_up(int lines) {
             lines--;
         }
         if (delta != old_delta) {
-            scroll_helper(delta - old_delta);
-            draw_users(delta, old_delta - delta);
+            old_delta = std::min(old_delta - delta, get_real_rows());
+            scroll_helper(-old_delta);
+            draw_users(delta, old_delta);
         }
         mvwprintw(win, current_active + 1 - delta, 1, "*");
     }
