@@ -51,7 +51,25 @@ target_include_directories(slack++
 	PRIVATE ${LIBNOTIFY_INCLUDE_DIRS}
 	PUBLIC include)
 
-target_link_libraries(slack++
+
+
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "FreeBSD")
+
+    message ("Building on FreeBSD")
+    find_library(JSONCPP_LIB jsoncpp HINTS /usr/local/lib)
+    find_library(NCURSESW_LIB ncursesw HINTS /usr/local/lib)
+    target_link_libraries(slack++
+    	${OPENSSL_SSL_LIBRARY}
+	${OPENSSL_CRYPTO_LIBRARY}
+	${CURL_LIBRARIES}
+	${JSONCPP_LIB}
+	${NCURSESW_LIB}
+	${LIBNOTIFY_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT})
+else()
+    message("Building default (${CMAKE_SYSTEM_NAME})")
+    target_link_libraries(slack++
 	${OPENSSL_SSL_LIBRARY}
 	${OPENSSL_CRYPTO_LIBRARY}
 	${CURL_LIBRARIES}
@@ -59,5 +77,6 @@ target_link_libraries(slack++
 	${NCURSESW_LIBRARIES}
 	${LIBNOTIFY_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT})
+endif()
 
 set_property(TARGET slack++ PROPERTY CXX_STANDARD 14)
